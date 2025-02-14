@@ -74,7 +74,7 @@ function Sidebar() {
           </Box> 
 
           <Box>
-            <Typography variant="h4">Arohan Agro</Typography>
+            <Typography variant="h5">Welcome To Arohan Agro!!!</Typography>
           </Box>
           {/*           
           <Box display={'flex'} justifyContent={'space-between'} flex={1} m={2} color={'#000'}>
@@ -147,12 +147,15 @@ function Sidebar() {
                     className="menu-item"
                     sx={{
                       mt: 1,
-                      color: 'black',
+                      color: '#0d4a2b',
+                      fontWeight:'bold',
                       borderRadius: "10px",
                       transition: "background-color 0.3s, color 0.3s",
                       "&:hover": {
                         color: "#fff",
-                        backgroundColor: "#2c85de",
+                        // backgroundColor: "#2c85de",
+                        backgroundColor: "#588d72", 
+                        
                         ".menu-icon": {
                           color: "#fff",
                         },
@@ -186,12 +189,13 @@ function Sidebar() {
                             sx={{
                               mt: 1,
                               borderRadius: "10px",
-                              color: "black",
+                              // color: "black",
+                              color:'#407d5e',
                               pl: 4,
                               transition: "background-color 0.3s, color 0.3s",
                               "&:hover": {
                                 color: "#fff",
-                                backgroundColor: "#0000ff",
+                                backgroundColor: "#588d72",
                                 ".menu-icon": {
                                   color: "#fff",
                                 },

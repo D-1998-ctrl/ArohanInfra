@@ -10,6 +10,9 @@ import AccountMaster from './Masters/AccountMaster';
 import LoginPage from './LogIn-SignUp/Login';
 import Purchase from './Transaction/PurchaseEntry';
 import { Navigate } from 'react-router-dom';
+import Settings from './Settings/Setting';
+import SalesEntry from './Transaction/Sales';
+import ProductionEntry from './Transaction/ProductionEntry';
 
 function App() {
   return (
@@ -27,7 +30,13 @@ function App() {
           <Route path="/productmaster" element={<ProductMaster />} />
           <Route path="/materialmaster" element={<MaterialMaster />} />
           <Route path="/accountmaster" element={<AccountMaster />} />
+          {/* transactions */}
           <Route path="/Purchase" element={<Purchase/>} />
+          <Route path="/salesentry" element={<SalesEntry/>} />
+          <Route path="/productionentry" element={<ProductionEntry/>} />
+
+
+          <Route path='/setting' element={<Settings/>}/>
         </Route>
       </Routes>
     </BrowserRouter>

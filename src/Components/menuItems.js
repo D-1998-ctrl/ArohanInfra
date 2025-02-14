@@ -7,6 +7,10 @@ import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
 import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
+import SettingsIcon from '@mui/icons-material/Settings';
+
+
+
 export const menuItems = [
 
   // {
@@ -26,6 +30,8 @@ export const menuItems = [
         path: "/customermaster",
         icon: <FiberManualRecordIcon />,
       },
+
+  
       {
         title: "Supplier Master",
         path: "/suppliermaster",
@@ -56,12 +62,18 @@ export const menuItems = [
     submenus: [
       {
         title: "Sales",
-        path: "/sales",
+        path: "/salesentry",
         icon: <FiberManualRecordIcon />,
       },
       {
         title: "Purchase",
         path: "Purchase",
+        icon: <FiberManualRecordIcon />,
+      },
+
+      {
+        title: "Production Entry",
+        path: "productionentry",
         icon: <FiberManualRecordIcon />,
       },
       {
@@ -135,6 +147,13 @@ export const menuItems = [
     title: "Company Information",
     path: "/companyinfo",
     icon: <PermIdentityIcon />,
+    submenus: [],
+  },
+
+  {
+    title: "Settings",
+    path: "/setting",
+    icon: <SettingsIcon />,
     submenus: [],
   },
 

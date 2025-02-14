@@ -16,7 +16,7 @@ import React, { useMemo, useState, useEffect } from 'react'
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, Box, useMediaQuery, Button, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { MaterialReactTable, } from 'material-react-table';
-// import suppliermaster from './suppliermaster.json'
+ import suppliermaster from '../Masters/suppliermaster.json'
 import { useTheme } from "@mui/material/styles";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";

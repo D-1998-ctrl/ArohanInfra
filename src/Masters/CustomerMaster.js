@@ -1315,7 +1315,7 @@ const CustomerMaster = () => {
                 </Box>
 
                 <Box>
-                  <Typography>Sub Group </Typography>
+                  <Typography> Group Id </Typography>
                   <FormControl onChange={(e) => handleChange("SubGroup", e.target.value)} value={formValues.SubGroup} error={!!formErrors.SubGroup} fullWidth size="small" margin="normal">
 
                     <Select>
@@ -1428,7 +1428,7 @@ const CustomerMaster = () => {
                 </Box>
 
                 <Box>
-                  <Typography>State </Typography>
+                  <Typography>City </Typography>
                   <FormControl onChange={(e) => handleChange("State", e.target.value)} value={formValues.State} error={!!formErrors.State} fullWidth size="small" margin="normal">
 
                     <Select>
@@ -1550,7 +1550,7 @@ const CustomerMaster = () => {
                 </Box>
 
                 <Box>
-                  <Typography>Group Id</Typography>
+                  <Typography>Sub Group Id</Typography>
                   <FormControl onChange={(e) => handleChange("GroupId", e.target.value)} value={formValues.GroupId} error={!!formErrors.GroupId} fullWidth size="small" margin="normal">
 
                     <Select>
@@ -1671,7 +1671,7 @@ const CustomerMaster = () => {
                 </Box>
 
                 <Box>
-                  <Typography>City </Typography>
+                  <Typography>State</Typography>
                   <FormControl onChange={(e) => handleChange("City", e.target.value)} value={formValues.City} error={!!formErrors.City} fullWidth size="small" margin="normal">
 
                     <Select>
@@ -1804,7 +1804,7 @@ const CustomerMaster = () => {
 
               <FormControlLabel
                 control={<Checkbox />}
-                label="GST Yes/No"
+                label="GST "
               />
 
 
