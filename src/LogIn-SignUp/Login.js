@@ -163,7 +163,7 @@ import { styled } from '@mui/material/styles';
 import { Box, Typography, IconButton, TextField, InputLabel, FormControl, MenuItem, Select, Checkbox, Link, Button, } from '@mui/material';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
-import logo from '../imgs/logo5.PNG';
+import logo from '../imgs/logo5.jpeg';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import TwitterIcon from '@mui/icons-material/Twitter';
@@ -240,9 +240,9 @@ export default function AdminLogin() {
   };
   const navigate = useNavigate();
   const handleLoginClick = (e) => {
-        e.preventDefault();
-        navigate('/customermaster');
-      };
+    e.preventDefault();
+    navigate('/customermaster');
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -259,7 +259,7 @@ export default function AdminLogin() {
         }}>
 
           <Box className="login-logo" mt={2}>
-            <img src={logo} alt="SNP Tax & Financials Logo" style={{ height: "80px" }} />
+            <img src={logo} alt="SNP Tax & Financials Logo" style={{ height: "130px" }} />
           </Box>
 
           <Typography variant="h3" fontWeight="bold" mt={2}>
@@ -287,130 +287,132 @@ export default function AdminLogin() {
           </Grid>
         </Grid>
         <Grid item xs={16} sm={8}
-        sx={{ backgroundColor: '#f0f0f0',
-          color: 'black',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100vh',
-          textAlign: 'center'}}
-        
+          sx={{
+            backgroundColor: '#f0f0f0',
+            color: 'black',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100vh',
+            textAlign: 'center'
+          }}
+
         >
-          
-            <Box className="right-container"
-              sx={{ textAlign: 'left', height: "100%", overflowY: "auto", padding: "10px", mt: 15,}}
 
-            >
-              <Box className="login-logo" sx={{ margin: 0 }}>
-                <img src={logo} alt="" style={{ height: "95px" }} />
+          <Box className="right-container"
+            sx={{ textAlign: 'left', height: "100%", overflowY: "auto", padding: "10px", mt: 15, }}
+
+          >
+            <Box className="login-logo" sx={{ margin: 0 }}>
+              <img src={logo} alt="" style={{ height: "95px" }} />
+            </Box>
+
+            <Box  >
+              <Typography textAlign={"center"} variant='h4'>Account Login</Typography>
+            </Box>
+
+            <Box>
+              <Box mt={3}>
+                <InputLabel sx={{ color: 'black' }}>Email</InputLabel>
+                <TextField
+
+                  fullWidth
+                  name="email"
+                  placeholder="Enter Your Email"
+                  size="small"
+                  sx={{ mt: 2 }}
+                  value={inpval.email}
+                  onChange={setVal}
+
+                  id="email"
+
+                />
               </Box>
 
-              <Box  >
-                <Typography textAlign={"center"} variant='h4'>Account Login</Typography>
-              </Box>
-
-              <Box>
-                <Box mt={3}>
-                  <InputLabel sx={{ color: 'black' }}>Email</InputLabel>
-                  <TextField
-
-                    fullWidth
-                    name="email"
-                    placeholder="Enter Your Email"
+              <Box mt={2}>
+                {/* <InputLabel sx={{ color: 'black' }}>Password</InputLabel> */}
+                <FormControl sx={{ mt: 2, width: '100%' }} variant="outlined">
+                  <Typography htmlFor="outlined-adornment-password" mb={2}>Password</Typography>
+                  <OutlinedInput
+                    // id="outlined-adornment-password"
+                    name="password"
+                    placeholder="password"
                     size="small"
-                    sx={{ mt: 2 }}
-                    value={inpval.email}
+                    value={inpval.password}
                     onChange={setVal}
-
-                    id="email"
-
+                    type={showPassword ? 'text' : 'password'}
+                    endAdornment={
+                      <InputAdornment position="end">
+                        <IconButton
+                          aria-label="toggle password visibility"
+                          onClick={handleClickShowPassword}
+                          onMouseDown={handleMouseDownPassword}
+                          onMouseUp={handleMouseUpPassword}
+                          edge="end"
+                        >
+                          {showPassword ? <VisibilityOff /> : <Visibility />}
+                        </IconButton>
+                      </InputAdornment>
+                    }
                   />
+                </FormControl>
+
+                <Box sx={{ textAlign: 'left', mb: '3%', fontSize: '12px', mt: 1 }}>
+                  <Link component={NavLink} to="/forgotpass" sx={{ color: 'cornflowerblue', textDecoration: 'none' }}>
+                    Forgot Password?
+                  </Link>
                 </Box>
-
-                <Box mt={2}>
-                  {/* <InputLabel sx={{ color: 'black' }}>Password</InputLabel> */}
-                  <FormControl sx={{ mt: 2, width: '100%' }} variant="outlined">
-                    <Typography htmlFor="outlined-adornment-password" mb={2}>Password</Typography>
-                    <OutlinedInput
-                      // id="outlined-adornment-password"
-                      name="password"
-                      placeholder="password"
-                      size="small"
-                      value={inpval.password}
-                      onChange={setVal}
-                      type={showPassword ? 'text' : 'password'}
-                      endAdornment={
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            onMouseUp={handleMouseUpPassword}
-                            edge="end"
-                          >
-                            {showPassword ? <VisibilityOff /> : <Visibility />}
-                          </IconButton>
-                        </InputAdornment>
-                      }
-                    />
-                  </FormControl>
-
-                  <Box sx={{ textAlign: 'left', mb: '3%', fontSize: '12px', mt: 1 }}>
-                    <Link component={NavLink} to="/forgotpass" sx={{ color: 'cornflowerblue', textDecoration: 'none' }}>
-                      Forgot Password?
-                    </Link>
-                  </Box>
-                </Box>
+              </Box>
 
 
-                <Box mt={2}>
-                  <FormControl fullWidth sx={{ mt: 2 }}>
-                    <Typography sx={{ color: 'black' }}>Stay signed in for</Typography>
-                    <Select
-                      size='small'
-                      margin='normal'
-                      value={inpval.expiryTime}
-                      onChange={setVal}
-                      name="expiryTime"
-                      sx={{
-                        // padding: "8px 12px",
-                        border: "2px solid rgb(100, 149, 237)",
-                        borderRadius: "10px"
-                      }}
-                    >
-                      <MenuItem value="">
-                        <em>Select</em>
-                      </MenuItem>
-                      <MenuItem value="1min">1 minute</MenuItem>
-                      <MenuItem value="30min">30 minutes</MenuItem>
-                      <MenuItem value="4hours">4 hours</MenuItem>
-                      <MenuItem value="8hours">8 hours</MenuItem>
-                    </Select>
-                  </FormControl>
-                </Box>
+              <Box mt={2}>
+                <FormControl fullWidth sx={{ mt: 2 }}>
+                  <Typography sx={{ color: 'black' }}>Stay signed in for</Typography>
+                  <Select
+                    size='small'
+                    margin='normal'
+                    value={inpval.expiryTime}
+                    onChange={setVal}
+                    name="expiryTime"
+                    sx={{
+                      // padding: "8px 12px",
+                      border: "2px solid rgb(100, 149, 237)",
+                      borderRadius: "10px"
+                    }}
+                  >
+                    <MenuItem value="">
+                      <em>Select</em>
+                    </MenuItem>
+                    <MenuItem value="1min">1 minute</MenuItem>
+                    <MenuItem value="30min">30 minutes</MenuItem>
+                    <MenuItem value="4hours">4 hours</MenuItem>
+                    <MenuItem value="8hours">8 hours</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
 
 
 
 
-                <Box display="flex" mt={2} alignItems={'center'}>
-                  <Checkbox id="terms" />
+              <Box display="flex" mt={2} alignItems={'center'}>
+                <Checkbox id="terms" />
 
-                  <Typography fontSize="14px" color="#696969" component="label" htmlFor="terms">
-                    Agree to{' '}
-                    <Link href="https://policies.google.com/terms?hl=en-US" color="rgb(58, 145, 245)" underline="none">
-                      Conditions
-                    </Link>
-                  </Typography>
-                </Box>
+                <Typography fontSize="14px" color="#696969" component="label" htmlFor="terms">
+                  Agree to{' '}
+                  <Link href="https://policies.google.com/terms?hl=en-US" color="rgb(58, 145, 245)" underline="none">
+                    Conditions
+                  </Link>
+                </Typography>
+              </Box>
 
-                <Box mt={2} display={'flex'} alignItems={'center'} justifyContent={'center'}>
-                  <Button onClick={handleLoginClick} variant='contained'>
-                    Login
-                  </Button>
-                </Box>
+              <Box mt={2} display={'flex'} alignItems={'center'} justifyContent={'center'}>
+                <Button onClick={handleLoginClick} variant='contained'>
+                  Login
+                </Button>
+              </Box>
 
-                {/* <Box mt={2} className="col-12">
+              {/* <Box mt={2} className="col-12">
                   <Typography variant="body">
                     {"Don't have a PMS solutions admin portal Account? "}
                     <Link
@@ -434,27 +436,27 @@ export default function AdminLogin() {
                   </Typography>
                 </Box> */}
 
-                <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", }}>
-                  <Box className="storeBtn" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-                    <Box className="playstore col-12">
-                      <NavLink to="https://play.google.com/store/apps/details?id=com.linkedin.android&hl=en_IN&gl=US">
-                        <img style={{ width: "120px" }} src={android} alt="Logo" />
-                      </NavLink>
-                    </Box>
-                    <br />
-                    <Box className="appstore col-12">
-                      <NavLink to="https://apps.apple.com/us/app/linkedin-network-job-finder/id288429040">
-                        <img style={{ width: "120px" }} src={apple} alt="Logo" />
-                      </NavLink>
-                    </Box>
+              <Box sx={{ display: "flex", flexDirection: "row", justifyContent: "space-evenly", }}>
+                <Box className="storeBtn" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+                  <Box className="playstore col-12">
+                    <NavLink to="https://play.google.com/store/apps/details?id=com.linkedin.android&hl=en_IN&gl=US">
+                      <img style={{ width: "120px" }} src={android} alt="Logo" />
+                    </NavLink>
+                  </Box>
+                  <br />
+                  <Box className="appstore col-12">
+                    <NavLink to="https://apps.apple.com/us/app/linkedin-network-job-finder/id288429040">
+                      <img style={{ width: "120px" }} src={apple} alt="Logo" />
+                    </NavLink>
                   </Box>
                 </Box>
-
               </Box>
 
             </Box>
 
-         
+          </Box>
+
+
         </Grid>
       </Grid>
     </Box>

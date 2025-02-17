@@ -13,6 +13,8 @@ import { Navigate } from 'react-router-dom';
 import Settings from './Settings/Setting';
 import SalesEntry from './Transaction/Sales';
 import ProductionEntry from './Transaction/ProductionEntry';
+import Commonpage from './Commonpage';
+// import Coverpage from './LogIn-SignUp/coverpage';
 
 function App() {
   return (
@@ -22,6 +24,7 @@ function App() {
         <Route index element={<Navigate to="/login" />} />
 
         <Route path='/login' element={<LoginPage />} />
+        {/* <Route path='/coverpage' element={<Coverpage/>}/> */}
         <Route path="/" element={<Sidebar />}>
 
 
@@ -37,6 +40,8 @@ function App() {
 
 
           <Route path='/setting' element={<Settings/>}/>
+
+          <Route path="/commonpage" element={<Commonpage/>} />
         </Route>
       </Routes>
     </BrowserRouter>

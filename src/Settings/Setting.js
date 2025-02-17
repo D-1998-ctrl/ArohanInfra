@@ -53,7 +53,7 @@ const Settings = () => {
     const [options, setOptions] = useState([]);
     const [loading, setLoading] = useState(false);
     const [selectedCity, setSelectedCity] = useState(null);
-    
+
 
     // useEffect(() => {
     //     const fetchCities = async () => {
@@ -73,9 +73,9 @@ const Settings = () => {
 
     //     fetchCities();
     // }, []);
-    
-    
-    
+
+
+
     const fetchCity = async () => {
         setLoading(true);
         try {
@@ -88,7 +88,7 @@ const Settings = () => {
             if (Array.isArray(response.data)) {
                 const cityOptions = response.data.map((city) => ({
                     value: city?.Id || "",
-                    label: city?.Id || "Unknown",
+                    label: city?.CityName,
                 }));
 
                 setOptions(cityOptions);
@@ -118,7 +118,7 @@ const Settings = () => {
             if (Array.isArray(response.data)) {
                 const stateOptions = response.data.map((state) => ({
                     value: state?.Id || "",
-                    label: state?.Id || "Unknown",
+                    label: state?.StateName || "Unknown",
                 }));
 
                 setStateOptions(stateOptions);
@@ -132,7 +132,7 @@ const Settings = () => {
     };
 
     //create CompanyMaster
-  
+
 
     const createCompanyMaster = () => {
         const urlencoded = new URLSearchParams();
@@ -196,9 +196,10 @@ const Settings = () => {
                 setUpdateWebsite(result.Website)
                 setSelectedCity(result.CityId)
 
-                console.log(result)}
-        
-        )
+                console.log(result)
+            }
+
+            )
             .catch((error) => console.error(error));
 
     }
@@ -251,128 +252,107 @@ const Settings = () => {
                     <Grid container spacing={2}>
                         {/* Left Column */}
                         <Grid item xs={12} sm={6}>
-                            <Box>
-                                <Typography>Company Name</Typography>
-                                <TextField size="small" margin="normal" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Enter Company Name" fullWidth />
-                            </Box>
+                            <Box display="flex" flexDirection="column" gap={2}>
+                                <Box>
+                                    <Typography>Company Name</Typography>
+                                    <TextField size="small" value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Enter Company Name" fullWidth />
+                                </Box>
 
-                            <Box>
-                                <Typography>CityId</Typography>
-                                <Autocomplete
-                                    options={options}
-                                    getOptionLabel={(option) => (option?.label ? option.label.toString() : "")}
-                                    isOptionEqualToValue={(option, value) => option.value === value.value}
-                                    loading={loading}
-                                    onOpen={fetchCity}
-                                    onChange={(event, newValue) => setSelectedCity(newValue)}
-                                    renderInput={(params) => (
-                                        <TextField {...params} size="small" margin="normal" placeholder="Enter City ID" fullWidth />
-                                    )}
-                                />
-                            </Box>
+                                <Box>
+                                    <Typography>City</Typography>
+                                    <Autocomplete
+                                        options={options}
+                                        getOptionLabel={(option) => (option?.label ? option.label.toString() : "")}
+                                        isOptionEqualToValue={(option, value) => option.value === value.value}
+                                        loading={loading}
+                                        onOpen={fetchCity}
+                                        onChange={(event, newValue) => setSelectedCity(newValue)}
+                                        renderInput={(params) => (
+                                            <TextField {...params} size="small" placeholder="Enter City" fullWidth />
+                                        )}
+                                    />
+                                </Box>
 
+                                <Box>
+                                    <Typography>GSTNum</Typography>
+                                    <TextField value={gstNum} onChange={(e) => setGSTNum(e.target.value)} size="small" placeholder="Enter GST Number" fullWidth />
+                                </Box>
 
-                            <Box>
-                                <Typography>GSTNum</Typography>
-                                <TextField value={gstNum} onChange={(e) => setGSTNum(e.target.value)} size="small" margin="normal" placeholder="Enter GST Number" fullWidth />
+                                <Box>
+                                    <Typography>Mobile Number</Typography>
+                                    <PhoneInput
+                                        country={"in"}
+                                        value={phone}
+                                        onChange={(phone) => setPhone(phone)}
+                                        inputProps={{ name: "phone", required: true }}
+                                        inputStyle={{ width: "100%", height: "40px", fontSize: "16px", borderRadius: "5px" }}
+                                        buttonStyle={{ borderRadius: "5px" }}
+                                    />
+                                </Box>
 
-                            </Box>
-
-
-
-                            <Box style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                                <InputLabel htmlFor="phone-input">Mobile Number</InputLabel>
-                                <PhoneInput
-                                    country={"in"}
-                                    value={phone}
-                                    onChange={(phone) => setPhone(phone)}
-                                    inputProps={{
-                                        name: "phone",
-                                        required: true,
-                                    }}
-                                    inputStyle={{
-                                        width: "100%",
-                                        height: "40px",
-                                        fontSize: "16px",
-                                        borderRadius: "5px",
-                                    }}
-                                    buttonStyle={{ borderRadius: "5px" }}
-                                />
-                            </Box>
-
-                            <Box>
-                                <Typography>Email Id</Typography>
-                                <TextField value={email} onChange={(e) => setEmail(e.target.value)} size="small" margin="normal" placeholder="Enter Email ID" fullWidth />
+                                <Box>
+                                    <Typography>Email Id</Typography>
+                                    <TextField value={email} onChange={(e) => setEmail(e.target.value)} size="small" placeholder="Enter Email ID" fullWidth />
+                                </Box>
                             </Box>
                         </Grid>
 
                         {/* Right Column */}
                         <Grid item xs={12} sm={6}>
-                            <Box>
-                                <Typography>Director</Typography>
-                                <TextField value={director} onChange={(e) => SetDirector(e.target.value)} size="small" margin="normal" placeholder="Enter Director" fullWidth />
-                            </Box>
+                            <Box display="flex" flexDirection="column" gap={2}>
+                                <Box>
+                                    <Typography>Director</Typography>
+                                    <TextField value={director} onChange={(e) => SetDirector(e.target.value)} size="small" placeholder="Enter Director" fullWidth />
+                                </Box>
 
-                            <Box>
-                                <Typography>State Id</Typography>
+                                <Box>
+                                    <Typography>State</Typography>
+                                    <Autocomplete
+                                        options={stateOptions}
+                                        getOptionLabel={(option) => (option?.label ? option.label.toString() : "")}
+                                        isOptionEqualToValue={(option, value) => option.value === value.value}
+                                        loading={loadingState}
+                                        onOpen={fetchState}
+                                        onChange={(event, newValue) => setSelectedState(newValue)}
+                                        renderInput={(params) => (
+                                            <TextField {...params} size="small" placeholder="Enter State" fullWidth />
+                                        )}
+                                    />
+                                </Box>
 
-                                <Autocomplete
-                                    options={stateOptions}
-                                    getOptionLabel={(option) => (option?.label ? option.label.toString() : "")}
-                                    isOptionEqualToValue={(option, value) => option.value === value.value}
-                                    loading={loadingState}
-                                    onOpen={fetchState}
-                                    onChange={(event, newValue) => setSelectedState(newValue)} // Store selected state
-                                    renderInput={(params) => (
-                                        <TextField {...params} size="small" margin="normal" placeholder="Enter State ID" fullWidth />
-                                    )}
-                                />
-                            </Box>
+                                <Box>
+                                    <Typography>Pincode</Typography>
+                                    <TextField value={pinCode} onChange={(e) => setPinCode(e.target.value)} size="small" placeholder="Enter Pincode" fullWidth />
+                                </Box>
 
-                            <Box>
-                                <Typography>Pincode</Typography>
-                                <TextField value={pinCode} onChange={(e) => setPinCode(e.target.value)} size="small" margin="normal" placeholder="Enter Pincode" fullWidth />
-                            </Box>
+                                <Box>
+                                    <Typography>Fax Num</Typography>
+                                    <TextField value={faxNum} onChange={(e) => setFaxNum(e.target.value)} size="small" placeholder="Enter Fax Number" fullWidth />
+                                </Box>
 
-                            <Box>
-                                <InputLabel htmlFor="phone-input">Fax Num</InputLabel>
-                                <TextField
-                                    size="small"
-                                    margin="normal"
-                                    placeholder="Enter Fax Number"
-                                    fullWidth
-                                    value={faxNum} onChange={(e) => setFaxNum(e.target.value)}
-                                    style={{
-
-                                        height: "30px",
-                                        fontSize: "16px",
-                                        borderRadius: "5px",
-                                    }}
-                                />
-                            </Box>
-
-                            <Box>
-                                <Typography>Website</Typography>
-                                <TextField value={website} onChange={(e) => setWebsite(e.target.value)} size="small" margin="normal" placeholder="Enter Website" fullWidth />
+                                <Box>
+                                    <Typography>Website</Typography>
+                                    <TextField value={website} onChange={(e) => setWebsite(e.target.value)} size="small" placeholder="Enter Website" fullWidth />
+                                </Box>
                             </Box>
                         </Grid>
                     </Grid>
 
 
+
                     <Box>
-                        <Typography>Dessignation</Typography>
+                        <Typography>Designation</Typography>
                         <TextField
                             value={dessignation} onChange={(e) => setDessignation(e.target.value)}
-                            size="small" margin="normal" placeholder='Dessignation' fullWidth />
-
+                            size="small" margin="normal" placeholder='Designation' fullWidth />
                     </Box>
 
                     <Box>
-                        <Typography>Adress</Typography>
+                        <Typography>Address</Typography>
                         <TextField
 
                             value={address} onChange={(e) => setAddress(e.target.value)}
-                            size="small" margin="normal" placeholder='Adress' fullWidth />
+                            size="small" margin="normal" placeholder='Address' fullWidth />
 
                     </Box>
 

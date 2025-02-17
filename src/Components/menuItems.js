@@ -78,27 +78,27 @@ export const menuItems = [
       },
       {
         title: "Delivery Challan at godwon",
-        path: "deliverychallan",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
       {
         title: "Inword at store",
-        path: "inwordstore",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
       {
         title: "Planning",
-        path: "planning",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
       {
         title: "Receipts",
-        path: "receipts",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
       {
         title: "Payments",
-        path: "payments",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
     ],
@@ -106,35 +106,35 @@ export const menuItems = [
 
   {
     title: "Reports",
-    path: '/reports',
+    path: '/commonpage',
     icon: <AttachMoneyIcon />,
     submenus: [
       {
         title: "Productwise Sales",
-        path: "/productwisesales",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
       {
         title: "Customerwise Sales",
-        path: "/customerwisesales",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
       {
         title: "Stock Report",
-        path: "/stockreport",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
 
       {
         title: "Account Receivable",
-        path: "/accountreceivable",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
 
 
       {
         title: "Account Payable",
-        path: "/accountpayable",
+        path: "commonpage",
         icon: <FiberManualRecordIcon />,
       },
     ],
@@ -145,7 +145,7 @@ export const menuItems = [
 
   {
     title: "Company Information",
-    path: "/companyinfo",
+    path: "commonpage",
     icon: <PermIdentityIcon />,
     submenus: [],
   },

@@ -74,7 +74,7 @@ function Sidebar() {
           </Box> 
 
           <Box>
-            <Typography variant="h5">Welcome To Arohan Agro!!!</Typography>
+            <Typography variant="body">Welcome To Arohan Agro!!!</Typography>
           </Box>
           {/*           
           <Box display={'flex'} justifyContent={'space-between'} flex={1} m={2} color={'#000'}>
@@ -138,7 +138,7 @@ function Sidebar() {
             </div>
             {!isCollapsed && <Typography variant="h5" className="company-name-text"></Typography>}
           </Box>
-          <Box className="sidebar-contents" sx={{ mt: 2 }}>
+          <Box className="sidebar-contents" sx={{ mt: 2 ,height:"65vh",overflowY:'auto'}}>
             <List sx={{ cursor: "pointer" }}>
               {menuItems.map((item, index) => (
                 <Box key={index}>
