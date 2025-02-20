@@ -1,16 +1,3 @@
-// import React from 'react'
-
-// const Purchase = () => {
-//   return (
-//     <div>Purchase</div>
-//   )
-// }
-
-// export default Purchase
-
-
-
-
 
 import React, { useMemo, useState, useEffect } from 'react'
 import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, Box, useMediaQuery, Button, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';

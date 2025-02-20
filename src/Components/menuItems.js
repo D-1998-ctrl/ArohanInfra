@@ -1,15 +1,10 @@
 
-
-
-
-import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import LibraryBooksIcon from '@mui/icons-material/LibraryBooks';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import PermIdentityIcon from '@mui/icons-material/PermIdentity';
-import AttachMoneyIcon from '@mui/icons-material/AttachMoney';
 import SettingsIcon from '@mui/icons-material/Settings';
-
-
+import ReceiptIcon from '@mui/icons-material/Receipt';
+import DescriptionIcon from '@mui/icons-material/Description';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 
 export const menuItems = [
 
@@ -23,34 +18,34 @@ export const menuItems = [
   {
     title: "Masters",
     path: '/master',
-    icon: <ReceiptLongIcon />,
+    icon: <PostAddIcon />,
     submenus: [
       {
         title: "Customer Master",
         path: "/customermaster",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
 
-  
+
       {
         title: "Supplier Master",
         path: "/suppliermaster",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Product Master",
         path: "/productmaster",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Material Master",
         path: "materialmaster",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Account Master",
         path: "/accountmaster",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
 
     ],
@@ -58,48 +53,48 @@ export const menuItems = [
   {
     title: "Transaction",
     path: '/transaction',
-    icon: <ReceiptLongIcon />,
+    icon: <ReceiptIcon />,
     submenus: [
       {
         title: "Sales",
         path: "/salesentry",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Purchase",
-        path: "Purchase",
-        icon: <FiberManualRecordIcon />,
+        path: "/Purchase",
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
 
       {
         title: "Production Entry",
         path: "productionentry",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Delivery Challan at godwon",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Inword at store",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Planning",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Receipts",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Payments",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
     ],
   },
@@ -107,35 +102,35 @@ export const menuItems = [
   {
     title: "Reports",
     path: '/commonpage',
-    icon: <AttachMoneyIcon />,
+    icon: <DescriptionIcon />,
     submenus: [
       {
         title: "Productwise Sales",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Customerwise Sales",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Stock Report",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
 
       {
         title: "Account Receivable",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
 
 
       {
         title: "Account Payable",
         path: "commonpage",
-        icon: <FiberManualRecordIcon />,
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
     ],
   },

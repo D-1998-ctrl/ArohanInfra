@@ -1,5 +1,58 @@
+// import React from 'react';
+// import { BrowserRouter, Routes, Route } from 'react-router-dom';
+// import Sidebar from './Components/Sidebar';
+// import Masters from './Masters/Masters';
+// import CustomerMaster from './Masters/CustomerMaster';
+// import SupplierMaster from './Masters/SupplierMaster';
+// import ProductMaster from './Masters/ProductMaster';
+// import MaterialMaster from './Masters/MaterialMaster';
+// import AccountMaster from './Masters/AccountMaster';
+// import LoginPage from './LogIn-SignUp/Login';
+// import Purchase from './Transaction/PurchaseEntry';
+// import { Navigate } from 'react-router-dom';
+// import Settings from './Settings/Setting';
+// import SalesEntry from './Transaction/Sales';
+// import ProductionEntry from './Transaction/ProductionEntry';
+// import Commonpage from './Commonpage';
+// // import Coverpage from './LogIn-SignUp/coverpage';
+
+// function App() {
+//   return (
+//     <BrowserRouter>
+//       <Routes>
+
+//         <Route index element={<Navigate to="/login" />} />
+
+//         <Route path='/login' element={<LoginPage />} />
+//         {/* <Route path='/coverpage' element={<Coverpage/>}/> */}
+//         <Route path="/" element={<Sidebar />}>
+
+
+//           <Route path="/customermaster" element={<CustomerMaster />} />
+//           <Route path="/suppliermaster" element={<SupplierMaster />} />
+//           <Route path="/productmaster" element={<ProductMaster />} />
+//           <Route path="/materialmaster" element={<MaterialMaster />} />
+//           <Route path="/accountmaster" element={<AccountMaster />} />
+//           {/* transactions */}
+//           <Route path="/Purchase" element={<Purchase/>} />
+//           <Route path="/salesentry" element={<SalesEntry/>} />
+//           <Route path="/productionentry" element={<ProductionEntry/>} />
+
+
+//           <Route path='/setting' element={<Settings/>}/>
+
+//           <Route path="/commonpage" element={<Commonpage/>} />
+//         </Route>
+//       </Routes>
+//     </BrowserRouter>
+//   );
+// }
+
+// export default App;
+
+
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import Sidebar from './Components/Sidebar';
 import Masters from './Masters/Masters';
 import CustomerMaster from './Masters/CustomerMaster';
@@ -18,16 +71,13 @@ import Commonpage from './Commonpage';
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
+
       <Routes>
-
         <Route index element={<Navigate to="/login" />} />
-
         <Route path='/login' element={<LoginPage />} />
         {/* <Route path='/coverpage' element={<Coverpage/>}/> */}
-        <Route path="/" element={<Sidebar />}>
-
-
+        <Route path="/" element={<Sidebar />}>          
           <Route path="/customermaster" element={<CustomerMaster />} />
           <Route path="/suppliermaster" element={<SupplierMaster />} />
           <Route path="/productmaster" element={<ProductMaster />} />
@@ -37,14 +87,11 @@ function App() {
           <Route path="/Purchase" element={<Purchase/>} />
           <Route path="/salesentry" element={<SalesEntry/>} />
           <Route path="/productionentry" element={<ProductionEntry/>} />
-
-
           <Route path='/setting' element={<Settings/>}/>
-
           <Route path="/commonpage" element={<Commonpage/>} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 

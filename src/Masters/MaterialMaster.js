@@ -875,7 +875,7 @@ import axios from 'axios';
 import { useTheme } from "@mui/material/styles";
 import { toast } from "react-toastify";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-
+import '../Components/common.css'
 
 const MaterialMaster = () => {
   const theme = useTheme();
@@ -1281,13 +1281,13 @@ const MaterialMaster = () => {
 
   return (
     <Box>
-      <Box sx={{ background: 'rgb(238, 246, 252)', borderRadius: '10px', p: 5, height: 'auto' }}>
+      <Box sx={{  p: 5, height: 'auto' }}>
         <Box textAlign={'center'}>
-          <Typography variant='h4'><b>Material Master</b></Typography>
+          <Typography color='var(--complementary-color)' variant='h4'><b>Material Master</b></Typography>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 3 }}>
-          <Button variant="contained" onClick={handleDrawerOpen}>Create Material Master </Button>
+          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleDrawerOpen}>Create Material Master </Button>
         </Box>
 
 
@@ -1296,7 +1296,13 @@ const MaterialMaster = () => {
             columns={columns}
             data={data}
           // enableColumnOrdering
+          muiTableHeadCellProps={{
+            sx: {
 
+              color: 'var(--primary-color)',
+
+            },
+          }}
           />
           <Menu
             anchorEl={anchorEl}
@@ -1325,7 +1331,7 @@ const MaterialMaster = () => {
             },
           }}
         >
-          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between',background:'rgb(236, 253, 230)' }}>
             <Typography m={2} variant="h6"><b>Create Material Master</b></Typography>
             <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleDrawerClose} />
           </Box>
@@ -1489,11 +1495,13 @@ const MaterialMaster = () => {
 
           <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mt={5}>
             <Box>
-              <Button variant='contained' onClick={CreateMaterialMaster}>Save </Button>
+              <Button  sx={{
+                 background: 'var(--primary-color)', 
+                 }} variant='contained' onClick={CreateMaterialMaster}>Save </Button>
             </Box>
 
             <Box>
-              <Button onClick={handleDrawerClose} variant='outlined'>Cancel </Button>
+              <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }}  onClick={handleDrawerClose} variant='outlined'>Cancel </Button>
             </Box>
           </Box>
         </Drawer>
@@ -1510,7 +1518,7 @@ const MaterialMaster = () => {
             },
           }}
         >
-          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between',background:'rgb(236, 253, 230)' }}>
             <Typography m={2} variant="h6"><b>Update Material Master</b></Typography>
             <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleEditDrawerClose} />
           </Box>
@@ -1674,11 +1682,13 @@ const MaterialMaster = () => {
 
           <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mt={5}>
             <Box>
-              <Button variant='contained' onClick={UpdateMaterialMaster}>Save </Button>
+              <Button sx={{
+                 background: 'var(--primary-color)', 
+                 }} variant='contained' onClick={UpdateMaterialMaster}>Save </Button>
             </Box>
 
             <Box>
-              <Button onClick={handleEditDrawerClose} variant='outlined'>Cancel </Button>
+              <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }}  onClick={handleEditDrawerClose} variant='outlined'>Cancel </Button>
             </Box>
           </Box>
         </Drawer>

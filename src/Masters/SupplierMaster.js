@@ -5,7 +5,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { MaterialReactTable, } from 'material-react-table';
 import suppliermaster from './suppliermaster.json'
 import { useTheme } from "@mui/material/styles";
-
+import '../Components/common.css'
 const SupplierMaster = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -116,13 +116,15 @@ const SupplierMaster = () => {
 
   return (
     <Box>
-      <Box sx={{ background: 'rgb(238, 246, 252)', borderRadius: '10px', p: 5, height: 'auto' }}>
+      <Box sx={{
+        //  background: 'rgb(238, 246, 252)', 
+         p: 5, height: 'auto' }}>
         <Box textAlign={'center'}>
-          <Typography variant='h4'><b>Supplier Master</b></Typography>
+          <Typography color='var(--complementary-color)' variant='h4'><b>Supplier Master</b></Typography>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 3 }}>
-          <Button variant="contained" onClick={handleDrawerOpen}>Create Supplier Master </Button>
+          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleDrawerOpen}>Create Supplier Master </Button>
         </Box>
 
 
@@ -130,8 +132,15 @@ const SupplierMaster = () => {
           <MaterialReactTable
             columns={columns}
             data={suppliermaster}
-            enableColumnOrdering
+            // enableColumnOrdering
             enableColumnResizing
+            muiTableHeadCellProps={{
+              sx: {
+
+                color: 'var(--primary-color)',
+
+              },
+            }}
           />
         </Box>
 
@@ -147,7 +156,7 @@ const SupplierMaster = () => {
             },
           }}
         >
-          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between',background:'rgb(236, 253, 230)' }}>
             <Typography m={2} variant="h6"><b>Create Supplier Master</b></Typography>
             <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleDrawerClose} />
           </Box>
@@ -155,8 +164,8 @@ const SupplierMaster = () => {
 
           <Box>
             <Box display="flex" alignItems="center" gap={2}>
-              <Box flex={1} m={2}>
-                <Box>
+              <Box flex={1} >
+                <Box m={1.5}>
                   <Typography>Account Code</Typography>
                   <TextField onChange={(e) => handleChange("AccountCode", e.target.value)} value={formValues.AccountCode} error={!!formErrors.AccountCode} size="small" margin="normal" placeholder="Enter Account Code" fullWidth />
                   {(!!formErrors.AccountCode) && (
@@ -182,7 +191,7 @@ const SupplierMaster = () => {
                   )}
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Sub Group </Typography>
                   <FormControl onChange={(e) => handleChange("SubGroup", e.target.value)} value={formValues.SubGroup} error={!!formErrors.SubGroup} fullWidth size="small" margin="normal">
 
@@ -214,7 +223,7 @@ const SupplierMaster = () => {
                   </FormControl>
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Current Balance</Typography>
                   <TextField
                     onChange={(e) => handleChange("CurrentBalance", e.target.value)} value={formValues.CurrentBalance} error={!!formErrors.CurrentBalance} size="small" margin="normal" placeholder="Enter Account Name" fullWidth />
@@ -242,7 +251,7 @@ const SupplierMaster = () => {
                 </Box>
 
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Type Code</Typography>
                   <TextField onChange={(e) => handleChange("TypeCode", e.target.value)} value={formValues.TypeCode} error={!!formErrors.TypeCode}
                     size="small" margin="normal" placeholder="Enter Type code" fullWidth />
@@ -269,7 +278,7 @@ const SupplierMaster = () => {
                   )}
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Address 1</Typography>
                   <TextField onChange={(e) => handleChange("Address1", e.target.value)} value={formValues.Address1} error={!!formErrors.Address1} size="small" margin="normal" placeholder="Enter Address 1" fullWidth />
                   {(!!formErrors.Address1) && (
@@ -295,7 +304,7 @@ const SupplierMaster = () => {
                   )}
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>State </Typography>
                   <FormControl onChange={(e) => handleChange("State", e.target.value)} value={formValues.State} error={!!formErrors.State} fullWidth size="small" margin="normal">
 
@@ -327,7 +336,7 @@ const SupplierMaster = () => {
                   </FormControl>
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Pincode</Typography>
                   <TextField onChange={(e) => handleChange("Pincode", e.target.value)} value={formValues.Pincode} error={!!formErrors.Pincode} size="small" margin="normal" placeholder="Enter pincode" fullWidth />
                   {(!!formErrors.Pincode) && (
@@ -353,7 +362,7 @@ const SupplierMaster = () => {
                   )}
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Mobile No</Typography>
                   <TextField onChange={(e) => handleChange("MobileNo", e.target.value)} value={formValues.MobileNo} error={!!formErrors.MobileNo}
                     size="small" margin="normal" placeholder="Enter Mobile No" fullWidth />
@@ -386,10 +395,10 @@ const SupplierMaster = () => {
 
 
 
-              <Box flex={1} m={2}>
+              <Box flex={1} >
 
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Account Name</Typography>
                   <TextField onChange={(e) => handleChange("AccountName", e.target.value)} value={formValues.AccountName} error={!!formErrors.AccountName}
                     size="small" margin="normal" placeholder="Enter Account Name" fullWidth />
@@ -417,7 +426,7 @@ const SupplierMaster = () => {
                   )}
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Group Id</Typography>
                   <FormControl onChange={(e) => handleChange("GroupId", e.target.value)} value={formValues.GroupId} error={!!formErrors.GroupId} fullWidth size="small" margin="normal">
 
@@ -448,7 +457,7 @@ const SupplierMaster = () => {
                   </FormControl>
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Debit/Credit </Typography>
                   <FormControl onChange={(e) => handleChange("DebitCredit", e.target.value)} value={formValues.DebitCredit} error={!!formErrors.DebitCredit} fullWidth size="small" margin="normal">
 
@@ -480,7 +489,7 @@ const SupplierMaster = () => {
                 </Box>
 
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Salesman </Typography>
                   <FormControl onChange={(e) => handleChange("Salesman", e.target.value)} value={formValues.Salesman} error={!!formErrors.Salesman} fullWidth size="small" margin="normal">
 
@@ -511,7 +520,7 @@ const SupplierMaster = () => {
                   </FormControl>
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Address 2</Typography>
                   <TextField onChange={(e) => handleChange("Address2", e.target.value)} value={formValues.Address2} error={!!formErrors.Address2}
                     size="small" margin="normal" placeholder="Enter Address 2" fullWidth />
@@ -538,7 +547,7 @@ const SupplierMaster = () => {
                   )}
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>City </Typography>
                   <FormControl onChange={(e) => handleChange("City", e.target.value)} value={formValues.City} error={!!formErrors.City} fullWidth size="small" margin="normal">
 
@@ -569,7 +578,7 @@ const SupplierMaster = () => {
                   </FormControl>
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>Email</Typography>
                   <TextField onChange={(e) => handleChange("Email", e.target.value)} value={formValues.Email} error={!!formErrors.Email} size="small" margin="normal" placeholder="Enter Email" fullWidth />
                   {(!!formErrors.Email) && (
@@ -595,7 +604,7 @@ const SupplierMaster = () => {
                   )}
                 </Box>
 
-                <Box>
+                <Box m={1.5}>
                   <Typography>URL</Typography>
                   <TextField onChange={(e) => handleChange("url", e.target.value)} value={formValues.url} error={!!formErrors.url}
                     size="small" margin="normal" placeholder="Enter URL" fullWidth />
@@ -623,16 +632,6 @@ const SupplierMaster = () => {
                 </Box>
 
               </Box>
-
-
-
-
-
-
-
-
-
-
             </Box>
 
 
@@ -663,7 +662,7 @@ const SupplierMaster = () => {
               )}
             </Box>
 
-            <Box m={2} display={'flex'} alignItems={'center'} gap={5}>
+            <Box m={2} display={'flex'} alignItems={'center'} justifyContent={'center'} gap={6}>
               <FormControlLabel
                 control={<Checkbox />}
                 label="Is System"
@@ -691,12 +690,20 @@ const SupplierMaster = () => {
 
 
           <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mb={5}>
-            <Box>
-              <Button onClick={handleSave} variant='contained'>Save </Button>
+            <Box >
+              <Button sx={{
+                 background: 'var(--primary-color)', 
+                 }} onClick={handleSave} variant='contained'>Save </Button>
             </Box>
 
-            <Box>
-              <Button onClick={handleDrawerClose} variant='outlined'>Cancel </Button>
+            <Box >
+              {/* <Button  sx={{ borderColor:'var(complementary-color)',color:'var(--complementary-color)' }}onClick={handleDrawerClose} variant='outlined'>  <b>Cancel</b></Button> */}
+                 <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }} 
+                            onClick={handleDrawerClose} 
+                            variant='outlined'>
+                              <b>Cancel</b>
+                             
+                            </Button>
             </Box>
           </Box>
         </Drawer>

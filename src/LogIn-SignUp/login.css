@@ -1,4 +1,4 @@
-
+/* 
 .right-container .login-logo {
     display: none;
   }
@@ -13,7 +13,7 @@
     .storeBtn {
       flex-direction: column;
     }
-    .MuiGrid-item:nth-child(1) { /* Targeting the left grid item */
+    .MuiGrid-item:nth-child(1) {
         display: none !important;
       }
   }
@@ -21,4 +21,4 @@
 
 
 
-  
+   */

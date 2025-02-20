@@ -21,7 +21,7 @@ import "./sidebar.css";
 import { menuItems } from "./menuItems"; // Import your JSON data
 // import logo from '../imgs/logo5.PNG'
 import logo from '../imgs/logo5.jpeg'
-import logonew from '../imgs/logo4.png'
+import logonew from '../imgs/logo_white.png'
 import user from '../imgs/user.jpg'
 import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
@@ -30,7 +30,7 @@ import { green } from "@mui/material/colors";
 
 
 function Sidebar() {
-   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [openMenu, setOpenMenu] = useState(null);
   const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth <= 768);
@@ -71,10 +71,10 @@ function Sidebar() {
         <Box component="header" sx={{ p: 2, display: "flex", gap: 3 }}>
           <Box className="bar-icon">
             <FaBars onClick={handleToggleSidebar} style={{ fontSize: "1.8rem" }} />
-          </Box> 
+          </Box>
 
-          <Box>
-            <Typography variant="body">Welcome To Arohan Agro!!!</Typography>
+          <Box >
+            <Typography color='var(--primary-color)' variant="body"> <b>Welcome To Arohan Agro </b></Typography>
           </Box>
           {/*           
           <Box display={'flex'} justifyContent={'space-between'} flex={1} m={2} color={'#000'}>
@@ -121,24 +121,48 @@ function Sidebar() {
         <Box
           component="aside"
           style={{
-            width: isCollapsed ? "50px" : "225px",
-            padding: 5,
+            width: isCollapsed ? "60px" : "250px",
+            // padding: 5,
             transition: "width 0.3s",
+
           }}
         >
-          <Box sx={{ pt: 3, display: "flex", alignItems: "center", justifyContent: "start", gap: 1 }}>
+          <Box
+          //  sx={{ pt: 3, display: "flex", alignItems: "center", justifyContent: "start", gap: 1 }}
+          >
 
-            <div style={{ textAlign: "center" }}>
+            {/* <div style={{ textAlign: "center" }}>
               <img
                 src={isCollapsed ? logonew : logo}
                 alt="logo"
-                style={{ height: "150px", margin: "0 auto", width: isCollapsed ? "55px" : "220px", }}
+                // style={{ height: "150px",  width: isCollapsed ? "55px" : "230px", }}
+                style={{
+                  height: "150px",
+                  width: isCollapsed ? "55px" : "230px",
+                 
+                  display: "block", 
+                
+                }}
               />
 
+            </div> */}
+            <div style={{ display: "flex", justifyContent: 'center', height: '160px', alignItems: 'center' }}>
+              <img
+                // src={isCollapsed ? logonew : logo}
+                src={isCollapsed ? logonew : logo}
+                alt="logo"
+                style={{
+                  height: isCollapsed ? "60px" : "160px",
+                  width: isCollapsed ? "60px" : "250px",
+
+                  // width:"250px",
+                  display: "block",
+                }}
+              />
             </div>
             {!isCollapsed && <Typography variant="h5" className="company-name-text"></Typography>}
           </Box>
-          <Box className="sidebar-contents" sx={{ mt: 2 ,height:"65vh",overflowY:'auto'}}>
+          <Box className="sidebar-contents" sx={{ height: "65vh", overflowY: 'auto', p: 0.6 }}>
             <List sx={{ cursor: "pointer" }}>
               {menuItems.map((item, index) => (
                 <Box key={index}>
@@ -148,14 +172,14 @@ function Sidebar() {
                     sx={{
                       mt: 1,
                       color: '#0d4a2b',
-                      fontWeight:'bold',
+                      fontWeight: 'bold',
                       borderRadius: "10px",
                       transition: "background-color 0.3s, color 0.3s",
                       "&:hover": {
                         color: "#fff",
                         // backgroundColor: "#2c85de",
-                        backgroundColor: "#588d72", 
-                        
+                        backgroundColor: 'var(--primary-color)',
+
                         ".menu-icon": {
                           color: "#fff",
                         },
@@ -190,8 +214,8 @@ function Sidebar() {
                               mt: 1,
                               borderRadius: "10px",
                               // color: "black",
-                              color:'#407d5e',
-                              pl: 4,
+                              color: '#407d5e',
+                              //  pl: 4,
                               transition: "background-color 0.3s, color 0.3s",
                               "&:hover": {
                                 color: "#fff",
@@ -243,19 +267,18 @@ function Sidebar() {
                   <div className="info" >
                     <div>
                       {/* <img src={user} alt="user" className="user-icon" style={{ height: "50px", width: "50px" }} /> */}
-                      <Avatar sx={{ bgcolor: "#054c2a",fontSize: 15 }}>DC</Avatar>
+                      <Avatar sx={{ bgcolor: "#054c2a", fontSize: 15 }}>DC</Avatar>
                     </div>
                     <span className="hidden-text" >
                       <b>Chavan Diksha</b>
                       {/* <h6>{userData}</h6> */}
                     </span>
 
-                    <div>
-                      <AiOutlineLogout onClick={logoutUser}
-                        className="logout-icon"
-                       
-                      />
-                    </div>
+                    {!isCollapsed && (
+                      <div>
+                        <AiOutlineLogout onClick={logoutUser} className="logout-icon" />
+                      </div>
+                    )}
                   </div>
 
 

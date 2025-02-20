@@ -7,6 +7,8 @@ import { useTheme } from "@mui/material/styles";
 import axios from 'axios';
 import { toast } from "react-toastify";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import '../Components/common.css'
+
 
 const ProductMaster = () => {
   const theme = useTheme();
@@ -397,13 +399,13 @@ const ProductMaster = () => {
 
   return (
     <Box>
-      <Box sx={{ background: 'rgb(238, 246, 252)', borderRadius: '10px', p: 5, height: 'auto' }}>
+      <Box sx={{ p: 5, height: 'auto' }}>
         <Box textAlign={'center'}>
-          <Typography variant='h4'><b>Product Master</b></Typography>
+          <Typography variant='h4' color='var(--complementary-color)'><b>Product Master</b></Typography>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 3 }}>
-          <Button variant="contained" onClick={handleDrawerOpen}>Create Product Master </Button>
+          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleDrawerOpen}>Create Product Master </Button>
         </Box>
 
 
@@ -411,6 +413,13 @@ const ProductMaster = () => {
           <MaterialReactTable
             columns={columns}
             data={data}
+            muiTableHeadCellProps={{
+              sx: {
+
+                color: 'var(--primary-color)',
+
+              },
+            }}
 
           />
           <Menu
@@ -440,7 +449,7 @@ const ProductMaster = () => {
             },
           }}
         >
-          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgb(236, 253, 230)' }}>
             <Typography m={2} variant="h6"><b>Create Product Master</b></Typography>
             <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleDrawerClose} />
           </Box>
@@ -498,7 +507,7 @@ const ProductMaster = () => {
                 size="small" margin="normal" placeholder="Enter Product Name" fullWidth />
 
             </Box>
-            
+
 
 
             <Box flex={1}>
@@ -507,7 +516,7 @@ const ProductMaster = () => {
                 <Select value={UOM} onChange={(e) => setUOM(e.target.value)} displayEmpty>
                   <MenuItem value="">Select UOM</MenuItem>
                   <MenuItem value="num">No</MenuItem>
-                 
+
                 </Select>
               </FormControl>
             </Box>
@@ -660,11 +669,18 @@ const ProductMaster = () => {
 
           <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mt={5}>
             <Box>
-              <Button onClick={CreateProductMaster} variant='contained'>Save </Button>
+              <Button sx={{
+                background: 'var(--primary-color)',
+              }} onClick={CreateProductMaster} variant='contained'>Save </Button>
             </Box>
 
             <Box>
-              <Button onClick={handleDrawerClose} variant='outlined'>Cancel </Button>
+              <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }}
+                onClick={handleDrawerClose}
+                variant='outlined'>
+                <b>Cancel</b>
+
+              </Button>
             </Box>
           </Box>
         </Drawer>
@@ -683,7 +699,7 @@ const ProductMaster = () => {
             },
           }}
         >
-          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgb(236, 253, 230)' }}>
             <Typography m={2} variant="h6"><b>Update Product Master</b></Typography>
             <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleEditDrawerClose} />
           </Box>
@@ -902,11 +918,13 @@ const ProductMaster = () => {
 
           <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mt={5}>
             <Box>
-              <Button onClick={UpdateProductMaster} variant='contained'>Save </Button>
+              <Button sx={{
+                 background: 'var(--primary-color)', 
+                 }} onClick={UpdateProductMaster} variant='contained'>Save </Button>
             </Box>
 
             <Box>
-              <Button onClick={handleEditDrawerClose} variant='outlined'>Cancel </Button>
+              <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }} onClick={handleEditDrawerClose} variant='outlined'><b>Cancel</b> </Button>
             </Box>
           </Box>
         </Drawer>
@@ -1036,7 +1054,7 @@ export default ProductMaster
 
 //   const handleChange = (field, value) => {
 //     setFormValues((prev) => ({ ...prev, [field]: value }));
-//     setFormErrors((prev) => ({ ...prev, [field]: "" })); 
+//     setFormErrors((prev) => ({ ...prev, [field]: "" }));
 //   };
 
 //   const validate = () => {
@@ -1060,7 +1078,7 @@ export default ProductMaster
 
 
 //     setFormErrors(errors);
-//     return Object.keys(errors).length === 0; 
+//     return Object.keys(errors).length === 0;
 //   };
 
 //   const handleSave = () => {
