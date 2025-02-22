@@ -202,6 +202,7 @@ const ProductMaster = () => {
       )
       .then((response) => {
         console.log("API Response:", response.data);
+        fetchData();
         handleClearTemplate();
         handleDrawerClose()
         toast.success("Product Master created successfully");

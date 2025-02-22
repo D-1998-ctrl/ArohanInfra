@@ -133,7 +133,7 @@
 import React from 'react';
 import { Box, Typography, TextField, Link, Button, useMediaQuery } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-import BaggroundImg from '../imgs/bg7.jpg';
+import BaggroundImg from '../imgs/bg7.2.jpg';
 import logo from '../imgs/logo5.jpeg';
 
 const Login = () => {
@@ -166,7 +166,8 @@ const Login = () => {
             height: isSmallScreen ? "auto" : "460px",
             borderRadius: "20px",
             overflow: "hidden",
-            boxShadow: "0 4px 10px rgba(0, 0, 0, 0.53)",
+            // boxShadow: "0 4px 10px rgba(0, 0, 0, 0.53)",
+            boxShadow: "0 4px 10px rgba(32, 30, 29, 0.22)",
             background: "rgba(255, 255, 255, 0.17)",
             flexDirection: isSmallScreen ? "column" : "row",
           }}
@@ -263,7 +264,7 @@ const Login = () => {
                 background: '#074e2c',
                 borderRadius: "20px",
                 "&:hover": {
-                  backgroundColor: "#b0d682",
+                  backgroundColor: "#08A04B",
                 },
               }}
               fullWidth

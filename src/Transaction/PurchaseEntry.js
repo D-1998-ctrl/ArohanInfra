@@ -1,18 +1,39 @@
-
 import React, { useMemo, useState, useEffect } from 'react'
-import {Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, Box, useMediaQuery, Button, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
+import { IconButton, Grid, Menu, Table, Autocomplete, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Alert, Box, useMediaQuery, Button, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import { MaterialReactTable, } from 'material-react-table';
- import suppliermaster from '../Masters/suppliermaster.json'
+import {
+  MaterialReactTable,
+  useMaterialReactTable,
+} from "material-react-table";
+import suppliermaster from '../Masters/suppliermaster.json'
 import { useTheme } from "@mui/material/styles";
 import { DatePicker } from "@mui/x-date-pickers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-
+import axios from "axios";
+import qs from "qs";
+import moment from "moment";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import MoreVertIcon from "@mui/icons-material/MoreVert";
+import BorderColorIcon from '@mui/icons-material/BorderColor';
 const PurchaseEntry = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [editingIndex, setEditingIndex] = useState(-1);
+  const [isEditing, setIsEditing] = useState(false);
+  const [purchaheaders, setPurchaseheaders] = useState([]);
+  const [purchasedetails, setPurchasedetails] = useState([]);
+  const [invdetailId, setInvdetailId] = useState("");
+  const [PurchaseNo, setPurchaseNo] = useState()
+  const [brandName, setBrandName] = useState()
+  const [billNo, setBillNo] = useState('')
+
+  const [rows, setRows] = useState([]);
+
+
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
   };
@@ -20,6 +41,40 @@ const PurchaseEntry = () => {
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
+
+  /*
+    api to call fetchpurchaseHeader
+  */
+  const fetchpurchaseHeader = async () => {
+    try {
+      const response = await axios.get(
+        "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=purchaseheader"
+      );
+      setPurchaseheaders(response.data);
+      console.log('header', response.data)
+    } catch (error) { }
+  };
+
+
+  //fetchInvdetails
+  const fetchpurchasedetails = async () => {
+    try {
+      const response = await axios.get(
+        "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=purchasedetail"
+      );
+      setPurchasedetails(response.data);
+      console.log('detail', response.data)
+    } catch (error) { }
+  };
+
+
+  useEffect(() => {
+    fetchpurchaseHeader();
+    
+    fetchpurchasedetails();
+  }, []);
+
+
   //table
   const columns = useMemo(() => {
     return [
@@ -27,34 +82,604 @@ const PurchaseEntry = () => {
         accessorKey: 'srNo',
         header: 'Sr No',
         size: 100,
+        Cell: ({ row }) => row.index + 1,
       },
       {
-        accessorKey: 'AccountCode',
-        header: 'Account Code',
+        accessorKey: 'PurchaseNo',
+        header: 'Purchase No',
         size: 150,
       },
       {
-        accessorKey: 'AccountName',
-        header: 'Account Name',
+        accessorKey: 'BillNo',
+        header: 'Bill No',
         size: 150,
       },
       {
-        accessorKey: 'TypeCode',
-        header: 'Type Code',
+        accessorKey: 'CGSTAmount',
+        header: 'CGST Amount',
+        size: 150,
+      },
+      {
+        accessorKey: 'SGSTAmount',
+        header: 'SGST Amount',
+        size: 150,
+      },
+      {
+        accessorKey: 'IGSTAmount',
+        header: 'IGST Amount%',
+        size: 150,
+      },
+      {
+        accessorKey: 'TransportCharges',
+        header: 'Transport Charges',
         size: 150,
       },
 
+      {
+        accessorKey: 'Other',
+        header: 'Other',
+        size: 150,
+      },
+      {
+        accessorKey: 'Total',
+        header: 'Total',
+        size: 150,
+      },
+      {
+        accessorKey: 'SubTotal',
+        header: 'SubTotal',
+        size: 150,
+      },
 
       {
         id: 'actions',
         header: 'Actions',
         size: 150,
+        Cell: ({ row }) => (
+          <div>
+            <IconButton onClick={(event) => handleMenuOpen(event, row)}>
+              <MoreVertIcon />
+            </IconButton>
+          </div>
+        ),
 
       },
     ];
-  }, []);
+  }, [purchaheaders]);
+
+  const [anchorEl, setAnchorEl] = useState(null);
+
+  const handleMenuOpen = (event, row) => {
+    // setAnchorEl(event.currentTarget);
+    setCurrentRow(row);
+    setShowEntry(3)
+  
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+    handleMenuOpen(false);
+  };
+
+  const handleNewClick = () => {
+    setIsDrawerOpen(true);
+    resetForm();
+    setIsEditing(false);
+    setShowEntry(1)
+  };
+
+  const handleNewClick1 = () => {
+    setIsDrawerOpen(true);
+    setShowEntry(2)
+  };
+
+
+  const [currentRow, setCurrentRow] = useState(null);
   //
-  const [purchaseDate, setPurchaseDate] = useState('');
+  const [rate, setRate] = useState(0);
+
+  const [gstNoComp, setGstNoComp] = useState(0);
+  const [productOptions, setProductOptions] = useState([]);
+  const [quantity, setQuantity] = useState(0);
+  const [amount, SetAmount] = useState(0);
+  const [selectedProduct, setSelectedProduct] = useState("");
+  const [selectedCGST, setSelectedCGST] = useState("0");
+  const [selectedSGST, setSelectedSGST] = useState("0");
+  const [selectedIGST, setSelectedIGST] = useState("0");
+  const [cgstAmount, setCGSTAmount] = useState(0);
+  const [sgstAmount, setSGSTAmount] = useState(0);
+  const [igstAmount, setIGSTAmount] = useState(0);
+  const [materialName, setMaterialName] = useState('');
+  const [transport, setTransport] = useState("");
+  const [other, setOther] = useState('')
+  const [showEntry, setShowEntry] = useState(0)
+
+  const fetchMaterialMaster = async () => {
+    try {
+      const response = await axios.get(
+        'https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=materialmaster',
+      );
+      console.log(response.data);
+      processMaterialData(response.data)
+    } catch (error) {
+      console.error(error);
+
+    }
+  };
+
+
+  const [options, setOptions] = useState([]);
+  const [selectedId, setSelectedId] = useState('');
+  const [selectedGSTNo, setSelectedGSTNo] = useState(0);
+
+
+  const processMaterialData = (data) => {
+    if (Array.isArray(data)) {
+
+      const options = data.map((account) => ({
+        value: account?.Id || "",
+        label: account?.MaterialName || "",
+        cgstpercent: account?.CGSTPercentage,
+        sgstpercent: account?.SGSTPercentage,
+        igstpercent: account?.IGSTPercentage,
+      }));
+
+      // console.log('options', options)
+      setProductOptions(options);
+    }
+  };
+
+
+  const fetchTypeCodeS = async () => {
+    try {
+      const response = await axios.get(
+        // 'https://arohanagroapi.microtechsolutions.co.in/php/gettypecode.php?TypeCode=S',
+        "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=suppliermaster"
+      );
+      console.log("fetchTypeCodeS",response.data);
+      setOptions(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  const fetchCompanyMaster = async () => {
+    try {
+      const response = await axios.get(
+        'https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=companymaster',
+        { maxBodyLength: Infinity }
+      );
+      console.log(response.data);
+      setGstNoComp(response.data[0].GSTNo);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchCompanyMaster();
+    fetchMaterialMaster();
+    fetchTypeCodeS();
+  }, []);
+
+  const handleQuantityChange = (e) => {
+    const qty = e.target.value;
+    setQuantity(qty);
+    calculateAmount(qty, rate);
+  };
+
+  const handleRateChange = (e) => {
+    const rt = e.target.value;
+    setRate(rt);
+    calculateAmount(quantity, rt);
+  };
+
+  const calculateAmount = (qty, rt) => {
+    const qtyNum = parseFloat(qty) || 0;
+    const rateNum = parseFloat(rt) || 0;
+    const amt = qtyNum * rateNum;
+    SetAmount(amt);
+    calculateCgstAmount(selectedCGST, amt);
+    calculateSgstAmount(selectedSGST, amt);
+    calculateIgstAmount(selectedIGST, amt);
+  };
+
+  const calculateCgstAmount = (cgstValue, amt) => {
+    let cgstNum = parseFloat(cgstValue) || 0;
+    let cgstAmt = (cgstNum * amt) / 100;
+    setCGSTAmount(cgstAmt);
+  };
+
+  const calculateSgstAmount = (sgstValue, amt) => {
+    let sgstNum = parseFloat(sgstValue) || 0;
+    let sgstAmt = (sgstNum * amt) / 100;
+    setSGSTAmount(sgstAmt);
+  };
+
+  const calculateIgstAmount = (igstValue, amt) => {
+    let igstNum = parseFloat(igstValue) || 0;
+    let igstAmt = (igstNum * amt) / 100;
+    setIGSTAmount(igstAmt);
+  };
+
+  const [editingRow, setEditingRow] = useState(null);
+
+  const handleAddRow = () => {
+
+    const newRow = {
+      id: rows.length + 1,
+      ProductId: selectedProduct,
+      MaterialName: materialName,
+      Quantity: quantity,
+      Rate: rate,
+      Amount: amount,
+      CGSTPercentage: selectedCGST,
+      CGSTAmount: cgstAmount,
+      SGSTPercentage: selectedSGST,
+      SGSTAmount: sgstAmount,
+      IGSTPercentage: selectedIGST,
+      IGSTAmount: igstAmount,
+    };
+    console.log("newRow", newRow);
+    // Update rows state and ensure the new row is added to the table
+    setRows((prevRows) => [...prevRows, newRow]);
+
+  };
+
+  const handleSaveOrAddRow = () => {
+    // const gstOutput = GSTcal();
+    // const { igstAmount, cgstAmount, sgstAmount } = gstOutput;
+    // console.log("handleSaveOrAddRow", gstOutput);
+
+    if (editingRow !== null) {
+      // Update the existing row
+      const updatedRows = [...rows];
+      updatedRows[editingRow] = {
+        ...updatedRows[editingRow],
+        ProductId: selectedProduct,
+        MaterialName: materialName,
+        Quantity: quantity,
+        Rate: rate,
+        Amount: amount,
+        CGSTPercentage: selectedCGST,
+        CGSTAmount: cgstAmount,
+        SGSTPercentage: selectedSGST,
+        SGSTAmount: sgstAmount,
+        IGSTPercentage: selectedIGST,
+        IGSTAmount: igstAmount,
+      };
+      setRows(updatedRows);
+      setEditingRow(null);
+    } else {
+      // Add a new row
+      handleAddRow();
+    }
+  };
+
+
+
+  const handleSubmit213 = (rowData) => {
+    console.log("This row has been clicked:", rowData);
+    setIsDrawerOpen(true);
+    setIsEditing(false);
+    setShowEntry(2)
+
+    setPurchaseNo(rowData.PurchaseNo)
+    //purchase date
+    const dateStr = rowData.PurchaseDate.date.split(" ")[0];
+    const [year, month, day] = dateStr.split("-").map(Number); // Convert to numbers
+    const formattedDate = `${year}-${month}-${day}`;
+    setPurchaseDate(formattedDate);
+
+    //bill no
+    setBillNo(rowData.BillNo)
+
+
+    //Bill date
+    const billdateStr = rowData.BillDate.date.split(" ")[0];
+    const [billyear, billmonth, billday] = billdateStr.split("-").map(Number);
+    const formattedBillDate = `${billyear}-${billmonth}-${billday}`;
+    setBillDate(formattedBillDate);
+
+    //CGST Amount
+    setCGSTAmount(rowData.CGSTAmount)
+
+
+    //SGST Amount
+    setSGSTAmount(rowData.SGSTAmount)
+
+
+    //IGST Amount
+    setIGSTAmount(rowData.IGSTAmount)
+
+
+    //TransportCharges
+    setTransport(rowData.TransportCharges)
+
+
+    //Other
+    setOther(rowData.Other)
+
+
+
+
+  };
+
+
+  const table = useMaterialReactTable({
+    columns,
+    data: purchaheaders,
+    muiTableHeadCellProps: {
+      style: {
+        backgroundColor: "#E9ECEF",
+        color: "black",
+        fontSize: "16px",
+      },
+    },
+    muiTableBodyRowProps: ({ row }) => ({
+      onClick: () => handleSubmit213(row.original),
+      style: { cursor: "pointer" },
+    }),
+  });
+
+
+  const subtotal = rows.reduce(
+    (acc, row) => acc + (parseFloat(row.Amount) || 0),
+    0
+  );
+  const totalCGST = rows.reduce(
+    (acc, row) => acc + (parseFloat(row.CGSTAmount) || 0),
+    0
+  );
+  const totalSGST = rows.reduce(
+    (acc, row) => acc + (parseFloat(row.SGSTAmount) || 0),
+    0
+  );
+  const totalIGST = rows.reduce(
+    (acc, row) => acc + (parseFloat(row.IGSTAmount) || 0),
+    0
+  );
+  const grandTotal =
+    subtotal + totalCGST + totalSGST + totalIGST + (parseFloat(transport) || 0) + (parseFloat(other) || 0);
+
+
+
+  const [editId, setEditId] = useState("");
+  const [PurchaseDate, setPurchaseDate] = useState(null);
+  const [BillDate, setBillDate] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const formattedPurchasedate = moment(PurchaseDate).format("YYYY-MM-DD");
+    const formattedBillDate = moment(BillDate).format("YYYY-MM-DD");
+
+    const purchaseheaderdata = {
+      Id: isEditing ? editId : "",
+      PurchaseNo: PurchaseNo,
+      PurchaseDate: formattedPurchasedate,
+      SupplierId: selectedId,
+      BillNo: billNo,
+      BillDate: formattedBillDate,
+      CGSTAmount: cgstAmount,
+      SGSTAmount: sgstAmount,
+      IGSTAmount: igstAmount,
+      TransportCharges: transport,
+      Other: other,
+      Total: grandTotal,
+      SubTotal: subtotal,
+    };
+    console.log("purchaseheaderdata", purchaseheaderdata);
+    try {
+      const invoiceurl = isEditing
+        ? "https://arohanagroapi.microtechsolutions.co.in/php/updatepurchaseheader.php"
+        : "https://arohanagroapi.microtechsolutions.co.in/php/postpurchaseheader.php";
+
+      const response = await axios.post(
+        invoiceurl,
+        qs.stringify(purchaseheaderdata),
+        {
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        }
+      );
+      console.log('postpurchaseheader', response.data)
+      const PurchaseId = isEditing ? editId : parseInt(response.data.ID, 10);
+      console.log("Purchase Id ", PurchaseId);
+      console.log("rows", rows);
+
+      for (const row of rows) {
+        console.log("this row   ", row);
+        const rowData = {
+          Id: parseInt(row.Id, 10),
+          PurchaseId: parseInt(PurchaseId, 10),
+          SerialNo: rows.indexOf(row) + 1,
+          MaterialId: parseInt(row.ProductId, 10),
+          // MaterialId: parseInt(row.selectedProduct, 10),
+          Quantity: parseFloat(row.Quantity),
+          Rate: parseFloat(row.Rate),
+          Amount: parseInt(row.Amount),
+          CGSTPercentage: parseFloat(row.CGSTPercentage),
+          CGSTAmount: parseFloat(row.CGSTAmount),
+          SGSTPercentage: parseFloat(row.SGSTPercentage),
+          SGSTAmount: parseFloat(row.SGSTAmount),
+          IGSTPercentage: parseFloat(row.IGSTPercentage),
+          IGSTAmount: parseFloat(row.IGSTAmount),
+        };
+        console.log({
+          Quantity: typeof row.Quantity,
+          Rate: typeof row.Rate
+        });
+
+        console.log("this row has rowData ", rowData);
+
+        const invoicdedetailurl =
+          isEditing && row.Id
+            ? "https://arohanagroapi.microtechsolutions.co.in/php/updatepurchasedetail.php"
+            : "https://arohanagroapi.microtechsolutions.co.in/php/postpurchasedetail.php";
+
+        console.log(" invoicdedetailurl is used ", invoicdedetailurl);
+        try {
+          const response = await axios.post(
+            invoicdedetailurl,
+            qs.stringify(rowData),
+            {
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+            }
+          );
+
+          console.log("Response:", response);
+        } catch (error) {
+          console.error("Error:", error);
+        }
+
+        if (isEditing && row.Id) {
+          handleSaveOrAddRow();
+        }
+      }
+
+      setIsDrawerOpen(false);
+      toast.success(
+        isEditing
+          ? "Purchase Entry updated successfully!"
+          : "Purchase Entry Created successfully!"
+      );
+      resetForm();
+
+      console.log("Purchase Header Data:", purchaseheaderdata);
+    } catch (error) {
+      console.error("Error submitting Purchase:", error);
+    }
+  };
+
+  const resetForm = () => {
+    setPurchaseNo("");
+    setPurchaseDate("");
+    setSelectedId("")
+    setBrandName('')
+    setBillNo('')
+    setBillDate('')
+    setSelectedProduct('')
+    setQuantity("");
+    setRate("");
+    SetAmount("");
+    setSelectedCGST("");
+    setCGSTAmount("");
+    setSelectedSGST("");
+    setSGSTAmount("");
+    setSelectedSGST("");
+    setIGSTAmount("");
+    setOther("");
+    setTransport("");
+    setRows([]);
+  };
+
+
+  const handleEdit = () => {
+
+    if (!currentRow) {
+      console.error("No row selected for editing.");
+      // toast.error("No row selected!");
+      return;
+    }
+
+    console.log("Editing item with ID:", currentRow.original?.Id);
+
+    // Ensure currentRow.index exists
+    if (typeof currentRow.index !== "number") {
+      console.error("Invalid row index:", currentRow.index);
+      toast.error("Invalid row index.");
+      return;
+    }
+
+    const purchaseheader = purchaheaders[currentRow.index];
+
+    if (!purchaseheader) {
+      console.error("No invoice header found for the selected row.");
+      toast.error("Invoice header not found.");
+      return;
+    }
+
+    const invdetail = purchasedetails.filter(
+      (detail) => detail.PurchaseId === purchaseheader.Id
+    );
+
+    console.log("header", purchaseheader);
+    console.log("detail", invdetail);
+
+    // Convert date strings to DD-MM-YYYY format
+    const convertDateForInput = (dateStr) => {
+      if (typeof dateStr === "string" && dateStr.includes("-")) {
+        const [year, month, day] = dateStr.split(" ")[0].split("-");
+        return `${year}-${month}-${day}`;
+      } else {
+        toast.error(`Invalid date format: ${dateStr}`);
+        return "";
+      }
+    };
+
+    // Map the details to rows
+
+    const mappedRows = invdetail.map((detail) => ({
+      Id: detail.Id,
+      PurchaseId: detail.PurchaseId,
+      MaterialId: detail.MaterialId,
+      Quantity: parseFloat(detail.Quantity) || 0,
+      Rate: parseFloat(detail.Rate) || 0,
+      Amount: parseFloat(detail.Amount) || 0,
+      CGSTPercentage: parseFloat(detail.CGSTPercentage) || 0,
+      CGSTAmount: parseFloat(detail.CGSTAmount) || 0,
+      SGSTPercentage: parseFloat(detail.SGSTPercentage) || 0,
+      SGSTAmount: parseFloat(detail.SGSTAmount) || 0,
+      IGSTPercentage: parseFloat(detail.IGSTPercentage) || 0,
+      IGSTAmount: parseFloat(detail.IGSTAmount) || 0,
+    }));
+    const purchaseDate = convertDateForInput(purchaseheader.PurchaseDate?.date);
+    const billdate = convertDateForInput(purchaseheader.BillDate?.date);
+
+    // Set form fields
+    setPurchaseNo(purchaseheader.PurchaseNo);
+    setPurchaseDate(purchaseDate);
+    setSelectedId(purchaseheader.SupplierId);
+
+    setBillNo(purchaseheader.BillNo);
+    setBillDate(billdate);
+
+    setSelectedProduct(purchaseheader.MaterialId);
+
+    setQuantity(purchaseheader.Quantity);
+    setRate(purchaseheader.Rate);
+    SetAmount(purchaseheader.Amount);
+    setSelectedCGST(purchaseheader.CGSTPercentage);
+    setCGSTAmount(purchaseheader.CGSTAmount);
+    setSelectedSGST(purchaseheader.SGSTPercentage);
+    setSGSTAmount(purchaseheader.SGSTAmount);
+    setSelectedIGST(purchaseheader.IGSTPercentage);
+    setIGSTAmount(purchaseheader.IGSTAmount);
+    setOther(purchaseheader.Other);
+    setTransport(purchaseheader.TransportCharges);
+    // Set the rows for the table with all the details
+    setRows(mappedRows);
+    // Set editing state
+    setEditingIndex(currentRow.index);
+    setIsDrawerOpen(true);
+    handleMenuClose();
+    setIsEditing(true);
+    setEditId(currentRow.original?.Id);
+    // Find the specific invoice detail
+    const specificDetail = invdetail.find(
+      (detail) => detail.Id === currentRow.original?.Id
+    );
+    if (specificDetail) {
+      setInvdetailId(specificDetail.Id);
+      console.log("specificDetail.Id", specificDetail.Id);
+    }
+    fetchpurchaseHeader();
+  };
 
 
   return (
@@ -65,18 +690,51 @@ const PurchaseEntry = () => {
         </Box>
 
         <Box sx={{ display: 'flex', gap: 3 }}>
-          <Button variant="contained" onClick={handleDrawerOpen}>Create Purchase Entry </Button>
+          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleNewClick}>Create Purchase Entry </Button>
+          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleNewClick1}>testing</Button>
+
         </Box>
 
 
-        {/* <Box mt={4}>
-          <MaterialReactTable
-            columns={columns}
-            // data={suppliermaster}
-            enableColumnOrdering
-            enableColumnResizing
-          />
-        </Box> */}
+        {/* <MaterialReactTable table={table}
+          enableColumnResizing
+          muiTableHeadCellProps={{
+            sx: {
+
+              color: 'var(--primary-color)',
+
+            },
+          }}
+
+        /> */}
+
+        <MaterialReactTable table={table}
+          enableColumnResizing
+          muiTableHeadCellProps={{
+            sx: {
+
+              color: 'var(--primary-color)',
+
+            },
+          }}
+
+        />
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem
+          // onClick={handleEdit}
+          >Edit
+          </MenuItem>
+          <MenuItem
+          //  onClick={handleDelete}
+          >Delete
+          </MenuItem>
+
+          {/* <MenuItem onClick={handlePrint}>Print</MenuItem> */}
+        </Menu>
 
         <Drawer
           anchor="right"
@@ -91,51 +749,84 @@ const PurchaseEntry = () => {
           }}
         >
           <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Typography m={2} variant="h6"><b>Create Purchase Entry</b></Typography>
+
+            <Box>
+              {showEntry === 1 && <p>Create Purchase Entry</p>}
+              {showEntry === 2 && <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: 2,
+                }}
+              >
+                <Typography variant="h6">Purchase Entry Detail</Typography>
+
+                <IconButton  onClick={handleMenuOpen}>
+                  <BorderColorIcon />
+                </IconButton>
+                
+               
+              </Box>
+              }
+              {showEntry === 3 && <p>Update Purchase Entry</p>}
+
+            </Box>
             <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleDrawerClose} />
           </Box>
           <Divider />
+          {(showEntry === 1 || showEntry === 3) &&
+            <Box>
 
-
-          <Box>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
-              <Box flex={1}>
-                <Box>
-                  <Typography>Purchase No</Typography>
-                  <TextField
+              <Box>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
+                  <Box flex={1}>
+                    <Box>
+                      <Typography>Purchase No</Typography>
+                      <TextField
+                        value={PurchaseNo}
+                        onChange={(e) => setPurchaseNo(e.target.value)}
+                        size="small" margin="normal" placeholder='Purchase No' fullWidth />
+                    </Box>
+                    <Box flex={1}>
+                      <Typography>Party</Typography>
+                      {/* <TextField
                     // value={reorderLevel}
                     // onChange={(e) => setReorderLevel(e.target.value)}
-                    size="small" margin="normal" placeholder='Purchase No' fullWidth />
-                </Box>
-                <Box>
-                  <Typography>Party</Typography>
-                  <TextField
-                    // value={reorderLevel}
-                    // onChange={(e) => setReorderLevel(e.target.value)}
-                    size="small" margin="normal" placeholder='Party' fullWidth />
-                </Box>
+                    size="small" margin="normal" placeholder='Party' fullWidth /> */}
+                      <Select
+                        fullWidth
+                        size="small"
+                        value={selectedId || ""}
+                        onChange={(event) => {
+                          const selectedValue = event.target.value;
+                          setSelectedId(selectedValue);
 
-                <Box>
-                  <Typography>Bill no</Typography>
-                  <TextField
-                    // value={reorderLevel}
-                    // onChange={(e) => setReorderLevel(e.target.value)}
-                    size="small" margin="normal" placeholder='Bill no' fullWidth />
-                </Box>
-              </Box>
+                          const selectedItem = options.find(option => option.Id.toString() === selectedValue);
+                          setSelectedGSTNo(selectedItem ? selectedItem.GSTNo : "");
+                        }}
+                      >
+                        {options.map((option) => (
+                          <MenuItem key={option.Id} value={option.Id.toString()}>
+                            {option.AccountName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Box>
+
+                    <Box>
+                      <Typography>Bill no</Typography>
+                      <TextField
+                        value={billNo}
+                        onChange={(e) => setBillNo(e.target.value)}
+                        size="small" margin="normal" placeholder='Bill no' fullWidth />
+                    </Box>
+                  </Box>
 
 
-              <Box flex={1}>
-                {/* <Box>
-                  <Typography>Purchase Date</Typography>
-                  <TextField
-                    // value={reorderLevel}
-                    // onChange={(e) => setReorderLevel(e.target.value)}
+                  <Box flex={1}>
 
-                    size="small" margin="normal" placeholder='Purchase Date' fullWidth />
-
-                </Box> */}
-                <Box >
+                    {/* <Box >
 
                   <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <Box width="100%">
@@ -146,158 +837,510 @@ const PurchaseEntry = () => {
                       />
                     </Box>
                   </LocalizationProvider>
-                </Box>
 
+                </Box> */}
 
+                    <Box flex={1} >
 
-                <Box mt={2}>
-                  <Typography>Brand Name</Typography>
-                  <TextField
-                    // value={reorderLevel}
-                    // onChange={(e) => setReorderLevel(e.target.value)}
-                    size="small" margin="normal" placeholder='Brand Name' fullWidth />
-                </Box>
-
-                <Box mt={3}>
-                  {/* <Typography>Bill Date</Typography>
-                  <TextField
-                    // value={reorderLevel}
-                    // onChange={(e) => setReorderLevel(e.target.value)}
-                    size="small" margin="normal" placeholder='Bill Date' fullWidth /> */}
-
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <Box width="100%">
-                      <Typography variant="body2">Bill Date</Typography>
-                      <DatePicker
-                        format="dd/MM/yyyy"
-                        slotProps={{ textField: { size: "small", fullWidth: true } }} // Ensure full width
-                      />
+                      <Typography variant="body2">Purchase Date</Typography>
+                      <LocalizationProvider dateAdapter={AdapterDateFns}>
+                        <DatePicker
+                          value={PurchaseDate ? new Date(PurchaseDate) : null} // Convert to Date object
+                          onChange={(newValue) => setPurchaseDate(newValue)}
+                          slotProps={{
+                            textField: { size: "small", fullWidth: true },
+                          }}
+                          renderInput={(params) => <TextField />}
+                        />
+                      </LocalizationProvider>
                     </Box>
-                  </LocalizationProvider>
+
+                    <Box mt={2}>
+                      <Typography>Brand Name</Typography>
+                      <TextField
+                        value={brandName}
+                        onChange={(e) => setBrandName(e.target.value)}
+                        size="small" margin="normal" placeholder='Brand Name' fullWidth />
+                    </Box>
+
+                    <Box >
+                      <Box flex={1}>
+                        <Typography variant="body2">Bill Date</Typography>
+                        <LocalizationProvider dateAdapter={AdapterDateFns}>
+                          <DatePicker
+                            value={BillDate ? new Date(BillDate) : null} // Convert to Date object
+                            onChange={(newValue) => setBillDate(newValue)}
+                            slotProps={{
+                              textField: { size: "small", fullWidth: true },
+                            }}
+                            renderInput={(params) => <TextField />}
+                          />
+                        </LocalizationProvider>
+                      </Box>
+                    </Box>
+                  </Box>
+
+                </Box>
+
+
+                <Box>
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
+                    <Box flex={1}>
+                      <Box>
+                        <Typography>Item </Typography>
+
+                        <Select
+                          fullWidth
+                          size="small"
+                          value={selectedProduct || ""}
+                          onChange={(event) => {
+                            const selectedValue = event.target.value;
+                            setSelectedProduct(selectedValue);
+
+                            const selectedItem = productOptions.find(option => option.value.toString() === selectedValue);
+                            setMaterialName(selectedItem.label)
+
+                            if (selectedItem) {
+                              let gstfromCompanyInfo = gstNoComp?.substring(0, 2) || "";
+                              let gstfromAccount = selectedGSTNo?.substring(0, 2) || "";
+
+                              setSelectedCGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.cgstpercent : "0");
+                              setSelectedSGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.sgstpercent : "0");
+                              setSelectedIGST(gstfromCompanyInfo !== gstfromAccount ? selectedItem.igstpercent : "0");
+                            } else {
+                              setSelectedCGST("0");
+                              setSelectedSGST("0");
+                              setSelectedIGST("0");
+                            }
+                          }}
+                        >
+                          {productOptions.map((option) => (
+                            <MenuItem key={option.value} value={option.value.toString()}>
+                              {option.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </Box>
+                    </Box>
+
+
+                    <Box flex={1}>
+                      <Box>
+                        <Typography>Quantity</Typography>
+                        <TextField
+                          value={quantity}
+                          onChange={handleQuantityChange}
+
+                          size="small" margin="normal" placeholder='Quantity' fullWidth />
+                      </Box>
+
+                    </Box>
+
+                    <Box flex={1}>
+                      <Box>
+                        <Typography>Rate</Typography>
+                        <TextField
+                          value={rate}
+                          onChange={handleRateChange}
+
+                          size="small" margin="normal" placeholder='Rate' fullWidth />
+                      </Box>
+
+                    </Box>
+
+
+                    <Box flex={1}>
+                      <Box>
+                        <Typography>Amount</Typography>
+                        <TextField
+                          value={amount}
+
+                          size="small" margin="normal" placeholder='Amount' fullWidth />
+                      </Box>
+
+                    </Box>
+
+                  </Box>
+
+                </Box>
+
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
+                  <Box flex={1}>
+                    <Typography variant="body2">CGST%</Typography>
+                    <TextField
+                      value={selectedCGST}
+                      size="small"
+                      margin="none"
+                      placeholder="CGST"
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flex={1}>
+                    <Typography variant="body2">CGST Amount</Typography>
+                    <TextField
+                      value={cgstAmount}
+                      size="small"
+                      margin="none"
+                      placeholder="CGST Amount"
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flex={1}>
+                    <Typography variant="body2">SGST%</Typography>
+                    <TextField
+                      value={selectedSGST}
+                      size="small"
+                      margin="none"
+                      placeholder="SGST"
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flex={1}>
+                    <Typography variant="body2">SGST Amount</Typography>
+                    <TextField
+                      value={sgstAmount}
+                      size="small"
+                      margin="none"
+                      placeholder="SGST Amount"
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flex={1}>
+                    <Typography variant="body2">IGST %</Typography>
+                    <TextField
+                      value={selectedIGST}
+                      size="small"
+                      margin="none"
+                      placeholder="IGST%"
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flex={1}>
+                    <Typography variant="body2">IGST Amount</Typography>
+                    <TextField
+                      value={igstAmount}
+                      size="small"
+                      margin="none"
+                      placeholder=" IGST Amount"
+                      fullWidth
+                    />
+                  </Box>
+                </Box>
+              </Box>
+
+              <Box m={2}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleSaveOrAddRow}
+
+
+                  sx={{ background: 'var(--complementary-color)', mb: 2, gap: 1 }}
+                >
+                  <AddCircleOutlineIcon />
+                  {editingRow !== null ? "Update Row" : "Add to Table"}
+                </Button>
+              </Box>
+
+              <Box m={1}>
+                <TableContainer component={Paper}>
+                  <Table>
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Sr No</TableCell>
+                        {/* <TableCell>InvoiceID</TableCell> */}
+                        <TableCell>Product</TableCell>
+                        <TableCell>Quantity</TableCell>
+                        <TableCell>Rate</TableCell>
+                        <TableCell>Amount</TableCell>
+                        <TableCell>CGST %</TableCell>
+                        <TableCell>CGST Amount</TableCell>
+                        <TableCell>SGST %</TableCell>
+                        <TableCell>SGST Amount</TableCell>
+                        <TableCell>IGST %</TableCell>
+                        <TableCell>IGST Amount</TableCell>
+                        <TableCell>Actions</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {rows.map((row, index) => (
+                        <TableRow key={index}>
+                          <TableCell>{index + 1}</TableCell>
+                          {/* <TableCell><TextField value={row.InvoiceId || ""} size="small" fullWidth /></TableCell> */}
+                          <TableCell>
+                            <Box>{row.MaterialName}</Box>
+                          </TableCell>
+
+                          <TableCell>
+                            {row.Quantity}
+                          </TableCell>
+
+                          <TableCell>
+                            {row.Rate}
+                          </TableCell>
+
+                          <TableCell>
+                            {row.Amount}
+                          </TableCell>
+
+                          <TableCell>
+                            {row.CGSTPercentage}
+                          </TableCell>
+
+                          <TableCell>
+                            {row.CGSTAmount}
+                          </TableCell>
+
+                          <TableCell>
+                            {row.SGSTPercentage}
+                          </TableCell>
+
+                          <TableCell>
+                            {row.SGSTAmount}
+                          </TableCell>
+
+                          <TableCell>
+                            {row.IGSTPercentage}
+                          </TableCell>
+
+                          <TableCell>
+                            {row.IGSTAmount}
+                          </TableCell>
+
+                          <TableCell>
+                            {/* <IconButton
+                          onClick={(event) => handleMenutableOpen(event, index)}
+                        >
+                          <MoreVertIcon />
+                        </IconButton> */}
+                            {/* <Menu
+                          anchorEl={anchorEl1}
+                          open={Boolean(anchorEl1) && selectedRow === index}
+                          // onClose={handletableMenuClose}
+                        >
+                          <MenuItem 
+                          // onClick={() => handleEditRow(index)}
+                          >
+                            Edit
+                          </MenuItem>
+                        </Menu> */}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Box>
+
+
+
+              <Box sx={{ display: "flex", gap: 10, m: 2 }}>
+                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+
+                  <Box>
+                    <Typography variant="body2">Transport</Typography>
+                    <TextField
+                      value={transport}
+                      onChange={(e) => setTransport(e.target.value)}
+                      size="small"
+                      placeholder="Transport"
+                      fullWidth
+                    />
+                  </Box>
+
+                  <Box>
+                    <Typography variant="body2">Other</Typography>
+                    <TextField
+                      value={other}
+                      onChange={(e) => setOther(e.target.value)}
+                      size="small"
+                      placeholder="Transport"
+                      fullWidth
+                    />
+                  </Box>
+                </Box>
+
+                <Box sx={{ display: "flex", flexDirection: "row", gap: 6, mt: 2 }}>
+                  <Box>
+                    <Typography variant="h6">SubTotal</Typography>
+                    <Box sx={{ fontSize: '20px' }}><b>{subtotal.toFixed(2)}</b></Box>
+
+
+
+                  </Box>
+                  <Box>
+                    <Typography variant="h6">CGST</Typography>
+                    <Box sx={{ fontSize: '20px' }}><b> {totalCGST.toFixed(2)}</b></Box>
+
+
+                  </Box>
+                  <Box>
+                    <Typography variant="h6">SGST</Typography>
+                    <Box sx={{ fontSize: '20px' }}><b>{totalSGST.toFixed(2)}</b></Box>
+
+
+                  </Box>
+                  <Box>
+                    <Typography variant="h6">IGST</Typography>
+                    <Box sx={{ fontSize: '20px' }}><b>{totalIGST.toFixed(2)}</b></Box>
+
+
+                  </Box>
+
+                  <Box>
+                    <Typography variant="h6">Total</Typography>
+                    <Box sx={{ fontSize: '20px', mr: 4, }} ><b>{grandTotal.toFixed(2)} Rs</b></Box>
+
+
+                  </Box>
+                </Box>
+              </Box>
+
+
+              <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mb={5}>
+                <Box>
+                  <Button sx={{
+                    background: 'var(--primary-color)',
+                  }} onClick={handleSubmit} variant="contained">
+                    {isEditing ? "update" : "save"}{" "}
+                  </Button>
+                </Box>
+
+                <Box>
+                  <Button onClick={handleDrawerClose} variant='outlined'>Cancel </Button>
                 </Box>
               </Box>
 
             </Box>
+          }
+
+          {showEntry === 2 &&
+            // <Box>
+
+            //  <Box>
+            //   <Typography>Purchase No:</Typography>
+            //   {PurchaseNo}
+            //  </Box>
 
 
-            <Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
-                <Box flex={1}>
-                  <Box>
-                    <Typography>Item</Typography>
-                    <TextField
-                      // value={reorderLevel}
-                      // onChange={(e) => setReorderLevel(e.target.value)}
-                      size="small" margin="normal" placeholder='Purchase No' fullWidth />
-                  </Box>
-                </Box>
+            //  <Box>
+            //   <Typography>Purchase Date:</Typography>
+            //   {PurchaseDate}
+            //  </Box>
 
-                <Box flex={1}>
-                  <Box>
-                    <Typography>Quantity</Typography>
-                    <TextField
-                      // value={reorderLevel}
-                      // onChange={(e) => setReorderLevel(e.target.value)}
-                      size="small" margin="normal" placeholder='Quantity' fullWidth />
-                  </Box>
+            //  <Box>
+            //   <Typography>Bill No:</Typography>
+            //   {billNo}
+            //  </Box>
 
-                </Box>
+            //  <Box>
+            //  <Typography>Bill Date:</Typography>
+            //  {BillDate}
+            //  </Box>
 
-                <Box flex={1}>
-                  <Box>
-                    <Typography>Rate</Typography>
-                    <TextField
-                      // value={reorderLevel}
-                      // onChange={(e) => setReorderLevel(e.target.value)}
-                      size="small" margin="normal" placeholder='Rate' fullWidth />
-                  </Box>
+            //  <Box>
+            //  <Typography>CGST Amount:</Typography>
+            //  {cgstAmount}
+            //  </Box>
 
-                </Box>
+            //  <Box>
+            //  <Typography>IGST Amount:</Typography>
+            //  {igstAmount}
+            //  </Box>
 
+            //  <Box>
+            //  <Typography>SGST Amount:</Typography>
+            //  {sgstAmount}
+            //  </Box>
 
-                <Box flex={1}>
-                  <Box>
-                    <Typography>Amount</Typography>
-                    <TextField
-                      // value={reorderLevel}
-                      // onChange={(e) => setReorderLevel(e.target.value)}
-                      size="small" margin="normal" placeholder='Amount' fullWidth />
-                  </Box>
+            //  <Box>
+            //  <Typography>TransportCharges:</Typography>
+            //  {transport}
+            //  </Box>
 
-                </Box>
+            //  <Box>
+            //  <Typography>other:</Typography>
+            //  {other}
+            //  </Box>
 
-              </Box>
+            //  <Box>
+            //  <Typography>Subtotal:</Typography>
+            //  {subtotal}
+            //  </Box>
 
-            </Box>
-
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
-              <Box flex={1}>
-
-              </Box>
-
-            </Box>
-
-          </Box>
+            //  <Box>
+            //  <Typography>Total:</Typography>
+            //  {grandTotal}
+            //  </Box>
 
 
-          <Box m={1}>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Sr No</TableCell>
-                    <TableCell>Item ID</TableCell>
-                    <TableCell>Item</TableCell>
-                    <TableCell>Quantity</TableCell>
-                    <TableCell>Rate</TableCell>
-                    <TableCell>Amount</TableCell>
-                    <TableCell>CGST</TableCell>
-                    <TableCell>SGST</TableCell>
-                    <TableCell>IGST</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  <TableRow>
-                    <TableCell>1</TableCell>
-                    <TableCell>A101</TableCell>
-                    <TableCell>Item 1</TableCell>
-                    <TableCell>2</TableCell>
-                    <TableCell>50</TableCell>
-                    <TableCell>100</TableCell>
-                    <TableCell>5</TableCell>
-                    <TableCell>5</TableCell>
-                    <TableCell>10</TableCell>
-                  </TableRow>
-                  <TableRow>
-                    <TableCell>2</TableCell>
-                    <TableCell>A102</TableCell>
-                    <TableCell>Item 2</TableCell>
-                    <TableCell>1</TableCell>
-                    <TableCell>80</TableCell>
-                    <TableCell>80</TableCell>
-                    <TableCell>4</TableCell>
-                    <TableCell>4</TableCell>
-                    <TableCell>8</TableCell>
-                  </TableRow>
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
+            // </Box>
+            <Grid container spacing={2} m={2}>
+              <Grid item xs={6}>
+                <Typography>Purchase No:</Typography>
+                <b> {PurchaseNo} </b>
 
 
+              </Grid>
 
+              <Grid item xs={6}>
+                <Typography>Purchase Date:</Typography>
+                <b>{PurchaseDate}</b>
 
+              </Grid>
 
+              <Grid item xs={6}>
+                <Typography>Bill No:</Typography>
+                <b>{billNo} </b>
+              </Grid>
 
-          <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mb={5}>
-            <Box>
-              <Button variant='contained'>Save </Button>
-            </Box>
+              <Grid item xs={6}>
+                <Typography>Bill Date:</Typography>
+                <b>{BillDate}</b>
+              </Grid>
 
-            <Box>
-              <Button onClick={handleDrawerClose} variant='outlined'>Cancel </Button>
-            </Box>
-          </Box>
+              <Grid item xs={6}>
+                <Typography>CGST Amount:</Typography>
+                <b>{cgstAmount}Rs</b>
+
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography>IGST Amount:</Typography>
+                <b>{igstAmount}Rs</b>
+
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography>SGST Amount:</Typography>
+                <b>{sgstAmount} Rs</b>
+
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography>Transport Charges:</Typography>
+                <b>{transport}Rs </b>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography>Other:</Typography>
+                <b>{other}Rs</b>
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography>Subtotal:</Typography>
+                <b>{subtotal}Rs </b>
+
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography>Total:</Typography>
+                <b>{grandTotal}RS</b>
+
+              </Grid>
+            </Grid>
+
+          }
         </Drawer>
 
       </Box>

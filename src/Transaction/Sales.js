@@ -130,6 +130,8 @@ const SalesEntry = () => {
     } catch (error) { }
   };
 
+
+  //get of Invoice details
   const fetchInvdetails = async () => {
     try {
       const response = await axios.get(

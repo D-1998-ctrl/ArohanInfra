@@ -67,6 +67,7 @@ import Settings from './Settings/Setting';
 import SalesEntry from './Transaction/Sales';
 import ProductionEntry from './Transaction/ProductionEntry';
 import Commonpage from './Commonpage';
+
 // import Coverpage from './LogIn-SignUp/coverpage';
 
 function App() {
