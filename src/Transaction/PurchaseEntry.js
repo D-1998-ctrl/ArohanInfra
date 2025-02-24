@@ -32,7 +32,7 @@ const PurchaseEntry = () => {
   const [billNo, setBillNo] = useState('')
 
   const [rows, setRows] = useState([]);
-
+  const [rowId, setRowId] = useState('');
 
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
@@ -70,7 +70,6 @@ const PurchaseEntry = () => {
 
   useEffect(() => {
     fetchpurchaseHeader();
-    
     fetchpurchasedetails();
   }, []);
 
@@ -131,29 +130,32 @@ const PurchaseEntry = () => {
         size: 150,
       },
 
-      {
-        id: 'actions',
-        header: 'Actions',
-        size: 150,
-        Cell: ({ row }) => (
-          <div>
-            <IconButton onClick={(event) => handleMenuOpen(event, row)}>
-              <MoreVertIcon />
-            </IconButton>
-          </div>
-        ),
+      // {
+      //   id: 'actions',
+      //   header: 'Actions',
+      //   size: 150,
+      //   // Cell: ({ row }) => (
+      //   //   // <div>
+      //   //   //   <IconButton onClick={(event) => handleMenuOpen(event, row)}>
+      //   //   //     <MoreVertIcon />
+      //   //   //   </IconButton>
+      //   //   // </div>
+      //   // ),
 
-      },
+      // },
     ];
   }, [purchaheaders]);
 
   const [anchorEl, setAnchorEl] = useState(null);
 
-  const handleMenuOpen = (event, row) => {
-    // setAnchorEl(event.currentTarget);
-    setCurrentRow(row);
+  const handleMenuOpen = (row) => {
+    //  setAnchorEl(event.currentTarget);
+    // setCurrentRow(row);
+    setIsDrawerOpen(false);
     setShowEntry(3)
-  
+
+    handleEdit()
+
   };
 
   const handleMenuClose = () => {
@@ -193,7 +195,7 @@ const PurchaseEntry = () => {
   const [transport, setTransport] = useState("");
   const [other, setOther] = useState('')
   const [showEntry, setShowEntry] = useState(0)
-
+  const [materialId, setMaterialId] = useState()
   const fetchMaterialMaster = async () => {
     try {
       const response = await axios.get(
@@ -234,9 +236,9 @@ const PurchaseEntry = () => {
     try {
       const response = await axios.get(
         // 'https://arohanagroapi.microtechsolutions.co.in/php/gettypecode.php?TypeCode=S',
-        "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=suppliermaster"
+        "https://arohanagroapi.microtechsolutions.co.in/php/getbyid.php?Table=Account&Colname=TypeCode&Colvalue=S"
       );
-      console.log("fetchTypeCodeS",response.data);
+      console.log("fetchTypeCodeS", response.data);
       setOptions(response.data);
     } catch (error) {
       console.error(error);
@@ -310,9 +312,8 @@ const PurchaseEntry = () => {
   const handleAddRow = () => {
 
     const newRow = {
-      id: rows.length + 1,
-      ProductId: selectedProduct,
-      MaterialName: materialName,
+      Id: rows.length + 1,
+      MaterialId: selectedProduct,
       Quantity: quantity,
       Rate: rate,
       Amount: amount,
@@ -339,8 +340,7 @@ const PurchaseEntry = () => {
       const updatedRows = [...rows];
       updatedRows[editingRow] = {
         ...updatedRows[editingRow],
-        ProductId: selectedProduct,
-        MaterialName: materialName,
+        MaterialId: selectedProduct,
         Quantity: quantity,
         Rate: rate,
         Amount: amount,
@@ -361,12 +361,15 @@ const PurchaseEntry = () => {
 
 
 
+
   const handleSubmit213 = (rowData) => {
     console.log("This row has been clicked:", rowData);
+
+    setRowId(rowData.Id)
+
     setIsDrawerOpen(true);
     setIsEditing(false);
     setShowEntry(2)
-
     setPurchaseNo(rowData.PurchaseNo)
     //purchase date
     const dateStr = rowData.PurchaseDate.date.split(" ")[0];
@@ -376,35 +379,24 @@ const PurchaseEntry = () => {
 
     //bill no
     setBillNo(rowData.BillNo)
-
-
     //Bill date
     const billdateStr = rowData.BillDate.date.split(" ")[0];
     const [billyear, billmonth, billday] = billdateStr.split("-").map(Number);
     const formattedBillDate = `${billyear}-${billmonth}-${billday}`;
     setBillDate(formattedBillDate);
-
     //CGST Amount
     setCGSTAmount(rowData.CGSTAmount)
-
-
     //SGST Amount
     setSGSTAmount(rowData.SGSTAmount)
-
-
     //IGST Amount
     setIGSTAmount(rowData.IGSTAmount)
-
-
     //TransportCharges
     setTransport(rowData.TransportCharges)
-
-
     //Other
     setOther(rowData.Other)
 
-
-
+    setSelectedId(rowData.SupplierId)
+    console.log(rowData.SupplierId)
 
   };
 
@@ -451,6 +443,44 @@ const PurchaseEntry = () => {
   const [PurchaseDate, setPurchaseDate] = useState(null);
   const [BillDate, setBillDate] = useState(null);
 
+  const testinghandle = () => {
+    const qs = require('qs');
+    let data = qs.stringify({
+      'PurchaseNo': '101',
+      'PurchaseDate': '2023-02-04',
+      'SupplierId': '1',
+      'BillNo': '121',
+      'BillDate': '2024-06-03',
+      'CGSTAmount': '120',
+      'SGSTAmount': '3',
+      'IGSTAmount': '7',
+      'TransportCharges': '100',
+      'Other': '47',
+      'Total': '1200',
+      'SubTotal': '7631',
+      'IsLocked': 'true'
+    });
+
+    let config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+      url: 'https://arohanagroapi.microtechsolutions.co.in/php/postpurchaseheader.php',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      data: data
+    };
+
+    axios.request(config)
+      .then((response) => {
+        console.log(JSON.stringify(response.data));
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  ///create an update purchase entry
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -458,19 +488,20 @@ const PurchaseEntry = () => {
     const formattedBillDate = moment(BillDate).format("YYYY-MM-DD");
 
     const purchaseheaderdata = {
-      Id: isEditing ? editId : "",
-      PurchaseNo: PurchaseNo,
+      Id: rowId,
+      PurchaseNo: parseInt(PurchaseNo),
       PurchaseDate: formattedPurchasedate,
-      SupplierId: selectedId,
-      BillNo: billNo,
+      SupplierId: parseInt(selectedId),
+      BillNo: parseInt(billNo),
       BillDate: formattedBillDate,
       CGSTAmount: cgstAmount,
       SGSTAmount: sgstAmount,
       IGSTAmount: igstAmount,
-      TransportCharges: transport,
-      Other: other,
+      TransportCharges: parseFloat(transport),
+      Other: parseInt(other),
       Total: grandTotal,
       SubTotal: subtotal,
+      IsLocked: 'true'
     };
     console.log("purchaseheaderdata", purchaseheaderdata);
     try {
@@ -486,7 +517,7 @@ const PurchaseEntry = () => {
         }
       );
       console.log('postpurchaseheader', response.data)
-      const PurchaseId = isEditing ? editId : parseInt(response.data.ID, 10);
+      let PurchaseId = isEditing ? rowId : parseInt(response.data.ID, 10);
       console.log("Purchase Id ", PurchaseId);
       console.log("rows", rows);
 
@@ -496,7 +527,7 @@ const PurchaseEntry = () => {
           Id: parseInt(row.Id, 10),
           PurchaseId: parseInt(PurchaseId, 10),
           SerialNo: rows.indexOf(row) + 1,
-          MaterialId: parseInt(row.ProductId, 10),
+          MaterialId: parseInt(row.MaterialId, 10),
           // MaterialId: parseInt(row.selectedProduct, 10),
           Quantity: parseFloat(row.Quantity),
           Rate: parseFloat(row.Rate),
@@ -508,10 +539,7 @@ const PurchaseEntry = () => {
           IGSTPercentage: parseFloat(row.IGSTPercentage),
           IGSTAmount: parseFloat(row.IGSTAmount),
         };
-        console.log({
-          Quantity: typeof row.Quantity,
-          Rate: typeof row.Rate
-        });
+
 
         console.log("this row has rowData ", rowData);
 
@@ -580,50 +608,18 @@ const PurchaseEntry = () => {
 
 
   const handleEdit = () => {
+    console.log("Editing item with ID:", rowId);
 
-    if (!currentRow) {
-      console.error("No row selected for editing.");
-      // toast.error("No row selected!");
-      return;
-    }
-
-    console.log("Editing item with ID:", currentRow.original?.Id);
-
-    // Ensure currentRow.index exists
-    if (typeof currentRow.index !== "number") {
-      console.error("Invalid row index:", currentRow.index);
-      toast.error("Invalid row index.");
-      return;
-    }
-
-    const purchaseheader = purchaheaders[currentRow.index];
-
-    if (!purchaseheader) {
-      console.error("No invoice header found for the selected row.");
-      toast.error("Invoice header not found.");
-      return;
-    }
 
     const invdetail = purchasedetails.filter(
-      (detail) => detail.PurchaseId === purchaseheader.Id
+      (detail) => detail.PurchaseId === rowId
     );
 
-    console.log("header", purchaseheader);
-    console.log("detail", invdetail);
+    console.log('invdetail', invdetail)
 
-    // Convert date strings to DD-MM-YYYY format
-    const convertDateForInput = (dateStr) => {
-      if (typeof dateStr === "string" && dateStr.includes("-")) {
-        const [year, month, day] = dateStr.split(" ")[0].split("-");
-        return `${year}-${month}-${day}`;
-      } else {
-        toast.error(`Invalid date format: ${dateStr}`);
-        return "";
-      }
-    };
+
 
     // Map the details to rows
-
     const mappedRows = invdetail.map((detail) => ({
       Id: detail.Id,
       PurchaseId: detail.PurchaseId,
@@ -638,103 +634,112 @@ const PurchaseEntry = () => {
       IGSTPercentage: parseFloat(detail.IGSTPercentage) || 0,
       IGSTAmount: parseFloat(detail.IGSTAmount) || 0,
     }));
-    const purchaseDate = convertDateForInput(purchaseheader.PurchaseDate?.date);
-    const billdate = convertDateForInput(purchaseheader.BillDate?.date);
 
-    // Set form fields
-    setPurchaseNo(purchaseheader.PurchaseNo);
-    setPurchaseDate(purchaseDate);
-    setSelectedId(purchaseheader.SupplierId);
+    console.log('mappedRows', mappedRows)
+    // // Set form fields
+    // setPurchaseNo(purchaseheader.PurchaseNo);
+    // setPurchaseDate(purchaseDate);
+    // setSelectedId(purchaseheader.SupplierId);
+    // setBillNo(purchaseheader.BillNo);
+    // setBillDate(billdate);
+    // setSelectedProduct(purchaseheader.MaterialId);
+    // setQuantity(purchaseheader.Quantity);
+    // setRate(purchaseheader.Rate);
+    // SetAmount(purchaseheader.Amount);
+    // setSelectedCGST(purchaseheader.CGSTPercentage);
+    // setCGSTAmount(purchaseheader.CGSTAmount);
+    // setSelectedSGST(purchaseheader.SGSTPercentage);
+    // setSGSTAmount(purchaseheader.SGSTAmount);
+    // setSelectedIGST(purchaseheader.IGSTPercentage);
+    // setIGSTAmount(purchaseheader.IGSTAmount);
+    // setOther(purchaseheader.Other);
+    // setTransport(purchaseheader.TransportCharges);
 
-    setBillNo(purchaseheader.BillNo);
-    setBillDate(billdate);
-
-    setSelectedProduct(purchaseheader.MaterialId);
-
-    setQuantity(purchaseheader.Quantity);
-    setRate(purchaseheader.Rate);
-    SetAmount(purchaseheader.Amount);
-    setSelectedCGST(purchaseheader.CGSTPercentage);
-    setCGSTAmount(purchaseheader.CGSTAmount);
-    setSelectedSGST(purchaseheader.SGSTPercentage);
-    setSGSTAmount(purchaseheader.SGSTAmount);
-    setSelectedIGST(purchaseheader.IGSTPercentage);
-    setIGSTAmount(purchaseheader.IGSTAmount);
-    setOther(purchaseheader.Other);
-    setTransport(purchaseheader.TransportCharges);
-    // Set the rows for the table with all the details
+    // // Set the rows for the table with all the details
     setRows(mappedRows);
-    // Set editing state
-    setEditingIndex(currentRow.index);
+    // // Set editing state
+    setEditingIndex(rowId.index);
     setIsDrawerOpen(true);
-    handleMenuClose();
+    // handleMenuClose();
     setIsEditing(true);
-    setEditId(currentRow.original?.Id);
+    setEditId(rowId.original?.Id);
+
     // Find the specific invoice detail
     const specificDetail = invdetail.find(
-      (detail) => detail.Id === currentRow.original?.Id
+      (detail) => detail.Id === rowId.original?.Id
     );
     if (specificDetail) {
       setInvdetailId(specificDetail.Id);
       console.log("specificDetail.Id", specificDetail.Id);
     }
     fetchpurchaseHeader();
+    setIsDrawerOpen(true);
   };
+
+
+  const [anchorEl1, setAnchorEl1] = useState(null);
+  const [selectedRow, setSelectedRow] = useState(null);
+
+  const handleMenutableOpen = (event, index) => {
+    setAnchorEl1(event.currentTarget);
+    setSelectedRow(index);
+  };
+
+  const handletableMenuClose = () => {
+    setAnchorEl1(null);
+    setSelectedRow(null);
+  };
+
+  //
+
+
+  const handleEditRow = (index) => {
+    const row = rows[index];
+    setEditingRow(index);
+    setQuantity(row.Quantity || "");
+    setRate(row.Rate || "");
+    SetAmount(row.Amount || "");
+    setSelectedCGST(row.CGSTPercentage || "");
+    setCGSTAmount(row.CGSTAmount || "");
+    setSelectedSGST(row.SGSTPercentage || "");
+    setSGSTAmount(row.SGSTAmount || "");
+    setSelectedIGST(row.IGSTPercentage || "");
+    setIGSTAmount(row.IGSTAmount || "");
+    setMaterialId(row.MaterialId)
+  };
+
 
 
   return (
     <Box>
-      <Box sx={{ background: 'rgb(238, 246, 252)', borderRadius: '10px', p: 5, height: 'auto' }}>
+      <Box sx={{ borderRadius: '10px', p: 5, height: 'auto' }}>
         <Box textAlign={'center'}>
           <Typography variant='h4'><b>Purchase Entry</b></Typography>
         </Box>
 
         <Box sx={{ display: 'flex', gap: 3 }}>
           <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleNewClick}>Create Purchase Entry </Button>
-          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleNewClick1}>testing</Button>
+          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={testinghandle}>testing</Button>
 
         </Box>
 
 
-        {/* <MaterialReactTable table={table}
-          enableColumnResizing
-          muiTableHeadCellProps={{
-            sx: {
 
-              color: 'var(--primary-color)',
+        <Box mt={2}>
+          <MaterialReactTable table={table}
+            enableColumnResizing
+            muiTableHeadCellProps={{
+              sx: {
 
-            },
-          }}
+                color: 'var(--primary-color)',
 
-        /> */}
+              },
+            }}
 
-        <MaterialReactTable table={table}
-          enableColumnResizing
-          muiTableHeadCellProps={{
-            sx: {
+          />
+        </Box>
 
-              color: 'var(--primary-color)',
 
-            },
-          }}
-
-        />
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={handleMenuClose}
-        >
-          <MenuItem
-          // onClick={handleEdit}
-          >Edit
-          </MenuItem>
-          <MenuItem
-          //  onClick={handleDelete}
-          >Delete
-          </MenuItem>
-
-          {/* <MenuItem onClick={handlePrint}>Print</MenuItem> */}
-        </Menu>
 
         <Drawer
           anchor="right"
@@ -751,22 +756,26 @@ const PurchaseEntry = () => {
           <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
             <Box>
-              {showEntry === 1 && <p>Create Purchase Entry</p>}
+              {showEntry === 1 &&
+              
+              <p>Create Purchase Entry</p>}
               {showEntry === 2 && <Box
                 sx={{
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
                   padding: 2,
+                 
+                  background: 'rgb(236, 253, 230)'
                 }}
               >
-                <Typography variant="h6">Purchase Entry Detail</Typography>
+                <Typography fontWeight="bold" variant="h6">Purchase Entry Detail</Typography>
 
-                <IconButton  onClick={handleMenuOpen}>
+                <IconButton onClick={handleMenuOpen}>
                   <BorderColorIcon />
                 </IconButton>
-                
-               
+
+
               </Box>
               }
               {showEntry === 3 && <p>Update Purchase Entry</p>}
@@ -826,19 +835,6 @@ const PurchaseEntry = () => {
 
                   <Box flex={1}>
 
-                    {/* <Box >
-
-                  <LocalizationProvider dateAdapter={AdapterDateFns}>
-                    <Box width="100%">
-                      <Typography variant="body2">Purchase Date</Typography>
-                      <DatePicker
-                        format="dd/MM/yyyy"
-                        slotProps={{ textField: { size: "small", fullWidth: true } }} // Ensure full width
-                      />
-                    </Box>
-                  </LocalizationProvider>
-
-                </Box> */}
 
                     <Box flex={1} >
 
@@ -899,6 +895,7 @@ const PurchaseEntry = () => {
 
                             const selectedItem = productOptions.find(option => option.value.toString() === selectedValue);
                             setMaterialName(selectedItem.label)
+
 
                             if (selectedItem) {
                               let gstfromCompanyInfo = gstNoComp?.substring(0, 2) || "";
@@ -1049,7 +1046,7 @@ const PurchaseEntry = () => {
                       <TableRow>
                         <TableCell>Sr No</TableCell>
                         {/* <TableCell>InvoiceID</TableCell> */}
-                        <TableCell>Product</TableCell>
+                        <TableCell>Item</TableCell>
                         <TableCell>Quantity</TableCell>
                         <TableCell>Rate</TableCell>
                         <TableCell>Amount</TableCell>
@@ -1108,22 +1105,22 @@ const PurchaseEntry = () => {
                           </TableCell>
 
                           <TableCell>
-                            {/* <IconButton
-                          onClick={(event) => handleMenutableOpen(event, index)}
-                        >
-                          <MoreVertIcon />
-                        </IconButton> */}
-                            {/* <Menu
-                          anchorEl={anchorEl1}
-                          open={Boolean(anchorEl1) && selectedRow === index}
-                          // onClose={handletableMenuClose}
-                        >
-                          <MenuItem 
-                          // onClick={() => handleEditRow(index)}
-                          >
-                            Edit
-                          </MenuItem>
-                        </Menu> */}
+                            <IconButton
+                              onClick={(event) => handleMenutableOpen(event, index)}
+                            >
+                              <MoreVertIcon />
+                            </IconButton>
+                            <Menu
+                              anchorEl={anchorEl1}
+                              open={Boolean(anchorEl1) && selectedRow === index}
+                              onClose={handletableMenuClose}
+                            >
+                              <MenuItem
+                                onClick={() => handleEditRow(index)}
+                              >
+                                Edit
+                              </MenuItem>
+                            </Menu>
                           </TableCell>
                         </TableRow>
                       ))}
@@ -1215,66 +1212,7 @@ const PurchaseEntry = () => {
           }
 
           {showEntry === 2 &&
-            // <Box>
 
-            //  <Box>
-            //   <Typography>Purchase No:</Typography>
-            //   {PurchaseNo}
-            //  </Box>
-
-
-            //  <Box>
-            //   <Typography>Purchase Date:</Typography>
-            //   {PurchaseDate}
-            //  </Box>
-
-            //  <Box>
-            //   <Typography>Bill No:</Typography>
-            //   {billNo}
-            //  </Box>
-
-            //  <Box>
-            //  <Typography>Bill Date:</Typography>
-            //  {BillDate}
-            //  </Box>
-
-            //  <Box>
-            //  <Typography>CGST Amount:</Typography>
-            //  {cgstAmount}
-            //  </Box>
-
-            //  <Box>
-            //  <Typography>IGST Amount:</Typography>
-            //  {igstAmount}
-            //  </Box>
-
-            //  <Box>
-            //  <Typography>SGST Amount:</Typography>
-            //  {sgstAmount}
-            //  </Box>
-
-            //  <Box>
-            //  <Typography>TransportCharges:</Typography>
-            //  {transport}
-            //  </Box>
-
-            //  <Box>
-            //  <Typography>other:</Typography>
-            //  {other}
-            //  </Box>
-
-            //  <Box>
-            //  <Typography>Subtotal:</Typography>
-            //  {subtotal}
-            //  </Box>
-
-            //  <Box>
-            //  <Typography>Total:</Typography>
-            //  {grandTotal}
-            //  </Box>
-
-
-            // </Box>
             <Grid container spacing={2} m={2}>
               <Grid item xs={6}>
                 <Typography>Purchase No:</Typography>
@@ -1337,6 +1275,15 @@ const PurchaseEntry = () => {
                 <Typography>Total:</Typography>
                 <b>{grandTotal}RS</b>
 
+              </Grid>
+
+              <Grid item xs={6}>
+                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                  Party:
+                </Typography>
+                <Typography variant="body1">
+                  {options.find(option => option.Id === selectedId)?.AccountName}
+                </Typography>
               </Grid>
             </Grid>
 
