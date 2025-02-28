@@ -51,21 +51,7 @@ const SalesEntry = () => {
   const [invoiceheaders, setInvoiceheaders] = useState([]);
   const [invoicedetails, setInvoicedetails] = useState([]);
   const [invdetailId, setInvdetailId] = useState("");
-  const [rows, setRows] = useState([
-    {
-      InvoiceId: 0,
-      ProductId: 0,
-      Quantity: 0,
-      Rate: 0,
-      Amount: 0,
-      CGSTPercentage: 0,
-      CGSTAmount: 0,
-      SGSTPercentage: 0,
-      SGSTAmount: 0,
-      IGSTPercentage: 0,
-      IGSTAmount: 0,
-    },
-  ]);
+  const [rows, setRows] = useState([]);
 
   const handleInputChange = (index, field, value) => {
     const updatedRows = [...rows];
@@ -137,6 +123,7 @@ const SalesEntry = () => {
       const response = await axios.get(
         "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=invoicedetail"
       );
+      console.log('detail',response.data)
       setInvoicedetails(response.data);
     } catch (error) { }
   };
@@ -417,6 +404,7 @@ const SalesEntry = () => {
   const [igstAmount, setIGSTAmount] = useState(0);
   const [paymentMode, setPaymentMode] = useState(null);
   const [transport, setTransport] = useState("");
+  const[productName,setProductName]= useState("");
 
   //fetch customer from  account table
   const [accountOptions, setAccountOptions] = useState([]);
@@ -443,23 +431,16 @@ const SalesEntry = () => {
     };
 
     fetch(
-      "https://arohanagroapi.microtechsolutions.co.in/php/getaccountinfo.php",
+      // "https://arohanagroapi.microtechsolutions.co.in/php/getaccountinfo.php",
+      "https://arohanagroapi.microtechsolutions.co.in/php/gettypecode.php?TypeCode=C",
       requestOptions
     )
       .then((response) => response.json())
       .then((result) => {
         console.log("account info:", result);
-        // Map fetched accounts to accountOptions format
-        const options = result.map((account) => ({
-          value: account.Id,
-          label: account.AccountName,
-        }));
-        // console.log('options',options)
-        setAccountOptions(options);
-        result.forEach((account) => {
-          setacctGSTNo(account.GSTNo);
-          // console.log("GSTNo:", account.GSTNo);
-        });
+
+        setAccountOptions(result);
+
       })
       .catch((error) => console.error("Error fetching accounts:", error));
   };
@@ -478,7 +459,6 @@ const SalesEntry = () => {
 
 
   const fetchProduct = async () => {
-    setSelectedProduct(true);
     try {
       const response = await fetch(
         "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=productmaster"
@@ -494,33 +474,43 @@ const SalesEntry = () => {
     setLoadingProduct(false);
   };
 
-  const handleProductChange = (event, newValue) => {
-    fetchProduct()
-    setSelectedProduct(newValue);
-    setCGST(newValue?.cgst || "");
-    setSGST(newValue?.sgst || "");
-    setIGST(newValue?.igst || "");
-  };
+  const [selectedProductID, setSelectedProductId] = useState(null);
+  const [selectedProductName, setSelectedProductName] = useState(null);
+
+
+  // const handleProductChange = (event, newValue) => {
+  //   fetchProduct()
+  //   setSelectedProduct(newValue.props);
+
+  //   setSelectedProductId(newValue.props.value)
+  //   console.log(event.target)
+  //  // setSelectedProductName(newValue.props.children)
+
+  //   const selectedItem = productOptions.find(option => option.value === newValue.props.value);
+
+  //   if (selectedItem) {
+  //     let gstfromCompanyInfo = gstNo.substring(0, 2);
+  //     let gstfromAccount = acctGSTNo.substring(0, 2);
+
+  //     setCGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.cgst : "0");
+  //     setSGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.sgst : "0");
+  //     setIGST(gstfromCompanyInfo !== gstfromAccount ? selectedItem.igst : "0");
+  //   }
+
+  // };
 
 
   const productvalidation = (data) => {
 
-    if (Array.isArray(data)) {
-      let gstfromCompanyInfo = gstNo.substring(0, 2);
-      let gstfromAccount = acctGSTNo.substring(0, 2);
+    const options = data.map((account) => ({
+      value: account?.Id,
+      label: account?.ProductName,
+      cgst: account?.CGSTPercentage,
+      sgst: account?.SGSTPercentage,
+      igst: account?.IGSTPercentage,
+    }));
+    setProductOptions(options);
 
-      console.log('gstfromCompanyInfo', gstfromCompanyInfo, 'gstfromAccount', gstfromAccount)
-
-      const options = data.map((account) => ({
-        value: account?.Id || "",
-        label: account?.ProductName,
-        cgst: gstfromCompanyInfo === gstfromAccount ? account?.CGSTPercentage || '0' : '0',
-        sgst: gstfromCompanyInfo === gstfromAccount ? account?.SGSTPercentage || '0' : '0',
-        igst: gstfromCompanyInfo !== gstfromAccount ? account?.IGSTPercentage || '0' : '0',
-      }));
-      // console.log('options', options)
-      setProductOptions(options);
-    }
   }
 
   const resetForm = () => {
@@ -548,10 +538,8 @@ const SalesEntry = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formattedInvoicedate = moment(invoiceDate).format("YYYY-MM-DD");
     const formattedorderdate = moment(orderDate).format("YYYY-MM-DD");
-
     const invoiceheaderdata = {
       Id: isEditing ? editId : "",
       InvoiceNo: invoiceNo,
@@ -582,7 +570,7 @@ const SalesEntry = () => {
         }
       );
 
-      const invoiceId = isEditing ? editId : parseInt(response.data.ID, 10);
+      const invoiceId = isEditing ? editId : parseInt(response.data.Id, 10);
       console.log("invioce id ", invoiceId);
       console.log("rows", rows);
 
@@ -594,7 +582,6 @@ const SalesEntry = () => {
           SerialNo: rows.indexOf(row) + 1,
           ProductId: parseInt(row.ProductId, 10),
           Quantity: parseFloat(row.Quantity),
-
           Rate: parseFloat(row.Rate),
           Amount: parseInt(row.Amount),
           CGSTPercentage: parseFloat(row.CGSTPercentage),
@@ -712,18 +699,14 @@ const SalesEntry = () => {
   };
 
   const handleAddRow = () => {
-    // if (!selectedProduct || !quantity || !rate) {
-    //     alert("Please fill in required fields");
-    //     return;
-    // }
-    const gstOutput = GSTcal();
-    const { igstAmount, cgstAmount, sgstAmount } = gstOutput;
+    console.log("Selected Product ID:", selectedProductID);
+    console.log("Selected Product Name:", selectedProductName);
 
-    const newRow = {
+    let newRow = {
       id: rows.length + 1,
       InvoiceId: null,
-      ProductId: selectedProduct.value,
-      ProductName: selectedProduct.label,
+      ProductId: selectedProductID,
+      ProductName: selectedProductName,
       Quantity: quantity,
       Rate: rate,
       Amount: amount,
@@ -737,13 +720,7 @@ const SalesEntry = () => {
     console.log("newRow", newRow);
     // Update rows state and ensure the new row is added to the table
     setRows((prevRows) => [...prevRows, newRow]);
-    // setSelectedProduct(null);
-    // setQuantity("");
-    // setRate("");
-    // SetAmount("");
-    // setCGST("");
-    // setSGST("");
-    // setIGST("");
+
   };
 
   const subtotal = rows.reduce(
@@ -784,9 +761,7 @@ const SalesEntry = () => {
   const handleEditRow = (index) => {
     const row = rows[index];
     setEditingRow(index);
-    setSelectedProduct(
-      productOptions.find((p) => p.value === row.ProductId) || null
-    );
+    setSelectedProduct(row.ProductId);
     setQuantity(row.Quantity || "");
     setRate(row.Rate || "");
     SetAmount(row.Amount || "");
@@ -799,16 +774,13 @@ const SalesEntry = () => {
   };
 
   const handleSaveOrAddRow = () => {
-    const gstOutput = GSTcal();
-    const { igstAmount, cgstAmount, sgstAmount } = gstOutput;
-    // console.log("handleSaveOrAddRow", gstOutput);
-
     if (editingRow !== null) {
       // Update the existing row
       const updatedRows = [...rows];
       updatedRows[editingRow] = {
         ...updatedRows[editingRow],
-        ProductId: selectedProduct?.value || "",
+        ProductId: selectedProductID,
+        ProductName:selectedProductName,
         Quantity: quantity,
         Rate: rate,
         Amount: amount,
@@ -875,6 +847,8 @@ const SalesEntry = () => {
     let output = { igstAmount, cgstAmount, sgstAmount }; // Store the output
     return output; // Return output as an object
   };
+
+
 
   return (
     <Box>
@@ -954,7 +928,7 @@ const SalesEntry = () => {
               <Box flex={1}>
                 <Typography variant="body2">Invoice No</Typography>
                 <TextField
-                  value={invoiceNo}                  
+                  value={invoiceNo}
                   onChange={(e) => setInvoiceNo(e.target.value)}
                   size="small"
                   margin="none"
@@ -988,11 +962,14 @@ const SalesEntry = () => {
                   onChange={(event) => {
                     const selectedValue = event.target.value;
                     setSelectedAccount(selectedValue);
-                    fetchProduct(); // Call fetchProduct() after updating selectedAccount
-                  }}                >
+
+                    const selectedItem = accountOptions.find(option => option.Id.toString() === selectedValue);
+                    setacctGSTNo(selectedItem ? selectedItem.GSTNo : "")
+
+                  }} >
                   {accountOptions.map((option) => (
-                    <MenuItem key={option.value} value={option.value}>
-                      {option.label}
+                    <MenuItem key={option.Id} value={option.Id.toString()}>
+                      {option.AccountName}
                     </MenuItem>
                   ))}
                 </Select>
@@ -1046,7 +1023,7 @@ const SalesEntry = () => {
             </Box>
 
             <Box sx={{ display: "flex", alignItems: "center", gap: 2, mt: 2 }}>
-              <Box flex={1}>
+              {/* <Box flex={1}>
                 <Typography variant="body2">Product</Typography>
                 <Autocomplete
                   options={productOptions}
@@ -1067,7 +1044,82 @@ const SalesEntry = () => {
                     />
                   )}
                 />
+              </Box> */}
+
+              <Box flex={1}>
+                <Typography variant="body2">Product </Typography>
+                <FormControl size="small" fullWidth>
+                  {/* <Select
+                    value={selectedProductID || ""}
+                    displayEmpty
+                    onChange={(event) => {
+                      let selectedValue = event.target.value;
+
+                      setSelectedProductId(selectedValue);
+
+                      let selectedItem = productOptions.find((option) => option.value === selectedValue);
+
+
+                      if (selectedItem) {
+                        console.log(selectedItem.label)
+                        setSelectedProductName(selectedItem.label)
+
+                        let gstfromCompanyInfo = gstNo?.substring(0, 2) || "";
+                        let gstfromAccount = acctGSTNo?.substring(0, 2) || "";
+
+                        setCGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.cgst : "0");
+                        setSGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.sgst : "0");
+                        setIGST(gstfromCompanyInfo !== gstfromAccount ? selectedItem.igst : "0");
+                      } else {
+                        setCGST("0");
+                        setSGST("0");
+                        setIGST("0");
+                      }
+                    }}
+
+                  >
+                    <MenuItem value="" disabled>
+                      Select a product
+                    </MenuItem>
+                    {productOptions?.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select> */}
+                  <Select
+                    value={selectedProductID || ""} // Ensure only ID is stored
+                    displayEmpty
+                    onChange={(event) => {
+                      const selectedValue = event.target.value;
+                      setSelectedProductId(selectedValue); 
+                 
+                      const selectedItem = productOptions.find((option) => option.value === selectedValue);
+                      setProductName(selectedItem.label)
+
+                      if (selectedItem) {
+                        setSelectedProductName(selectedItem.label); // Store the name separately
+                        setCGST(gstNo?.substring(0, 2) === acctGSTNo?.substring(0, 2) ? selectedItem.cgst : "0");
+                        setSGST(gstNo?.substring(0, 2) === acctGSTNo?.substring(0, 2) ? selectedItem.sgst : "0");
+                        setIGST(gstNo?.substring(0, 2) !== acctGSTNo?.substring(0, 2) ? selectedItem.igst : "0");
+                      } else {
+                        setSelectedProductName(""); // Reset if no product is found
+                        setCGST("0");
+                        setSGST("0");
+                        setIGST("0");
+                      }
+                    }}
+                  >
+                    <MenuItem value="" disabled>Select a product</MenuItem>
+                    {productOptions.map((option) => (
+                      <MenuItem key={option.value} value={option.value}>
+                        {option.label}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
               </Box>
+
               <Box flex={1}>
                 <Typography variant="body2">Quantity</Typography>
                 <TextField
@@ -1210,105 +1262,56 @@ const SalesEntry = () => {
                       <TableCell>{index + 1}</TableCell>
                       {/* <TableCell><TextField value={row.InvoiceId || ""} size="small" fullWidth /></TableCell> */}
                       <TableCell>
-                        <Autocomplete
-                          options={productOptions}
-                          getOptionLabel={(option) => option.label}
-                          value={
-                            productOptions.find(
-                              (option) => option.value === row.ProductId
-                            ) || null
-                          }
-                          onChange={(event, newValue) =>
-                            handleInputChange(
-                              index,
-                              "ProductId",
-                              newValue ? newValue.value : null
-                            )
-                          }
-                          loading={loadingProduct}
-                          renderInput={(params) => (
-                            <TextField
-                              sx={{ minWidth: 170 }}
-                              {...params}
-                              size="small"
-                              variant="outlined"
-                              placeholder="Select Product"
-                            />
-                          )}
-                        />
+
+                      
+                     {row.ProductName} 
+
                       </TableCell>
                       <TableCell>
-                        <TextField
-                          value={row.Quantity || ""}
-                          onChange={handleQuantityChange}
-                          size="small"
-                          fullWidth
-                        />
+
+                        {row.Quantity || ""}
+
+
                       </TableCell>
                       <TableCell>
-                        <TextField
-                          sx={{ minWidth: 120 }}
-                          value={row.Rate || ""}
-                          onChange={handleRateChange}
-                          size="small"
-                          fullWidth
-                        />
+
+                        {row.Rate || ""}
+
                       </TableCell>
                       <TableCell>
-                        <TextField
-                          value={row.Amount || ""}
-                          size="small"
-                          fullWidth
-                          disabled
-                        />
+
+                        {row.Amount || ""}
+
                       </TableCell>
                       <TableCell>
-                        <TextField
-                          value={row.CGSTPercentage || ""}
-                          onChange={handleCgstChange}
-                          size="small"
-                          fullWidth
-                        />
+
+                        {row.CGSTPercentage || ""}
+
                       </TableCell>
                       <TableCell>
-                        <TextField
-                          value={row.CGSTAmount || ""}
-                          size="small"
-                          fullWidth
-                          disabled
-                        />
+
+                        {row.CGSTAmount || ""}
+
                       </TableCell>
                       <TableCell>
-                        <TextField
-                          value={row.SGSTPercentage || ""}
-                          onChange={handleSgstChange}
-                          size="small"
-                          fullWidth
-                        />
+
+                        {row.SGSTPercentage || ""}
+
                       </TableCell>
                       <TableCell>
-                        <TextField
-                          value={row.SGSTAmount || ""}
-                          size="small"
-                          fullWidth
-                          disabled
-                        />
+
+                        {row.SGSTAmount || ""}
+
                       </TableCell>
                       <TableCell>
-                        <TextField
-                          value={row.IGSTPercentage || ""}
-                          onChange={handleIgstChange}
-                          size="small"
-                          fullWidth
-                        />
+
+                        {row.IGSTPercentage || ""}
+
                       </TableCell>
                       <TableCell>
-                        <TextField
-                          value={row.IGSTAmount || ""}
-                          size="small"
-                          fullWidth
-                          disabled
-                        />
+
+                        {row.IGSTAmount || ""}
+
                       </TableCell>
 
                       <TableCell>
@@ -1334,7 +1337,7 @@ const SalesEntry = () => {
             </TableContainer>
           </Box>
 
-          <Box sx={{ display: "flex", gap:10, m: 2 }}>
+          <Box sx={{ display: "flex", gap: 10, m: 2 }}>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
               <Box>
                 <Typography variant="body2">Payment Mode</Typography>
@@ -1358,38 +1361,38 @@ const SalesEntry = () => {
               </Box>
             </Box>
 
-            <Box sx={{ display: "flex", flexDirection: "row",gap:6,mt:2}}>
+            <Box sx={{ display: "flex", flexDirection: "row", gap: 6, mt: 2 }}>
               <Box>
                 <Typography variant="h6">SubTotal</Typography>
-                <Box sx={{fontSize:'20px'}}><b>{subtotal.toFixed(2) }</b></Box>
-                
-                
-              
+                <Box sx={{ fontSize: '20px' }}><b>{subtotal.toFixed(2)}</b></Box>
+
+
+
               </Box>
               <Box>
                 <Typography variant="h6">CGST</Typography>
-                <Box sx={{fontSize:'20px'}}><b> {totalCGST.toFixed(2)}</b></Box>
-                
-               
+                <Box sx={{ fontSize: '20px' }}><b> {totalCGST.toFixed(2)}</b></Box>
+
+
               </Box>
               <Box>
                 <Typography variant="h6">SGST</Typography>
-                <Box sx={{fontSize:'20px'}}><b>{totalSGST.toFixed(2)}</b></Box>
-                
-                
+                <Box sx={{ fontSize: '20px' }}><b>{totalSGST.toFixed(2)}</b></Box>
+
+
               </Box>
               <Box>
                 <Typography variant="h6">IGST</Typography>
-                <Box sx={{fontSize:'20px'}}><b>{totalIGST.toFixed(2)}</b></Box>
-                
-               
+                <Box sx={{ fontSize: '20px' }}><b>{totalIGST.toFixed(2)}</b></Box>
+
+
               </Box>
-          
+
               <Box>
                 <Typography variant="h6">Total</Typography>
-                <Box sx={{fontSize:'20px',mr:4 ,}} ><b>{grandTotal.toFixed(2)} Rs</b></Box>
-                
-               
+                <Box sx={{ fontSize: '20px', mr: 4, }} ><b>{grandTotal.toFixed(2)} Rs</b></Box>
+
+
               </Box>
             </Box>
           </Box>

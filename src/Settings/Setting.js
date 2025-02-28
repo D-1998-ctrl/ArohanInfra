@@ -224,7 +224,7 @@ const Settings = () => {
         <Box sx={{ background: "#dfe4e9", display: "flex", justifyContent: "center", alignItems: "flex-start", p: 4, gap: 5 }}>
 
 
-            <Paper elevation={3} sx={{ p: 3, textAlign: "center", width: 200, height: 450, flexShrink: 0 }}>
+            <Paper elevation={3} sx={{ p: 3, textAlign: "center", width: 200, height: 450, flexShrink: 0,}}>
                 <Typography variant="h6" sx={{ mt: 2 }}>
                     <b>Diksha Chavan</b>
                 </Typography>

@@ -1,17 +1,15 @@
 
-
-
 import React, { useMemo, useState, useEffect } from 'react'
-import { Menu, Alert, Box, useMediaQuery, Button, IconButton, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
+import { Menu, Autocomplete, Alert, Box, useMediaQuery, Button, IconButton, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { MaterialReactTable, } from 'material-react-table';
-import suppliermaster from './suppliermaster.json'
 import { useTheme } from "@mui/material/styles";
 import '../Components/common.css'
 import axios from 'axios';
 import { toast } from "react-toastify";
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import PhoneInput from "react-phone-input-2";
+import qs from 'qs';
 
 const SupplierMaster = () => {
   const theme = useTheme();
@@ -42,15 +40,32 @@ const SupplierMaster = () => {
     setAnchorEl(null);
   };
   const [idwiseData, setIdwiseData] = useState('')
-
+  const [accountId, setAccountId] = useState(null)
   const handleEdit = () => {
     if (currentRow) {
-      console.log("Editing item with ID:", currentRow.original.Id);
+      console.log("Editing item with ID:", currentRow.original);
       setIdwiseData(currentRow.original.Id)
+      console.log(currentRow.original.Id)
+      setAccountId(currentRow.original.AccountId)
+      console.log(currentRow.original.AccountId)
+      setUpdatedAccountName(currentRow.original.AccountName)
+      setSelectedGroupOption(currentRow.original.GroupId)
+      setSelectedSubGroupOption(currentRow.original.SubGroupId)
+      setUpdatedCurrentBal(currentRow.original.OpeningBalance)
+      setDebitCredit(currentRow.original.DrORCr)
+      setUpdatedAddress1(currentRow.original.Address1)
+      setUpdatedAddress2(currentRow.original.Address2)
+      setSelectedCity(currentRow.original.CityId)
+      setSelectedState(currentRow.original.StateId)
+      setUpdatedEmail(currentRow.original.EmailId)
+      setUpdatedPincode(currentRow.original.Pincode)
+      setupdatedMobile(currentRow.original.MobileNo)
+      SetupdatedGSTNo(currentRow.original.GSTNo)
+      setupdatedIsSystem(currentRow.original.IsSystem)
     }
   };
 
-  console.log('idwiseData', idwiseData)
+
 
   // edit drawer
   const [isEditDrawerOpen, setEditIsDrawerOpen] = useState(false);
@@ -66,12 +81,6 @@ const SupplierMaster = () => {
   };
   console.log(idwiseData)
 
-
-
-
-
-
-
   const fetchData = async () => {
     const requestOptions = {
       method: "GET",
@@ -79,19 +88,21 @@ const SupplierMaster = () => {
     };
 
     try {
-      const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=suppliermaster", requestOptions);
+      // const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=customermaster", requestOptions);
+      const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/getaccountaddress.php?Typecode=S", requestOptions);
       const result = await response.json();
-
-      console.log("Fetched result:", result);  // Log the fetched data before setting it
-
+      console.log("Fetched result:", result);
       setData(result);
-      setID(result.map(item => item.Id));
-      console.log('id', setID)
+      // setID(result.map(item => item.Id));
+      // console.log('id', setID)
 
     } catch (error) {
       console.error(error);
     }
   };
+
+
+
   console.log("result", data);
   useEffect(() => {
     fetchData();
@@ -106,30 +117,28 @@ const SupplierMaster = () => {
         Cell: ({ row }) => row.index + 1,
       },
       {
-        accessorKey: 'AccountCode',
-        header: 'Account Code',
-        size: 150,
-      },
-      {
         accessorKey: 'AccountName',
         header: 'Account Name',
         size: 150,
       },
+
+
+
       {
-        accessorKey: 'DrOrCr',
+        accessorKey: 'DrORCr',
         header: 'Debit/Credit',
         size: 150,
       },
 
-   
+
       {
         accessorKey: 'Address1',
-        header: 'Address1',
+        header: 'Address 1',
         size: 150,
       },
       {
         accessorKey: 'Address2',
-        header: 'Address2',
+        header: 'Address 2',
         size: 150,
       },
       {
@@ -149,7 +158,7 @@ const SupplierMaster = () => {
       },
 
       {
-        accessorKey: 'CurrentBalance',
+        accessorKey: 'OpeningBalance',
         header: 'Current Balance',
         size: 150,
       },
@@ -172,15 +181,15 @@ const SupplierMaster = () => {
 
   //
   const [accountCode, setAccountCode] = useState('')
-  const [updatedaccountCode, setUpdatedAccountCode] = useState('')
+
   const [AccountName, setAccountName] = useState('');
   const [updatedAccountName, setUpdatedAccountName] = useState('');
-  
+
   const [currentBal, setCurrentBal] = useState('');
   const [updatedcurrentBal, setUpdatedCurrentBal] = useState('');
 
   const [debitCredit, setDebitCredit] = useState('');
-  const [updateddebitCredit, setUpdatedDebitCredit] = useState('');
+
 
   const [typecode, setTypecode] = useState('S');
   const [updatedtypecode, setUpdatedTypecode] = useState('S');
@@ -204,7 +213,7 @@ const SupplierMaster = () => {
 
 
   const [urls, setURLs] = useState('');
-  const [updatedurls, setUpdatedURLs] = useState('');
+
 
   const [gstNo, SetGSTNo] = useState('');
   const [updatedgstNo, SetupdatedGSTNo] = useState('');
@@ -214,10 +223,10 @@ const SupplierMaster = () => {
   const [updatedissystem, setupdatedIsSystem] = useState(false);
 
   const [gst, setGst] = useState(false);
-  const [updatedgst, setupdatedGst] = useState(false);
+
 
   const [compliance, setCompliance] = useState(false);
-  const [updatedcompliance, setupdatedCompliance] = useState(false);
+
 
   //fetch groupId
   const [groupOption, setGroupOption] = useState('');
@@ -276,9 +285,7 @@ const SupplierMaster = () => {
 
   //for cityId
   const [options, setOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [selectedCity, setSelectedCity] = useState(null);
-
   const fetchCity = async () => {
     const requestOptions = {
       method: "GET",
@@ -293,17 +300,41 @@ const SupplierMaster = () => {
       .then((result) => {
         console.log("API Response:", result); // Debugging log
 
-
         const cityOptions = result.map((city) => ({
-          value: city?.Id || "",
-          label: city?.CityName,
+          value: city.Id,
+          label: city.CityName,
         }));
 
         setOptions(cityOptions);
-
+        console.log('cityOptions', cityOptions)
       })
       .catch((error) => console.error("Error fetching cities:", error));
   };
+  // const fetchCity = async () => {
+  //   const requestOptions = {
+  //     method: "GET",
+  //     redirect: "follow",
+  //   };
+
+  //   fetch(
+  //     "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=city",
+  //     requestOptions
+  //   )
+  //     .then((response) => response.json())
+  //     .then((result) => {
+  //       console.log("API Response:", result); // Debugging log
+
+
+  //       const cityOptions = result.map((city) => ({
+  //         value: city?.Id || "",
+  //         label: city?.CityName,
+  //       }));
+
+  //       setOptions(cityOptions);
+
+  //     })
+  //     .catch((error) => console.error("Error fetching cities:", error));
+  // };
   //for state id 
   const [stateOptions, setStateOptions] = useState([]);
   const [loadingState, setLoadingState] = useState(false);
@@ -345,56 +376,84 @@ const SupplierMaster = () => {
     fetchSubGroup();
     fetchCity();
     fetchState()
-    fetchDataById(idwiseData)
+    // fetchDataById(idwiseData)
   }, [idwiseData]);
 
 
   //create Customer Master
-  const CreateCustomerMaster = () => {
-    const urlencoded = new URLSearchParams();
-    urlencoded.append("AccountCode", accountCode);
-    urlencoded.append("AccountName", AccountName);
-    urlencoded.append("GroupId", selectedGroupOption);
-    urlencoded.append("SubGroupId", selectedSubGroupOption);
-    urlencoded.append("DrOrCr", debitCredit);
-    urlencoded.append("TypeCode", "S");
-    urlencoded.append("CurrentBalance", currentBal);
-    urlencoded.append("Address1", address1);
-    urlencoded.append("Address2", address2);
-    urlencoded.append("CityId", selectedCity);
-    urlencoded.append("StateId", selectedState);
-    urlencoded.append("Pincode", pincode);
-    urlencoded.append("EmailId", email);
-    urlencoded.append("MobileNo", mobileno);
-    urlencoded.append("URL", urls);
-    urlencoded.append("GSTNo", gstNo);
-    urlencoded.append("IsSystem", issystem);
-    urlencoded.append("GST", gst);
-    urlencoded.append("Compilance", compliance);
-    const requestOptions = {
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-    };
-
-    axios
-      .post(
-        "https://arohanagroapi.microtechsolutions.co.in/php/postsuppliermaster.php",
-        urlencoded,
-        requestOptions
-      )
-      .then((response) => {
-        console.log("API Response:", response.data);
-        handleClearTemplate();
-        fetchData();
-        handleDrawerClose()
-        toast.success("supplier Master created successfully");
-      })
-      .catch((error) => {
-        console.error("Error:", error);
+  const CreateCustomerMaster = async () => {
+    try {
+      // Post Account Data
+      let accountData = qs.stringify({
+        'AccountName': AccountName,
+        'GroupId': selectedGroupOption,
+        'SubGroupId': selectedSubGroupOption,
+        'OpeningBalance': currentBal,
+        'DrORCr': debitCredit,
+        'TypeCode': 'S',
+        'IsSystem': issystem,
+        'Depriciation': "0"
       });
+
+      let accountConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://arohanagroapi.microtechsolutions.co.in/php/postaccount.php',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: accountData
+      };
+
+      const accountResponse = await axios.request(accountConfig);
+      console.log("Account Response:", accountResponse.data);
+
+      let accId = parseInt(accountResponse.data.Id);
+      setAccountId(accId);
+      console.log('accId', accId);
+
+
+      let addressData = qs.stringify({
+        'AccountId': accId,
+        'Address1': address1,
+        'Address2': address2,
+        'Address3': '',
+        'AreaId': '0',
+        'CityId': selectedCity,
+        'StateId': selectedState,
+        'Pincode': pincode,
+        'CountryId': '0',
+        'TelephoneNo': '0',
+        'FaxNo': '0',
+        'MobileNo': mobileno,
+        'EmailId': email,
+        'PANNo': '0',
+        'GSTNo': gstNo
+      });
+
+      let addressConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://arohanagroapi.microtechsolutions.co.in/php/postaddress.php',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: addressData
+      };
+
+      const addressResponse = await axios.request(addressConfig);
+      console.log("Address Response:", addressResponse.data);
+      handleDrawerClose()
+      handleClearTemplate();
+      toast.success("Supplier Master created successfully");
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
+
+
+  //clr all fields
   const handleClearTemplate = () => {
     setAccountCode('');
     setAccountName('');
@@ -416,121 +475,125 @@ const SupplierMaster = () => {
     setCompliance('');
   }
 
- //for delete 
-  const DeleteProductMaster = () => {
-    // if (currentRow) {
-    //   console.log("Editing item with ID:", currentRow.original.Id);
+  //for delete 
+  // const deleteCustomerMaster = () => {
+  //   const requestOptions = {
+  //     method: "GET",
+  //     redirect: "follow"
+  //   };
 
-    // }
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow"
-    };
-    const url = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=suppliermaster&Id=${currentRow.original.Id}`
-    console.log(url)
-    fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result)
+  //   // Delete Account 
+  //   fetch(`https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Account&Id=${currentRow.original.AccountId}`, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((result) => console.log("Deleted Account:", result))
+  //     .catch((error) => console.error("Error deleting Account:", error));
 
-        toast.success("supplier master deleted successfully!");
+  //   // Delete Address 
+  //   fetch(`https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.AccountId}`, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((result) => console.log("Deleted Address:", result))
+  //     .catch((error) => console.error("Error deleting Address:", error));
+  // };
 
-
-      })
-      .catch((error) => console.error(error));
-  }
-
-   //get Data by Id
-    const fetchDataById = () => {
+  const deleteCustomerMaster = async () => {
+    try {
       const requestOptions = {
         method: "GET",
         redirect: "follow",
       };
-  
-      fetch(
-        `https://arohanagroapi.microtechsolutions.co.in/php/getbyid.php?Id=${idwiseData}&Table=suppliermaster`,
+
+      // Delete Account
+      const accountResponse = await fetch(
+        `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Account&Id=${currentRow.original.AccountId}`,
         requestOptions
-      )
-        .then((response) => response.json())
-        .then((result) => {
-          console.log(result)
-          setUpdatedAccountCode(result.AccountCode)
-          setUpdatedAccountName(result.AccountName)
-          setUpdatedCurrentBal(result.CurrentBalance)
-          setUpdatedDebitCredit(result.DrOrCr)
-          setUpdatedTypecode(result.TypeCode)
-          setUpdatedAddress1(result.Address1)
-          setUpdatedAddress2(result.Address2)
-          setUpdatedPincode(result.Pincode)
-          setupdatedMobile(result.MobileNo)
-          setUpdatedURLs(result.URL)
-          SetupdatedGSTNo(result.GSTNo)
-          setupdatedIsSystem(result.IsSystem)
-          setupdatedGst(result.GST)
-          setupdatedCompliance(result.Compilance)
-          setSelectedGroupOption(result.GroupId)
-          setSelectedSubGroupOption(result.SubGroupId)
-          setSelectedCity(result.CityId)
-          setSelectedState(result.StateId)
-          setUpdatedEmail(result.EmailId)
-  
-        })
-        .catch((error) => console.error(error));
-    };
-    // useEffect(() => {
-    //   // CreateMaterialMaster();
-    //   fetchDataById(idwiseData)
-    // }, [idwiseData])
+      );
+      const accountResult = await accountResponse.json();
+      console.log("Deleted Account:", accountResult);
+
+      // Delete Address
+      const addressResponse = await fetch(
+        `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`,
+        requestOptions
+      );
+      const addressResult = await addressResponse.json();
+      console.log("Deleted Address:", addressResult);
+
+      toast.success("Customer Master deleted successfully");
+    } catch (error) {
+      console.error("Error deleting Customer Master:", error);
+      // toast.error("Failed to delete Customer Master");
+    }
+  }
+  const UpdateCustomerMaster = async () => {
+    try {
+      //  Post Account Data
+      let accountData = qs.stringify({
+        'AccountName': updatedAccountName,
+        'GroupId': selectedGroupOption,
+        'SubGroupId': selectedSubGroupOption,
+        'OpeningBalance': updatedcurrentBal,
+        'DrORCr': debitCredit,
+        'TypeCode': 'S',
+        'IsSystem': updatedissystem,
+        'Depriciation': "0",
+        'Id': idwiseData
+      });
+
+      let accountConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://arohanagroapi.microtechsolutions.co.in/php/updateaccount.php',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: accountData
+      };
+
+      const updateaccountResponse = await axios.request(accountConfig);
+      console.log("updateAccount Response:", updateaccountResponse.data);
+      // let accId = parseInt(accountResponse.data.Id)
+      // setAccountId(accId)
+      console.log('accId', accountId)
 
 
-//update
-const UpdateCustomerMaster = () => {
-  const qs = require('qs');
-  let data = qs.stringify({
-    'AccountCode': updatedaccountCode,
-    'AccountName': updatedAccountName,
-    'GroupId': selectedGroupOption,
-    'SubGroupId': selectedSubGroupOption,
-    'DrOrCr': debitCredit,
-    'TypeCode': 'S',
-    'Address1': updatedaddress1,
-    'Address2': updatedaddress2,
-    'CityId': selectedCity,
-    'StateId': selectedGroupOption,
-    'Pincode': updatedpincode,
-    'EmailId': updatedemail,
-    'MobileNo': updatedmobileno,
-    'URL': updatedurls,
-    'GSTNo': updatedgstNo,
-    'IsSystem': updatedissystem,
-    'GST': updatedgst,
-    'Compilance': updatedcompliance,
-    'CurrentBalance': updatedcurrentBal,
-    'Id': idwiseData
-  });
+      let addressData = qs.stringify({
+        'AccountId': accountId,
+        'Address1': updatedaddress1,
+        'Address2': updatedaddress2,
+        'Address3': '',
+        'AreaId': '0',
+        'CityId': selectedCity,
+        'StateId': selectedState,
+        'Pincode': updatedpincode,
+        'CountryId': '0',
+        'TelephoneNo': '0',
+        'FaxNo': '0',
+        'MobileNo': updatedmobileno,
+        'EmailId': updatedemail,
+        'PANNo': '0',
+        'GSTNo': updatedgstNo,
+        'Id': idwiseData
+      });
 
-  let config = {
-    method: 'post',
-    maxBodyLength: Infinity,
-    url: "https://arohanagroapi.microtechsolutions.co.in/php/updatesuppliermaster.php",
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    },
-    data: data
+      let addressConfig = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'https://arohanagroapi.microtechsolutions.co.in/php/updateaddress.php',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        data: addressData
+      };
+
+      const addressResponse = await axios.request(addressConfig);
+      console.log("Address Response:", addressResponse.data);
+      handleDrawerClose()
+      handleClearTemplate();
+      toast.success("Supplier Master updated successfully");
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
-
-  axios.request(config)
-    .then((response) => {
-      console.log(JSON.stringify(response.data));
-      fetchData()
-      handleEditDrawerClose()
-      toast.success("customer Master Updated successfully");
-
-    })
-    .catch((error) => {
-      console.log(error);
-    });
-};
 
   return (
     <Box>
@@ -573,7 +636,7 @@ const UpdateCustomerMaster = () => {
               onClick={handleEditDrawerOpen}
             >Edit </MenuItem>
             <MenuItem
-             onClick={DeleteProductMaster}
+              onClick={deleteCustomerMaster}
             >
               Delete</MenuItem>
           </Menu>
@@ -598,247 +661,10 @@ const UpdateCustomerMaster = () => {
           <Divider />
 
           <Box>
-            {/* <Box display="flex" alignItems="center" gap={2}>
-              <Box flex={1} >
-                <Box m={1.5}>
-                  <Typography>Account Code</Typography>
-                  <TextField
-                    value={accountCode}
-                    onChange={(e) => setAccountCode(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Account Code" fullWidth />
-
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography> Group  </Typography>
-                  <FormControl fullWidth size="small" margin="normal">
-
-                    <Select
-                      fullWidth
-                      size="small"
-                      value={selectedGroupOption}
-                      onChange={(event) => setSelectedGroupOption(event.target.value)}
-                    >
-                      {groupOption.length > 0 ? (
-                        groupOption.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem disabled>No options available</MenuItem>
-                      )}
-                    </Select>
-
-                  </FormControl>
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>Current Balance</Typography>
-                  <TextField
-                    value={currentBal}
-                    onChange={(e) => setCurrentBal(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Account Name" fullWidth />
-
-                </Box>
-
-
-                <Box m={1.5}>
-                  <Typography>Type Code</Typography>
-                  <TextField
-                    size="small" margin="normal" placeholder="Enter Type code" fullWidth />
-
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>Address 1</Typography>
-                  <TextField
-                    value={address1}
-                    onChange={(e) => setAddress1(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Address 1" fullWidth />
-
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>City </Typography>
-                  <FormControl fullWidth size="small" margin="normal">
-
-                    <Select
-                      fullWidth
-                      size="small"
-                      value={selectedCity || ""}
-                      onChange={(event) => setSelectedCity(event.target.value)}
-                    >
-                      {options.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-
-                  </FormControl>
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>Pincode</Typography>
-                  <TextField
-                    value={pincode}
-                    onChange={(e) => setPincode(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter pincode" fullWidth />
-
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>Mobile No</Typography>
-                  <PhoneInput
-                    country={"in"}
-                    value={mobileno}
-                    onChange={(phone) => setMobile(phone)}
-                    inputProps={{ name: "phone", required: true }}
-                    inputStyle={{
-                      width: "100%",
-                      height: "40px",
-                      fontSize: "16px",
-                      borderRadius: "5px",
-                    }}
-                    buttonStyle={{ borderRadius: "5px" }}
-                  />
-
-                </Box>
-
-              </Box>
-
-
-
-
-
-              <Box flex={1} >
-
-
-                <Box m={1.5}>
-                  <Typography>Account Name</Typography>
-                  <TextField
-                    value={AccountName}
-                    onChange={(e) => setAccountName(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Account Name" fullWidth />
-
-
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>Sub Group Id</Typography>
-                  <FormControl fullWidth size="small" margin="normal">
-
-                    <Select
-                      fullWidth
-                      size="small"
-                      value={selectedSubGroupOption}
-                      onChange={(event) => setSelectedSubGroupOption(event.target.value)}
-                    >
-                      {subGroupOption.length > 0 ? (
-                        subGroupOption.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))
-                      ) : (
-                        <MenuItem disabled>No options available</MenuItem>
-                      )}
-                    </Select>
-
-                  </FormControl>
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>Debit/Credit </Typography>
-                  <FormControl fullWidth size="small" margin="normal">
-
-                    <Select value={debitCredit} onChange={(event, newValue) => setDebitCredit(newValue)}  >
-                      <MenuItem value="">D</MenuItem>
-                      <MenuItem value="">C</MenuItem>
-                    </Select>
-
-                  </FormControl>
-                </Box>
-
-
-                {/* <Box m={1.5}>
-                  <Typography>Salesman </Typography>
-                  <FormControl fullWidth size="small" margin="normal">
-
-                    <Select>
-                      <MenuItem value=""></MenuItem>
-                    </Select>
-
-                  </FormControl>
-                </Box> */}
-
-            {/* <Box m={1.5}>
-                  <Typography>Address 2</Typography>
-                  <TextField
-                    value={address2}
-                    onChange={(e) => setAddress2(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Address 2" fullWidth />
-
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>State</Typography>
-                  <FormControl fullWidth size="small" margin="normal">
-
-                    <Select
-                      fullWidth
-                      size="small"
-                      value={selectedState || ""}
-                      onChange={(event) => setSelectedState(event.target.value)}
-                    >
-                      {stateOptions.map((option) => (
-                        <MenuItem key={option.value} value={option.value}>
-                          {option.label}
-                        </MenuItem>
-                      ))}
-                    </Select>
-
-                  </FormControl>
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>Email</Typography>
-                  <TextField
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Email" fullWidth />
-
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>URL</Typography>
-                  <TextField
-                    value={url}
-                    onChange={(e) => setURL(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter URL" fullWidth />
-
-                </Box>
-
-
-                <Box m={1.5}>
-              <Typography>GST No</Typography>
-              <TextField
-                value={gstNo}
-                onChange={(e) => SetGSTNo(e.target.value)}
-                size="small" margin="normal" placeholder="Enter GST No" fullWidth />
-
-            </Box>
-
-              </Box>
-
-            </Box> */}
-
-
             <Box display="flex" alignItems="flex-start" gap={2}>
               {/* Left Column */}
               <Box flex={1}>
-                <Box m={1.5}>
+                {/* <Box m={1.5}>
                   <Typography>Account Code</Typography>
                   <TextField
                     value={accountCode}
@@ -847,7 +673,20 @@ const UpdateCustomerMaster = () => {
                     placeholder="Enter Account Code"
                     fullWidth
                   />
+                </Box> */}
+
+
+                <Box m={1.5}>
+                  <Typography>Account Name</Typography>
+                  <TextField
+                    value={AccountName}
+                    onChange={(e) => setAccountName(e.target.value)}
+                    size="small"
+                    placeholder="Enter Account Name"
+                    fullWidth
+                  />
                 </Box>
+
 
                 <Box m={1.5}>
                   <Typography>Group</Typography>
@@ -869,24 +708,15 @@ const UpdateCustomerMaster = () => {
                   </FormControl>
                 </Box>
 
-                <Box m={1.5}>
-                  <Typography>Current Balance</Typography>
-                  <TextField
-                    value={currentBal}
-                    onChange={(e) => setCurrentBal(e.target.value)}
-                    size="small"
-                    placeholder="Enter Current Balance"
-                    fullWidth
-                  />
-                </Box>
+
 
                 <Box m={1.5}>
                   <Typography>Type Code</Typography>
                   <TextField
-                  value={typecode}
-                  disabled
-                  onChange={(e) => setTypecode(e.target.value)}
-                  size="small" placeholder="Enter Type Code" fullWidth />
+                    value={typecode}
+                    disabled
+                    onChange={(e) => setTypecode(e.target.value)}
+                    size="small" placeholder="Enter Type Code" fullWidth />
                 </Box>
 
                 <Box m={1.5}>
@@ -904,7 +734,7 @@ const UpdateCustomerMaster = () => {
                   <Typography>City</Typography>
                   <FormControl fullWidth size="small">
                     <Select
-                      value={selectedCity || ""}
+                      value={selectedCity}
                       onChange={(event) => setSelectedCity(event.target.value)}
                     >
                       {options.map((option) => (
@@ -948,12 +778,12 @@ const UpdateCustomerMaster = () => {
               {/* Right Column */}
               <Box flex={1}>
                 <Box m={1.5}>
-                  <Typography>Account Name</Typography>
+                  <Typography>Opening Balance</Typography>
                   <TextField
-                    value={AccountName}
-                    onChange={(e) => setAccountName(e.target.value)}
+                    value={currentBal}
+                    onChange={(e) => setCurrentBal(e.target.value)}
                     size="small"
-                    placeholder="Enter Account Name"
+                    placeholder="Enter Opening Balance"
                     fullWidth
                   />
                 </Box>
@@ -1029,7 +859,7 @@ const UpdateCustomerMaster = () => {
                   />
                 </Box>
 
-                <Box m={1.5}>
+                {/* <Box m={1.5}>
                   <Typography>URL</Typography>
                   <TextField
                     value={urls}
@@ -1038,7 +868,7 @@ const UpdateCustomerMaster = () => {
                     placeholder="Enter URL"
                     fullWidth
                   />
-                </Box>
+                </Box> */}
 
                 <Box m={1.5}>
                   <Typography>GST No</Typography>
@@ -1063,7 +893,7 @@ const UpdateCustomerMaster = () => {
                 }
                 label="Is System"
               />
-
+              {/* 
 
               <FormControlLabel
                 control={<Checkbox
@@ -1083,7 +913,7 @@ const UpdateCustomerMaster = () => {
 
                 />}
                 label="Compliance"
-              />
+              /> */}
             </Box>
 
           </Box>
@@ -1128,11 +958,11 @@ const UpdateCustomerMaster = () => {
 
 
           <Box>
-          
+
             <Box display="flex" alignItems="flex-start" gap={2}>
               {/* Left Column */}
               <Box flex={1}>
-                <Box m={1.5}>
+                {/* <Box m={1.5}>
                   <Typography>Account Code</Typography>
                   <TextField
                     value={updatedaccountCode}
@@ -1141,7 +971,20 @@ const UpdateCustomerMaster = () => {
                     placeholder="Enter Account Code"
                     fullWidth
                   />
+                </Box> */}
+                
+
+                <Box m={1.5}>
+                  <Typography>Account Name</Typography>
+                  <TextField
+                    value={updatedAccountName}
+                    onChange={(e) => setUpdatedAccountName(e.target.value)}
+                    size="small"
+                    placeholder="Enter Account Name"
+                    fullWidth
+                  />
                 </Box>
+
 
                 <Box m={1.5}>
                   <Typography>Group</Typography>
@@ -1163,24 +1006,15 @@ const UpdateCustomerMaster = () => {
                   </FormControl>
                 </Box>
 
-                <Box m={1.5}>
-                  <Typography>Current Balance</Typography>
-                  <TextField
-                    value={updatedcurrentBal}
-                    onChange={(e) =>setUpdatedCurrentBal(e.target.value)}
-                    size="small"
-                    placeholder="Enter Current Balance"
-                    fullWidth
-                  />
-                </Box>
+
 
                 <Box m={1.5}>
                   <Typography>Type Code</Typography>
-                  <TextField 
-                  value={updatedtypecode}
-                  disabled
-                  onChange={(e) => setUpdatedTypecode(e.target.value)}
-                  size="small" placeholder="Enter Type Code" fullWidth />
+                  <TextField
+                    value={updatedtypecode}
+                    disabled
+                    onChange={(e) => setUpdatedTypecode(e.target.value)}
+                    size="small" placeholder="Enter Type Code" fullWidth />
                 </Box>
 
                 <Box m={1.5}>
@@ -1241,13 +1075,13 @@ const UpdateCustomerMaster = () => {
 
               {/* Right Column */}
               <Box flex={1}>
-                <Box m={1.5}>
-                  <Typography>Account Name</Typography>
+              <Box m={1.5}>
+                  <Typography>Opening Balance</Typography>
                   <TextField
-                    value={updatedAccountName}
-                    onChange={(e) => setUpdatedAccountName(e.target.value)}
+                    value={updatedcurrentBal}
+                    onChange={(e) => setUpdatedCurrentBal(e.target.value)}
                     size="small"
-                    placeholder="Enter Account Name"
+                    placeholder="Enter Current Balance"
                     fullWidth
                   />
                 </Box>
@@ -1276,8 +1110,8 @@ const UpdateCustomerMaster = () => {
                   <Typography>Debit/Credit</Typography>
                   <FormControl fullWidth size="small">
                     <Select
-                      value={updateddebitCredit}
-                      onChange={(event) => setUpdatedDebitCredit(event.target.value)}
+                      value={debitCredit}
+                      onChange={(event) => setDebitCredit(event.target.value)}
                     >
                       <MenuItem value="D">D</MenuItem>
                       <MenuItem value="C">C</MenuItem>
@@ -1323,7 +1157,7 @@ const UpdateCustomerMaster = () => {
                   />
                 </Box>
 
-                <Box m={1.5}>
+                {/* <Box m={1.5}>
                   <Typography>URL</Typography>
                   <TextField
                     value={updatedurls}
@@ -1332,7 +1166,7 @@ const UpdateCustomerMaster = () => {
                     placeholder="Enter URL"
                     fullWidth
                   />
-                </Box>
+                </Box> */}
 
                 <Box m={1.5}>
                   <Typography>GST No</Typography>
@@ -1358,7 +1192,7 @@ const UpdateCustomerMaster = () => {
                 label="Is System"
               />
 
-
+              {/* 
               <FormControlLabel
                 control={<Checkbox
 
@@ -1377,7 +1211,7 @@ const UpdateCustomerMaster = () => {
 
                 />}
                 label="Compliance"
-              />
+              /> */}
             </Box>
 
           </Box>
@@ -1406,6 +1240,3 @@ const UpdateCustomerMaster = () => {
 }
 
 export default SupplierMaster
-
-
-

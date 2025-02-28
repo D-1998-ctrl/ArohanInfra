@@ -1,9 +1,8 @@
 
 import React, { useMemo, useState, useEffect } from 'react'
-import { Menu, Alert, Box, useMediaQuery, Button, IconButton, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
+import { Menu, Autocomplete, Alert, Box, useMediaQuery, Button, IconButton, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, Checkbox } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { MaterialReactTable, } from 'material-react-table';
-import suppliermaster from './suppliermaster.json'
 import { useTheme } from "@mui/material/styles";
 import '../Components/common.css'
 import axios from 'axios';
@@ -41,30 +40,30 @@ const CustomerMaster = () => {
     setAnchorEl(null);
   };
   const [idwiseData, setIdwiseData] = useState('')
-
+  const [accountId, setAccountId] = useState(null)
   const handleEdit = () => {
     if (currentRow) {
       console.log("Editing item with ID:", currentRow.original);
       setIdwiseData(currentRow.original.Id)
+      console.log(currentRow.original.Id)
+      setAccountId(currentRow.original.AccountId)
+      console.log(currentRow.original.AccountId)
       setUpdatedAccountName(currentRow.original.AccountName)
-      setSelectedGroupOption(currentRow.original.GroupId) 
-       setSelectedSubGroupOption(currentRow.original.SubGroupId)
-       setUpdatedCurrentBal(currentRow.original.OpeningBalance)
-       setDebitCredit(currentRow.original.DrORCr)
-       setUpdatedAddress1(currentRow.original.Address1)
-       setUpdatedAddress2(currentRow.original.Address2)
-      //  selectedCity(currentRow.original.CityId)
-      //  selectedState(currentRow.original.StateId)
-       setUpdatedEmail(currentRow.original.EmailId)
-
-       setUpdatedPincode(currentRow.original.Pincode)
-       setupdatedMobile(currentRow.original.MobileNo)
-       SetupdatedGSTNo(currentRow.original.GSTNo)
-       setupdatedIsSystem(currentRow.original.IsSystem)
+      setSelectedGroupOption(currentRow.original.GroupId)
+      setSelectedSubGroupOption(currentRow.original.SubGroupId)
+      setUpdatedCurrentBal(currentRow.original.OpeningBalance)
+      setDebitCredit(currentRow.original.DrORCr)
+      setUpdatedAddress1(currentRow.original.Address1)
+      setUpdatedAddress2(currentRow.original.Address2)
+      setSelectedCity(currentRow.original.CityId)
+      setSelectedState(currentRow.original.StateId)
+      setUpdatedEmail(currentRow.original.EmailId)
+      setUpdatedPincode(currentRow.original.Pincode)
+      setupdatedMobile(currentRow.original.MobileNo)
+      SetupdatedGSTNo(currentRow.original.GSTNo)
+      setupdatedIsSystem(currentRow.original.IsSystem)
     }
   };
-
-  console.log('idwiseData', idwiseData)
 
   // edit drawer
   const [isEditDrawerOpen, setEditIsDrawerOpen] = useState(false);
@@ -90,22 +89,92 @@ const CustomerMaster = () => {
       // const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=customermaster", requestOptions);
       const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/getaccountaddress.php?Typecode=C", requestOptions);
       const result = await response.json();
-      console.log("Fetched result:", result);  
+      console.log("Fetched result:", result);
       setData(result);
-      setID(result.map(item => item.Id));
-      console.log('id', setID)
-
     } catch (error) {
       console.error(error);
     }
   };
 
 
-    
-  console.log("result", data);
+
+
   useEffect(() => {
     fetchData();
   }, []);
+
+
+  // const deleteCustomerMaster = () => {
+  //   const requestOptions = {
+  //     method: "GET",
+  //     redirect: "follow"
+  //   };
+
+  //   // Delete Account 
+  //   fetch(`https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Account&Id=${currentRow.original.AccountId}`, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((result) => console.log("Deleted Account:", result))
+  //     .catch((error) => console.error("Error deleting Account:", error));
+
+  //   // Delete Address 
+  //   fetch(`https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((result) => console.log("Deleted Address:", result))
+  //     .catch((error) => console.error("Error deleting Address:", error));
+  // };
+
+
+  const deleteCustomerMaster = async () => {
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow"
+    };
+
+    try {
+      // Delete Address First
+      const addressResponse = await fetch(
+        `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`,
+        requestOptions
+      );
+      const addressResult = await addressResponse.json();
+      console.log("Deleted Address:", addressResult);
+
+      // Delete Account After Address
+      const accountResponse = await fetch(
+        `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Account&Id=${currentRow.original.AccountId}`,
+        requestOptions
+      );
+      const accountResult = await accountResponse.json();
+      console.log("Deleted Account:", accountResult);
+
+    } catch (error) {
+      console.error("Error deleting:", error);
+    }
+  };
+
+
+  // const deleteCustomerMaster = () => {
+  //   if (currentRow) {
+  //     console.log("Editing item with ID:", currentRow.original.Id);
+
+  //   }
+  //   const requestOptions = {
+  //     method: "GET",
+  //     redirect: "follow"
+  //   };
+  //   const url = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`
+  //   console.log(url)
+  //   fetch(url, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((result) => {
+  //       console.log(result)
+
+  //       toast.success("customermaster deleted successfully!");
+
+
+  //     })
+  //     .catch((error) => console.error(error));
+  // }
 
   const columns = useMemo(() => {
     return [
@@ -121,35 +190,36 @@ const CustomerMaster = () => {
         size: 150,
       },
 
-  
-     
       {
         accessorKey: 'DrORCr',
         header: 'Debit/Credit',
         size: 150,
       },
 
-
       {
         accessorKey: 'Address1',
         header: 'Address 1',
         size: 150,
       },
+
       {
         accessorKey: 'Address2',
         header: 'Address 2',
         size: 150,
       },
+
       {
         accessorKey: 'EmailId',
         header: 'Email Id',
         size: 150,
       },
+
       {
         accessorKey: 'MobileNo',
         header: 'Mobile No',
         size: 150,
       },
+
       {
         accessorKey: 'GSTNo',
         header: 'GST No',
@@ -180,7 +250,7 @@ const CustomerMaster = () => {
 
   //
   const [accountCode, setAccountCode] = useState('')
-  const [updatedaccountCode, setUpdatedAccountCode] = useState('')
+
   const [AccountName, setAccountName] = useState('');
   const [updatedAccountName, setUpdatedAccountName] = useState('');
 
@@ -188,7 +258,7 @@ const CustomerMaster = () => {
   const [updatedcurrentBal, setUpdatedCurrentBal] = useState('');
 
   const [debitCredit, setDebitCredit] = useState('');
-  const [updateddebitCredit, setUpdatedDebitCredit] = useState('');
+
 
   const [typecode, setTypecode] = useState('C');
   const [updatedtypecode, setUpdatedTypecode] = useState('C');
@@ -212,7 +282,7 @@ const CustomerMaster = () => {
 
 
   const [urls, setURLs] = useState('');
-  const [updatedurls, setUpdatedURLs] = useState('');
+
 
   const [gstNo, SetGSTNo] = useState('');
   const [updatedgstNo, SetupdatedGSTNo] = useState('');
@@ -222,10 +292,10 @@ const CustomerMaster = () => {
   const [updatedissystem, setupdatedIsSystem] = useState(false);
 
   const [gst, setGst] = useState(false);
-  const [updatedgst, setupdatedGst] = useState(false);
+
 
   const [compliance, setCompliance] = useState(false);
-  const [updatedcompliance, setupdatedCompliance] = useState(false);
+
 
   //fetch groupId
   const [groupOption, setGroupOption] = useState('');
@@ -284,7 +354,6 @@ const CustomerMaster = () => {
 
   //for cityId
   const [options, setOptions] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [selectedCity, setSelectedCity] = useState(null);
 
   const fetchCity = async () => {
@@ -356,59 +425,11 @@ const CustomerMaster = () => {
     // fetchDataById(idwiseData)
   }, [idwiseData]);
 
-  const [accountId, setAccountId] = useState()
-  const[updatedacountId,setUpdatedAccountId]= useState()
 
   //create Customer Master
-  // const CreateCustomerMaster = () => {
-  //   const urlencoded = new URLSearchParams();
-  //   urlencoded.append("AccountCode", accountCode);
-  //   urlencoded.append("AccountName", AccountName);
-  //   urlencoded.append("GroupId", selectedGroupOption);
-  //   urlencoded.append("SubGroupId", selectedSubGroupOption);
-  //   urlencoded.append("DrOrCr", debitCredit);
-  //   urlencoded.append("TypeCode", "C");
-  //   urlencoded.append("CurrentBalance", currentBal);
-  //   urlencoded.append("Address1", address1);
-  //   urlencoded.append("Address2", address2);
-  //   urlencoded.append("CityId", selectedCity);
-  //   urlencoded.append("StateId", selectedState);
-  //   urlencoded.append("Pincode", pincode);
-  //   urlencoded.append("EmailId", email);
-  //   urlencoded.append("MobileNo", mobileno);
-  //   urlencoded.append("URL", urls);
-  //   urlencoded.append("GSTNo", gstNo);
-  //   urlencoded.append("IsSystem", issystem);
-  //   urlencoded.append("GST", gst);
-  //   urlencoded.append("Compilance", compliance);
-  //   const requestOptions = {
-  //     headers: {
-  //       "Content-Type": "application/x-www-form-urlencoded",
-  //     },
-  //   };
-
-  //   axios
-  //     .post(
-  //       "https://arohanagroapi.microtechsolutions.co.in/php/postcustomermaster.php",
-  //       urlencoded,
-  //       requestOptions
-  //     )
-  //     .then((response) => {
-  //       console.log("API Response:", response.data);
-  //       handleClearTemplate();
-  //       fetchData();
-  //       handleDrawerClose()
-  //       toast.success("Customer Master created successfully");
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error:", error);
-  //     });
-  // };
-
-  //create CustomerMaster
   const CreateCustomerMaster = async () => {
     try {
-      // Step 1: Post Account Data
+      // Post Account Data
       let accountData = qs.stringify({
         'AccountName': AccountName,
         'GroupId': selectedGroupOption,
@@ -432,13 +453,14 @@ const CustomerMaster = () => {
 
       const accountResponse = await axios.request(accountConfig);
       console.log("Account Response:", accountResponse.data);
-      let accId = parseInt(accountResponse.data.Id)
-      setAccountId(accId)
-      console.log('accId',accountId)
 
-  
+      let accId = parseInt(accountResponse.data.Id);
+      setAccountId(accId);
+      console.log('accId', accId);
+
+
       let addressData = qs.stringify({
-       'AccountId': accountId,
+        'AccountId': accId,
         'Address1': address1,
         'Address2': address2,
         'Address3': '',
@@ -467,6 +489,7 @@ const CustomerMaster = () => {
 
       const addressResponse = await axios.request(addressConfig);
       console.log("Address Response:", addressResponse.data);
+      handleDrawerClose()
       handleClearTemplate();
       toast.success("Customer Master created successfully");
     } catch (error) {
@@ -474,7 +497,9 @@ const CustomerMaster = () => {
     }
   };
 
-//clr all fields
+
+
+  //clr all fields
   const handleClearTemplate = () => {
     setAccountCode('');
     setAccountName('');
@@ -496,120 +521,11 @@ const CustomerMaster = () => {
     setCompliance('');
   }
 
-  //for delete 
-  const DeleteProductMaster = () => {
-    // if (currentRow) {
-    //   console.log("Editing item with ID:", currentRow.original.Id);
 
-    // }
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow"
-    };
-    const url = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=customermaster&Id=${currentRow.original.Id}`
-    console.log(url)
-    fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result)
-
-        toast.success("customermaster deleted successfully!");
-
-
-      })
-      .catch((error) => console.error(error));
-  }
-
-  //get Data by Id
-  // const fetchDataById = () => {
-  //   const requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow",
-  //   };
-
-  //   fetch(
-     
-  //     `https://arohanagroapi.microtechsolutions.co.in/php/getbyid.php?Id=${idwiseData}&Table=customermaster`,
- 
-  //     requestOptions
-  //   )
-  //     .then((response) => response.json())
-  //     .then((result) => {
-  //       console.log(result)
-  //       setUpdatedAccountCode(result.AccountCode)
-  //       setUpdatedAccountName(result.AccountName)
-  //       setUpdatedCurrentBal(result.CurrentBalance)
-  //       setUpdatedDebitCredit(result.DrOrCr)
-  //       setUpdatedTypecode(result.TypeCode)
-  //       setUpdatedAddress1(result.Address1)
-  //       setUpdatedAddress2(result.Address2)
-  //       setUpdatedPincode(result.Pincode)
-  //       setupdatedMobile(result.MobileNo)
-  //       setUpdatedURLs(result.URL)
-  //       SetupdatedGSTNo(result.GSTNo)
-  //       setupdatedIsSystem(result.IsSystem)
-  //       setupdatedGst(result.GST)
-  //       setupdatedCompliance(result.Compilance)
-  //       setSelectedGroupOption(result.GroupId)
-  //       setSelectedSubGroupOption(result.SubGroupId)
-  //       setSelectedCity(result.CityId)
-  //       setSelectedState(result.StateId)
-  //       setUpdatedEmail(result.EmailId)
-
-  //     })
-  //     .catch((error) => console.error(error));
-  // };
- 
-  
-  // const UpdateCustomerMaster = () => {
-  //   const qs = require('qs');
-  //   let data = qs.stringify({
-  //     'AccountCode': updatedaccountCode,
-  //     'AccountName': updatedAccountName,
-  //     'GroupId': selectedGroupOption,
-  //     'SubGroupId': selectedSubGroupOption,
-  //     'DrOrCr': debitCredit,
-  //     'TypeCode': 'C',
-  //     'Address1': updatedaddress1,
-  //     'Address2': updatedaddress2,
-  //     'CityId': selectedCity,
-  //     'StateId': selectedGroupOption,
-  //     'Pincode': updatedpincode,
-  //     'EmailId': updatedemail,
-  //     'MobileNo': updatedmobileno,
-  //     'URL': updatedurls,
-  //     'GSTNo': updatedgstNo,
-  //     'IsSystem': updatedissystem,
-  //     'GST': updatedgst,
-  //     'Compilance': updatedcompliance,
-  //     'CurrentBalance': updatedcurrentBal,
-  //     'Id': idwiseData
-  //   });
-
-  //   let config = {
-  //     method: 'post',
-  //     maxBodyLength: Infinity,
-  //     url: 'https://arohanagroapi.microtechsolutions.co.in/php/updatecustomermaster.php',
-  //     headers: {
-  //       'Content-Type': 'application/x-www-form-urlencoded'
-  //     },
-  //     data: data
-  //   };
-
-  //   axios.request(config)
-  //     .then((response) => {
-  //       console.log(JSON.stringify(response.data));
-  //       handleEditDrawerClose()
-  //       toast.success("customer Master Updated successfully");
-
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //     });
-  // };
+  //for update
   const UpdateCustomerMaster = async () => {
     try {
-      // Step 1: Post Account Data
+      //  Post Account Data
       let accountData = qs.stringify({
         'AccountName': updatedAccountName,
         'GroupId': selectedGroupOption,
@@ -618,48 +534,50 @@ const CustomerMaster = () => {
         'DrORCr': debitCredit,
         'TypeCode': 'C',
         'IsSystem': updatedissystem,
-        'Depriciation': "0"
+        'Depriciation': "0",
+        'Id': idwiseData
       });
 
       let accountConfig = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'https://arohanagroapi.microtechsolutions.co.in/php/postaccount.php',
+        url: 'https://arohanagroapi.microtechsolutions.co.in/php/updateaccount.php',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
         data: accountData
       };
 
-      const accountResponse = await axios.request(accountConfig);
-      console.log("Account Response:", accountResponse.data);
-      let accId = parseInt(accountResponse.data.Id)
-      setAccountId(accId)
-      console.log('accId',accountId)
+      const updateaccountResponse = await axios.request(accountConfig);
+      console.log("updateAccount Response:", updateaccountResponse.data);
+      // let accId = parseInt(accountResponse.data.Id)
+      // setAccountId(accId)
+      console.log('accId', accountId)
 
-  
+
       let addressData = qs.stringify({
-       'AccountId': accountId,
+        'AccountId': accountId,
         'Address1': updatedaddress1,
         'Address2': updatedaddress2,
         'Address3': '',
         'AreaId': '0',
         'CityId': selectedCity,
         'StateId': selectedState,
-        'Pincode': updatedtypecode,
+        'Pincode': updatedpincode,
         'CountryId': '0',
         'TelephoneNo': '0',
         'FaxNo': '0',
         'MobileNo': updatedmobileno,
         'EmailId': updatedemail,
         'PANNo': '0',
-        'GSTNo': updatedgstNo
+        'GSTNo': updatedgstNo,
+        'Id': idwiseData
       });
 
       let addressConfig = {
         method: 'post',
         maxBodyLength: Infinity,
-        url: 'https://arohanagroapi.microtechsolutions.co.in/php/postaddress.php',
+        url: 'https://arohanagroapi.microtechsolutions.co.in/php/updateaddress.php',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
         },
@@ -668,6 +586,7 @@ const CustomerMaster = () => {
 
       const addressResponse = await axios.request(addressConfig);
       console.log("Address Response:", addressResponse.data);
+      handleDrawerClose()
       handleClearTemplate();
       toast.success("Customer Master updated successfully");
     } catch (error) {
@@ -716,7 +635,7 @@ const CustomerMaster = () => {
               onClick={handleEditDrawerOpen}
             >Edit </MenuItem>
             <MenuItem
-              onClick={DeleteProductMaster}
+              onClick={deleteCustomerMaster}
             >
               Delete</MenuItem>
           </Menu>
@@ -744,7 +663,7 @@ const CustomerMaster = () => {
             <Box display="flex" alignItems="flex-start" gap={2}>
               {/* Left Column */}
               <Box flex={1}>
-                <Box m={1.5}>
+                {/* <Box m={1.5}>
                   <Typography>Account Code</Typography>
                   <TextField
                     value={accountCode}
@@ -753,7 +672,22 @@ const CustomerMaster = () => {
                     placeholder="Enter Account Code"
                     fullWidth
                   />
+                </Box> */}
+
+
+                <Box m={1.5}>
+                  <Typography>Account Name</Typography>
+                  <TextField
+                    value={AccountName}
+                    onChange={(e) => setAccountName(e.target.value)}
+                    size="small"
+                    placeholder="Enter Account Name"
+                    fullWidth
+                  />
                 </Box>
+
+
+
 
                 <Box m={1.5}>
                   <Typography>Group</Typography>
@@ -773,17 +707,6 @@ const CustomerMaster = () => {
                       )}
                     </Select>
                   </FormControl>
-                </Box>
-
-                <Box m={1.5}>
-                  <Typography>Current Balance</Typography>
-                  <TextField
-                    value={currentBal}
-                    onChange={(e) => setCurrentBal(e.target.value)}
-                    size="small"
-                    placeholder="Enter Current Balance"
-                    fullWidth
-                  />
                 </Box>
 
                 <Box m={1.5}>
@@ -854,18 +777,18 @@ const CustomerMaster = () => {
               {/* Right Column */}
               <Box flex={1}>
                 <Box m={1.5}>
-                  <Typography>Account Name</Typography>
+                  <Typography>Opening Balance</Typography>
                   <TextField
-                    value={AccountName}
-                    onChange={(e) => setAccountName(e.target.value)}
+                    value={currentBal}
+                    onChange={(e) => setCurrentBal(e.target.value)}
                     size="small"
-                    placeholder="Enter Account Name"
+                    placeholder="Enter Opening Balance"
                     fullWidth
                   />
                 </Box>
 
                 <Box m={1.5}>
-                  <Typography>Sub Group Id</Typography>
+                  <Typography>Sub Group </Typography>
                   <FormControl fullWidth size="small">
                     <Select
                       value={selectedSubGroupOption}
@@ -935,7 +858,7 @@ const CustomerMaster = () => {
                   />
                 </Box>
 
-                <Box m={1.5}>
+                {/* <Box m={1.5}>
                   <Typography>URL</Typography>
                   <TextField
                     value={urls}
@@ -944,7 +867,7 @@ const CustomerMaster = () => {
                     placeholder="Enter URL"
                     fullWidth
                   />
-                </Box>
+                </Box> */}
 
                 <Box m={1.5}>
                   <Typography>GST No</Typography>
@@ -969,7 +892,7 @@ const CustomerMaster = () => {
                 }
                 label="Is System"
               />
-
+              {/* 
 
               <FormControlLabel
                 control={<Checkbox
@@ -989,7 +912,7 @@ const CustomerMaster = () => {
 
                 />}
                 label="Compliance"
-              />
+              /> */}
             </Box>
 
           </Box>
@@ -1038,13 +961,25 @@ const CustomerMaster = () => {
             <Box display="flex" alignItems="flex-start" gap={2}>
               {/* Left Column */}
               <Box flex={1}>
-                <Box m={1.5}>
+                {/* <Box m={1.5}>
                   <Typography>Account Code</Typography>
                   <TextField
                     value={updatedaccountCode}
                     onChange={(e) => setUpdatedAccountCode(e.target.value)}
                     size="small"
                     placeholder="Enter Account Code"
+                    fullWidth
+                  />
+                </Box> */}
+             
+
+                <Box m={1.5}>
+                  <Typography>Account Name</Typography>
+                  <TextField
+                    value={updatedAccountName}
+                    onChange={(e) => setUpdatedAccountName(e.target.value)}
+                    size="small"
+                    placeholder="Enter Account Name"
                     fullWidth
                   />
                 </Box>
@@ -1069,16 +1004,7 @@ const CustomerMaster = () => {
                   </FormControl>
                 </Box>
 
-                <Box m={1.5}>
-                  <Typography>Current Balance</Typography>
-                  <TextField
-                    value={updatedcurrentBal}
-                    onChange={(e) => setUpdatedCurrentBal(e.target.value)}
-                    size="small"
-                    placeholder="Enter Current Balance"
-                    fullWidth
-                  />
-                </Box>
+
 
                 <Box m={1.5}>
                   <Typography>Type Code</Typography>
@@ -1147,13 +1073,13 @@ const CustomerMaster = () => {
 
               {/* Right Column */}
               <Box flex={1}>
-                <Box m={1.5}>
-                  <Typography>Account Name</Typography>
+              <Box m={1.5}>
+                  <Typography>Opening Balance</Typography>
                   <TextField
-                    value={updatedAccountName}
-                    onChange={(e) => setUpdatedAccountName(e.target.value)}
+                    value={updatedcurrentBal}
+                    onChange={(e) => setUpdatedCurrentBal(e.target.value)}
                     size="small"
-                    placeholder="Enter Account Name"
+                    placeholder="Enter Current Balance"
                     fullWidth
                   />
                 </Box>
@@ -1182,8 +1108,8 @@ const CustomerMaster = () => {
                   <Typography>Debit/Credit</Typography>
                   <FormControl fullWidth size="small">
                     <Select
-                      value={updateddebitCredit}
-                      onChange={(event) => setUpdatedDebitCredit(event.target.value)}
+                      value={debitCredit}
+                      onChange={(event) => setDebitCredit(event.target.value)}
                     >
                       <MenuItem value="D">D</MenuItem>
                       <MenuItem value="C">C</MenuItem>
@@ -1229,7 +1155,7 @@ const CustomerMaster = () => {
                   />
                 </Box>
 
-                <Box m={1.5}>
+                {/* <Box m={1.5}>
                   <Typography>URL</Typography>
                   <TextField
                     value={updatedurls}
@@ -1238,7 +1164,7 @@ const CustomerMaster = () => {
                     placeholder="Enter URL"
                     fullWidth
                   />
-                </Box>
+                </Box> */}
 
                 <Box m={1.5}>
                   <Typography>GST No</Typography>
@@ -1264,7 +1190,7 @@ const CustomerMaster = () => {
                 label="Is System"
               />
 
-
+              {/* 
               <FormControlLabel
                 control={<Checkbox
 
@@ -1283,7 +1209,7 @@ const CustomerMaster = () => {
 
                 />}
                 label="Compliance"
-              />
+              /> */}
             </Box>
 
           </Box>

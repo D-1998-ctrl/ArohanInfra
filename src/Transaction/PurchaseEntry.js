@@ -185,6 +185,7 @@ const PurchaseEntry = () => {
   const [quantity, setQuantity] = useState(0);
   const [amount, SetAmount] = useState(0);
   const [selectedProduct, setSelectedProduct] = useState("");
+
   const [selectedCGST, setSelectedCGST] = useState("0");
   const [selectedSGST, setSelectedSGST] = useState("0");
   const [selectedIGST, setSelectedIGST] = useState("0");
@@ -196,6 +197,12 @@ const PurchaseEntry = () => {
   const [other, setOther] = useState('')
   const [showEntry, setShowEntry] = useState(0)
   const [materialId, setMaterialId] = useState()
+
+
+
+
+
+
   const fetchMaterialMaster = async () => {
     try {
       const response = await axios.get(
@@ -235,8 +242,8 @@ const PurchaseEntry = () => {
   const fetchTypeCodeS = async () => {
     try {
       const response = await axios.get(
-        // 'https://arohanagroapi.microtechsolutions.co.in/php/gettypecode.php?TypeCode=S',
-        "https://arohanagroapi.microtechsolutions.co.in/php/getbyid.php?Table=Account&Colname=TypeCode&Colvalue=S"
+        'https://arohanagroapi.microtechsolutions.co.in/php/gettypecode.php?TypeCode=S',
+        // "https://arohanagroapi.microtechsolutions.co.in/php/getbyid.php?Table=Account&Colname=TypeCode&Colvalue=S"
       );
       console.log("fetchTypeCodeS", response.data);
       setOptions(response.data);
@@ -314,6 +321,7 @@ const PurchaseEntry = () => {
     const newRow = {
       Id: rows.length + 1,
       MaterialId: selectedProduct,
+      MaterialName: materialName,
       Quantity: quantity,
       Rate: rate,
       Amount: amount,
@@ -341,6 +349,7 @@ const PurchaseEntry = () => {
       updatedRows[editingRow] = {
         ...updatedRows[editingRow],
         MaterialId: selectedProduct,
+        MaterialName: materialName,
         Quantity: quantity,
         Rate: rate,
         Amount: amount,
@@ -394,7 +403,6 @@ const PurchaseEntry = () => {
     setTransport(rowData.TransportCharges)
     //Other
     setOther(rowData.Other)
-
     setSelectedId(rowData.SupplierId)
     console.log(rowData.SupplierId)
 
@@ -443,42 +451,6 @@ const PurchaseEntry = () => {
   const [PurchaseDate, setPurchaseDate] = useState(null);
   const [BillDate, setBillDate] = useState(null);
 
-  const testinghandle = () => {
-    const qs = require('qs');
-    let data = qs.stringify({
-      'PurchaseNo': '101',
-      'PurchaseDate': '2023-02-04',
-      'SupplierId': '1',
-      'BillNo': '121',
-      'BillDate': '2024-06-03',
-      'CGSTAmount': '120',
-      'SGSTAmount': '3',
-      'IGSTAmount': '7',
-      'TransportCharges': '100',
-      'Other': '47',
-      'Total': '1200',
-      'SubTotal': '7631',
-      'IsLocked': 'true'
-    });
-
-    let config = {
-      method: 'post',
-      maxBodyLength: Infinity,
-      url: 'https://arohanagroapi.microtechsolutions.co.in/php/postpurchaseheader.php',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      data: data
-    };
-
-    axios.request(config)
-      .then((response) => {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
 
   ///create an update purchase entry
   const handleSubmit = async (e) => {
@@ -538,6 +510,9 @@ const PurchaseEntry = () => {
           SGSTAmount: parseFloat(row.SGSTAmount),
           IGSTPercentage: parseFloat(row.IGSTPercentage),
           IGSTAmount: parseFloat(row.IGSTAmount),
+          Brandname: brandName
+
+
         };
 
 
@@ -579,6 +554,7 @@ const PurchaseEntry = () => {
       resetForm();
 
       console.log("Purchase Header Data:", purchaseheaderdata);
+
     } catch (error) {
       console.error("Error submitting Purchase:", error);
     }
@@ -609,15 +585,10 @@ const PurchaseEntry = () => {
 
   const handleEdit = () => {
     console.log("Editing item with ID:", rowId);
-
-
     const invdetail = purchasedetails.filter(
       (detail) => detail.PurchaseId === rowId
     );
-
     console.log('invdetail', invdetail)
-
-
 
     // Map the details to rows
     const mappedRows = invdetail.map((detail) => ({
@@ -691,8 +662,6 @@ const PurchaseEntry = () => {
   };
 
   //
-
-
   const handleEditRow = (index) => {
     const row = rows[index];
     setEditingRow(index);
@@ -711,138 +680,159 @@ const PurchaseEntry = () => {
 
 
   return (
-    <Box>
-      <Box sx={{ borderRadius: '10px', p: 5, height: 'auto' }}>
-        <Box textAlign={'center'}>
-          <Typography variant='h4'><b>Purchase Entry</b></Typography>
-        </Box>
 
-        <Box sx={{ display: 'flex', gap: 3 }}>
-          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleNewClick}>Create Purchase Entry </Button>
-          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={testinghandle}>testing</Button>
+    <Box m={2} >
+      <Box textAlign={'center'}>
+        <Typography variant='h4' color='var(--complementary-color)'><b>Purchase Entry</b></Typography>
+      </Box>
 
-        </Box>
+      <Box sx={{ display: 'flex', gap: 3 }}>
+        <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleNewClick}>Create Purchase Entry </Button>
+      </Box>
 
 
 
-        <Box mt={2}>
-          <MaterialReactTable table={table}
-            enableColumnResizing
-            muiTableHeadCellProps={{
-              sx: {
-
-                color: 'var(--primary-color)',
-
-              },
-            }}
-
-          />
-        </Box>
-
-
-
-        <Drawer
-          anchor="right"
-          open={isDrawerOpen}
-          onClose={handleDrawerClose}
-          PaperProps={{
+      <Box mt={2}>
+        <MaterialReactTable table={table}
+          enableColumnResizing
+          muiTableHeadCellProps={{
             sx: {
-              borderRadius: isSmallScreen ? "0" : "10px 0 0 10px",
-              width: isSmallScreen ? "100%" : "65%",
-              zIndex: 1000,
+
+              color: 'var(--primary-color)',
+
             },
           }}
-        >
-          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 
-            <Box>
-              {showEntry === 1 &&
-              
-              <p>Create Purchase Entry</p>}
-              {showEntry === 2 && <Box
-                sx={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: 2,
-                 
-                  background: 'rgb(236, 253, 230)'
-                }}
-              >
-                <Typography fontWeight="bold" variant="h6">Purchase Entry Detail</Typography>
+        />
+      </Box>
 
-                <IconButton onClick={handleMenuOpen}>
+
+
+      <Drawer
+        anchor="right"
+        open={isDrawerOpen}
+        onClose={handleDrawerClose}
+        PaperProps={{
+          sx: {
+            borderRadius: isSmallScreen ? "0" : "10px 0 0 10px",
+            width: isSmallScreen ? "100%" : "65%",
+            zIndex: 1000,
+          },
+        }}
+      >
+        <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgb(236, 253, 230)' }}>
+
+          <Box  >
+            {showEntry === 1 &&
+              <Typography m={2} variant="h6"><b>Create Purchase Entry</b></Typography>
+            }
+            {showEntry === 2 && <Box
+
+            >
+              <Box display="flex" justifyContent="space-between" alignItems="center" m={2}>
+                <Typography fontWeight="bold" variant="h6">
+                  Purchase Entry Detail
+                </Typography>
+                <IconButton color='#000' onClick={handleMenuOpen}>
                   <BorderColorIcon />
                 </IconButton>
-
-
               </Box>
-              }
-              {showEntry === 3 && <p>Update Purchase Entry</p>}
+
 
             </Box>
-            <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleDrawerClose} />
-          </Box>
-          <Divider />
-          {(showEntry === 1 || showEntry === 3) &&
-            <Box>
+            }
+            {showEntry === 3 &&
+              <Typography m={2} variant="h6"><b>Update Purchase Entry </b></Typography>
 
-              <Box>
-                <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
+
+            }
+
+          </Box>
+          <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleDrawerClose} />
+        </Box>
+        <Divider />
+        {(showEntry === 1 || showEntry === 3) &&
+          <Box>
+
+            <Box>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
+                <Box flex={1}>
+                  <Box>
+                    <Typography>Purchase No</Typography>
+                    <TextField
+                      value={PurchaseNo}
+                      onChange={(e) => setPurchaseNo(e.target.value)}
+                      size="small" margin="normal" placeholder='Purchase No' fullWidth />
+                  </Box>
                   <Box flex={1}>
-                    <Box>
-                      <Typography>Purchase No</Typography>
-                      <TextField
-                        value={PurchaseNo}
-                        onChange={(e) => setPurchaseNo(e.target.value)}
-                        size="small" margin="normal" placeholder='Purchase No' fullWidth />
-                    </Box>
-                    <Box flex={1}>
-                      <Typography>Party</Typography>
-                      {/* <TextField
+                    <Typography>Party</Typography>
+                    {/* <TextField
                     // value={reorderLevel}
                     // onChange={(e) => setReorderLevel(e.target.value)}
                     size="small" margin="normal" placeholder='Party' fullWidth /> */}
-                      <Select
-                        fullWidth
-                        size="small"
-                        value={selectedId || ""}
-                        onChange={(event) => {
-                          const selectedValue = event.target.value;
-                          setSelectedId(selectedValue);
+                    <Select
+                      fullWidth
+                      size="small"
+                      value={selectedId || ""}
+                      onChange={(event) => {
+                        const selectedValue = event.target.value;
+                        setSelectedId(selectedValue);
 
-                          const selectedItem = options.find(option => option.Id.toString() === selectedValue);
-                          setSelectedGSTNo(selectedItem ? selectedItem.GSTNo : "");
-                        }}
-                      >
-                        {options.map((option) => (
-                          <MenuItem key={option.Id} value={option.Id.toString()}>
-                            {option.AccountName}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </Box>
-
-                    <Box>
-                      <Typography>Bill no</Typography>
-                      <TextField
-                        value={billNo}
-                        onChange={(e) => setBillNo(e.target.value)}
-                        size="small" margin="normal" placeholder='Bill no' fullWidth />
-                    </Box>
+                        const selectedItem = options.find(option => option.Id.toString() === selectedValue);
+                        setSelectedGSTNo(selectedItem ? selectedItem.GSTNo : "");
+                      }}
+                    >
+                      {options.map((option) => (
+                        <MenuItem key={option.Id} value={option.Id.toString()}>
+                          {option.AccountName}
+                        </MenuItem>
+                      ))}
+                    </Select>
                   </Box>
 
+                  <Box>
+                    <Typography>Bill no</Typography>
+                    <TextField
+                      value={billNo}
+                      onChange={(e) => setBillNo(e.target.value)}
+                      size="small" margin="normal" placeholder='Bill no' fullWidth />
+                  </Box>
+                </Box>
 
-                  <Box flex={1}>
+
+                <Box flex={1}>
 
 
-                    <Box flex={1} >
+                  <Box flex={1} >
 
-                      <Typography variant="body2">Purchase Date</Typography>
+                    <Typography variant="body2">Purchase Date</Typography>
+                    <LocalizationProvider dateAdapter={AdapterDateFns}>
+                      <DatePicker
+                        value={PurchaseDate ? new Date(PurchaseDate) : null} // Convert to Date object
+                        onChange={(newValue) => setPurchaseDate(newValue)}
+                        slotProps={{
+                          textField: { size: "small", fullWidth: true },
+                        }}
+                        renderInput={(params) => <TextField />}
+                      />
+                    </LocalizationProvider>
+                  </Box>
+
+                  <Box mt={2}>
+                    <Typography>Brand Name</Typography>
+                    <TextField
+                      value={brandName}
+                      onChange={(e) => setBrandName(e.target.value)}
+                      size="small" margin="normal" placeholder='Brand Name' fullWidth />
+                  </Box>
+
+                  <Box >
+                    <Box flex={1}>
+                      <Typography variant="body2">Bill Date</Typography>
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
-                          value={PurchaseDate ? new Date(PurchaseDate) : null} // Convert to Date object
-                          onChange={(newValue) => setPurchaseDate(newValue)}
+                          value={BillDate ? new Date(BillDate) : null} // Convert to Date object
+                          onChange={(newValue) => setBillDate(newValue)}
                           slotProps={{
                             textField: { size: "small", fullWidth: true },
                           }}
@@ -850,449 +840,427 @@ const PurchaseEntry = () => {
                         />
                       </LocalizationProvider>
                     </Box>
-
-                    <Box mt={2}>
-                      <Typography>Brand Name</Typography>
-                      <TextField
-                        value={brandName}
-                        onChange={(e) => setBrandName(e.target.value)}
-                        size="small" margin="normal" placeholder='Brand Name' fullWidth />
-                    </Box>
-
-                    <Box >
-                      <Box flex={1}>
-                        <Typography variant="body2">Bill Date</Typography>
-                        <LocalizationProvider dateAdapter={AdapterDateFns}>
-                          <DatePicker
-                            value={BillDate ? new Date(BillDate) : null} // Convert to Date object
-                            onChange={(newValue) => setBillDate(newValue)}
-                            slotProps={{
-                              textField: { size: "small", fullWidth: true },
-                            }}
-                            renderInput={(params) => <TextField />}
-                          />
-                        </LocalizationProvider>
-                      </Box>
-                    </Box>
                   </Box>
-
                 </Box>
 
-
-                <Box>
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
-                    <Box flex={1}>
-                      <Box>
-                        <Typography>Item </Typography>
-
-                        <Select
-                          fullWidth
-                          size="small"
-                          value={selectedProduct || ""}
-                          onChange={(event) => {
-                            const selectedValue = event.target.value;
-                            setSelectedProduct(selectedValue);
-
-                            const selectedItem = productOptions.find(option => option.value.toString() === selectedValue);
-                            setMaterialName(selectedItem.label)
+              </Box>
 
 
-                            if (selectedItem) {
-                              let gstfromCompanyInfo = gstNoComp?.substring(0, 2) || "";
-                              let gstfromAccount = selectedGSTNo?.substring(0, 2) || "";
-
-                              setSelectedCGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.cgstpercent : "0");
-                              setSelectedSGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.sgstpercent : "0");
-                              setSelectedIGST(gstfromCompanyInfo !== gstfromAccount ? selectedItem.igstpercent : "0");
-                            } else {
-                              setSelectedCGST("0");
-                              setSelectedSGST("0");
-                              setSelectedIGST("0");
-                            }
-                          }}
-                        >
-                          {productOptions.map((option) => (
-                            <MenuItem key={option.value} value={option.value.toString()}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </Box>
-                    </Box>
-
-
-                    <Box flex={1}>
-                      <Box>
-                        <Typography>Quantity</Typography>
-                        <TextField
-                          value={quantity}
-                          onChange={handleQuantityChange}
-
-                          size="small" margin="normal" placeholder='Quantity' fullWidth />
-                      </Box>
-
-                    </Box>
-
-                    <Box flex={1}>
-                      <Box>
-                        <Typography>Rate</Typography>
-                        <TextField
-                          value={rate}
-                          onChange={handleRateChange}
-
-                          size="small" margin="normal" placeholder='Rate' fullWidth />
-                      </Box>
-
-                    </Box>
-
-
-                    <Box flex={1}>
-                      <Box>
-                        <Typography>Amount</Typography>
-                        <TextField
-                          value={amount}
-
-                          size="small" margin="normal" placeholder='Amount' fullWidth />
-                      </Box>
-
-                    </Box>
-
-                  </Box>
-
-                </Box>
-
+              <Box>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
                   <Box flex={1}>
-                    <Typography variant="body2">CGST%</Typography>
-                    <TextField
-                      value={selectedCGST}
-                      size="small"
-                      margin="none"
-                      placeholder="CGST"
-                      fullWidth
-                    />
+                    <Box>
+                      <Typography>Item</Typography>
+
+                      <Select
+                        fullWidth
+                        size="small"
+                        value={selectedProduct || ""}
+                        onChange={(event) => {
+                          const selectedValue = event.target.value;
+                          setSelectedProduct(selectedValue);
+
+                          const selectedItem = productOptions.find(option => option.value.toString() === selectedValue);
+                          setMaterialName(selectedItem.label)
+
+
+                          if (selectedItem) {
+                            let gstfromCompanyInfo = gstNoComp?.substring(0, 2) || "";
+                            let gstfromAccount = selectedGSTNo?.substring(0, 2) || "";
+
+                            setSelectedCGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.cgstpercent : "0");
+                            setSelectedSGST(gstfromCompanyInfo === gstfromAccount ? selectedItem.sgstpercent : "0");
+                            setSelectedIGST(gstfromCompanyInfo !== gstfromAccount ? selectedItem.igstpercent : "0");
+                          } else {
+                            setSelectedCGST("0");
+                            setSelectedSGST("0");
+                            setSelectedIGST("0");
+                          }
+                        }}
+                      >
+                        {productOptions.map((option) => (
+                          <MenuItem key={option.value} value={option.value.toString()}>
+                            {option.label}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </Box>
                   </Box>
+
+
                   <Box flex={1}>
-                    <Typography variant="body2">CGST Amount</Typography>
-                    <TextField
-                      value={cgstAmount}
-                      size="small"
-                      margin="none"
-                      placeholder="CGST Amount"
-                      fullWidth
-                    />
+                    <Box>
+                      <Typography>Quantity</Typography>
+                      <TextField
+                        value={quantity}
+                        onChange={handleQuantityChange}
+
+                        size="small" margin="normal" placeholder='Quantity' fullWidth />
+                    </Box>
+
                   </Box>
+
                   <Box flex={1}>
-                    <Typography variant="body2">SGST%</Typography>
-                    <TextField
-                      value={selectedSGST}
-                      size="small"
-                      margin="none"
-                      placeholder="SGST"
-                      fullWidth
-                    />
+                    <Box>
+                      <Typography>Rate</Typography>
+                      <TextField
+                        value={rate}
+                        onChange={handleRateChange}
+
+                        size="small" margin="normal" placeholder='Rate' fullWidth />
+                    </Box>
+
                   </Box>
+
+
                   <Box flex={1}>
-                    <Typography variant="body2">SGST Amount</Typography>
-                    <TextField
-                      value={sgstAmount}
-                      size="small"
-                      margin="none"
-                      placeholder="SGST Amount"
-                      fullWidth
-                    />
+                    <Box>
+                      <Typography>Amount</Typography>
+                      <TextField
+                        value={amount}
+
+                        size="small" margin="normal" placeholder='Amount' fullWidth />
+                    </Box>
+
                   </Box>
-                  <Box flex={1}>
-                    <Typography variant="body2">IGST %</Typography>
-                    <TextField
-                      value={selectedIGST}
-                      size="small"
-                      margin="none"
-                      placeholder="IGST%"
-                      fullWidth
-                    />
-                  </Box>
-                  <Box flex={1}>
-                    <Typography variant="body2">IGST Amount</Typography>
-                    <TextField
-                      value={igstAmount}
-                      size="small"
-                      margin="none"
-                      placeholder=" IGST Amount"
-                      fullWidth
-                    />
-                  </Box>
+
+                </Box>
+
+              </Box>
+
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, m: 1 }}>
+                <Box flex={1}>
+                  <Typography variant="body2">CGST%</Typography>
+                  <TextField
+                    value={selectedCGST}
+                    size="small"
+                    margin="none"
+                    placeholder="CGST"
+                    fullWidth
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Typography variant="body2">CGST Amount</Typography>
+                  <TextField
+                    value={cgstAmount}
+                    size="small"
+                    margin="none"
+                    placeholder="CGST Amount"
+                    fullWidth
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Typography variant="body2">SGST%</Typography>
+                  <TextField
+                    value={selectedSGST}
+                    size="small"
+                    margin="none"
+                    placeholder="SGST"
+                    fullWidth
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Typography variant="body2">SGST Amount</Typography>
+                  <TextField
+                    value={sgstAmount}
+                    size="small"
+                    margin="none"
+                    placeholder="SGST Amount"
+                    fullWidth
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Typography variant="body2">IGST %</Typography>
+                  <TextField
+                    value={selectedIGST}
+                    size="small"
+                    margin="none"
+                    placeholder="IGST%"
+                    fullWidth
+                  />
+                </Box>
+                <Box flex={1}>
+                  <Typography variant="body2">IGST Amount</Typography>
+                  <TextField
+                    value={igstAmount}
+                    size="small"
+                    margin="none"
+                    placeholder=" IGST Amount"
+                    fullWidth
+                  />
+                </Box>
+              </Box>
+            </Box>
+
+            <Box m={2}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleSaveOrAddRow}
+
+
+                sx={{ background: 'var(--complementary-color)', mb: 2, gap: 1 }}
+              >
+                <AddCircleOutlineIcon />
+                {editingRow !== null ? "Update Row" : "Add to Table"}
+              </Button>
+            </Box>
+
+            <Box m={1}>
+              <TableContainer component={Paper}>
+                <Table>
+                  <TableHead>
+                    <TableRow>
+                      <TableCell>Sr No</TableCell>
+                      {/* <TableCell>InvoiceID</TableCell> */}
+                      <TableCell>Item</TableCell>
+                      <TableCell>Quantity</TableCell>
+                      <TableCell>Rate</TableCell>
+                      <TableCell>Amount</TableCell>
+                      <TableCell>CGST %</TableCell>
+                      <TableCell>CGST Amount</TableCell>
+                      <TableCell>SGST %</TableCell>
+                      <TableCell>SGST Amount</TableCell>
+                      <TableCell>IGST %</TableCell>
+                      <TableCell>IGST Amount</TableCell>
+                      <TableCell>Actions</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {rows.map((row, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{index + 1}</TableCell>
+                        {/* <TableCell><TextField value={row.InvoiceId || ""} size="small" fullWidth /></TableCell> */}
+                        <TableCell>
+                          <Box>{row.MaterialName}</Box>
+                        </TableCell>
+
+                        <TableCell>
+                          {row.Quantity}
+                        </TableCell>
+
+                        <TableCell>
+                          {row.Rate}
+                        </TableCell>
+
+                        <TableCell>
+                          {row.Amount}
+                        </TableCell>
+
+                        <TableCell>
+                          {row.CGSTPercentage}
+                        </TableCell>
+
+                        <TableCell>
+                          {row.CGSTAmount}
+                        </TableCell>
+
+                        <TableCell>
+                          {row.SGSTPercentage}
+                        </TableCell>
+
+                        <TableCell>
+                          {row.SGSTAmount}
+                        </TableCell>
+
+                        <TableCell>
+                          {row.IGSTPercentage}
+                        </TableCell>
+
+                        <TableCell>
+                          {row.IGSTAmount}
+                        </TableCell>
+
+                        <TableCell>
+                          <IconButton
+                            onClick={(event) => handleMenutableOpen(event, index)}
+                          >
+                            <MoreVertIcon />
+                          </IconButton>
+                          <Menu
+                            anchorEl={anchorEl1}
+                            open={Boolean(anchorEl1) && selectedRow === index}
+                            onClose={handletableMenuClose}
+                          >
+                            <MenuItem
+                              onClick={() => handleEditRow(index)}
+                            >
+                              Edit
+                            </MenuItem>
+                          </Menu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+            </Box>
+
+
+
+            <Box sx={{ display: "flex", gap: 10, m: 2 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+
+                <Box>
+                  <Typography variant="body2">Transport</Typography>
+                  <TextField
+                    value={transport}
+                    onChange={(e) => setTransport(e.target.value)}
+                    size="small"
+                    placeholder="Transport"
+                    fullWidth
+                  />
+                </Box>
+
+                <Box>
+                  <Typography variant="body2">Other</Typography>
+                  <TextField
+                    value={other}
+                    onChange={(e) => setOther(e.target.value)}
+                    size="small"
+                    placeholder="Transport"
+                    fullWidth
+                  />
                 </Box>
               </Box>
 
-              <Box m={2}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSaveOrAddRow}
+              <Box sx={{ display: "flex", flexDirection: "row", gap: 6, mt: 2 }}>
+                <Box>
+                  <Typography variant="h6">SubTotal</Typography>
+                  <Box sx={{ fontSize: '20px' }}><b>{subtotal.toFixed(2)}</b></Box>
 
 
-                  sx={{ background: 'var(--complementary-color)', mb: 2, gap: 1 }}
-                >
-                  <AddCircleOutlineIcon />
-                  {editingRow !== null ? "Update Row" : "Add to Table"}
+
+                </Box>
+                <Box>
+                  <Typography variant="h6">CGST</Typography>
+                  <Box sx={{ fontSize: '20px' }}><b> {totalCGST.toFixed(2)}</b></Box>
+
+
+                </Box>
+                <Box>
+                  <Typography variant="h6">SGST</Typography>
+                  <Box sx={{ fontSize: '20px' }}><b>{totalSGST.toFixed(2)}</b></Box>
+
+
+                </Box>
+                <Box>
+                  <Typography variant="h6">IGST</Typography>
+                  <Box sx={{ fontSize: '20px' }}><b>{totalIGST.toFixed(2)}</b></Box>
+
+
+                </Box>
+
+                <Box>
+                  <Typography variant="h6">Total</Typography>
+                  <Box sx={{ fontSize: '20px', mr: 4, }} ><b>{grandTotal.toFixed(2)} Rs</b></Box>
+
+
+                </Box>
+              </Box>
+            </Box>
+
+
+            <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mb={5}>
+              <Box>
+                <Button sx={{
+                  background: 'var(--primary-color)',
+                }} onClick={handleSubmit} variant="contained">
+                  {isEditing ? "update" : "save"}{" "}
                 </Button>
               </Box>
 
-              <Box m={1}>
-                <TableContainer component={Paper}>
-                  <Table>
-                    <TableHead>
-                      <TableRow>
-                        <TableCell>Sr No</TableCell>
-                        {/* <TableCell>InvoiceID</TableCell> */}
-                        <TableCell>Item</TableCell>
-                        <TableCell>Quantity</TableCell>
-                        <TableCell>Rate</TableCell>
-                        <TableCell>Amount</TableCell>
-                        <TableCell>CGST %</TableCell>
-                        <TableCell>CGST Amount</TableCell>
-                        <TableCell>SGST %</TableCell>
-                        <TableCell>SGST Amount</TableCell>
-                        <TableCell>IGST %</TableCell>
-                        <TableCell>IGST Amount</TableCell>
-                        <TableCell>Actions</TableCell>
-                      </TableRow>
-                    </TableHead>
-                    <TableBody>
-                      {rows.map((row, index) => (
-                        <TableRow key={index}>
-                          <TableCell>{index + 1}</TableCell>
-                          {/* <TableCell><TextField value={row.InvoiceId || ""} size="small" fullWidth /></TableCell> */}
-                          <TableCell>
-                            <Box>{row.MaterialName}</Box>
-                          </TableCell>
-
-                          <TableCell>
-                            {row.Quantity}
-                          </TableCell>
-
-                          <TableCell>
-                            {row.Rate}
-                          </TableCell>
-
-                          <TableCell>
-                            {row.Amount}
-                          </TableCell>
-
-                          <TableCell>
-                            {row.CGSTPercentage}
-                          </TableCell>
-
-                          <TableCell>
-                            {row.CGSTAmount}
-                          </TableCell>
-
-                          <TableCell>
-                            {row.SGSTPercentage}
-                          </TableCell>
-
-                          <TableCell>
-                            {row.SGSTAmount}
-                          </TableCell>
-
-                          <TableCell>
-                            {row.IGSTPercentage}
-                          </TableCell>
-
-                          <TableCell>
-                            {row.IGSTAmount}
-                          </TableCell>
-
-                          <TableCell>
-                            <IconButton
-                              onClick={(event) => handleMenutableOpen(event, index)}
-                            >
-                              <MoreVertIcon />
-                            </IconButton>
-                            <Menu
-                              anchorEl={anchorEl1}
-                              open={Boolean(anchorEl1) && selectedRow === index}
-                              onClose={handletableMenuClose}
-                            >
-                              <MenuItem
-                                onClick={() => handleEditRow(index)}
-                              >
-                                Edit
-                              </MenuItem>
-                            </Menu>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </TableContainer>
+              <Box>
+                <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }} onClick={handleDrawerClose} variant='outlined'> <b>Cancel</b>
+                </Button>
               </Box>
-
-
-
-              <Box sx={{ display: "flex", gap: 10, m: 2 }}>
-                <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-
-                  <Box>
-                    <Typography variant="body2">Transport</Typography>
-                    <TextField
-                      value={transport}
-                      onChange={(e) => setTransport(e.target.value)}
-                      size="small"
-                      placeholder="Transport"
-                      fullWidth
-                    />
-                  </Box>
-
-                  <Box>
-                    <Typography variant="body2">Other</Typography>
-                    <TextField
-                      value={other}
-                      onChange={(e) => setOther(e.target.value)}
-                      size="small"
-                      placeholder="Transport"
-                      fullWidth
-                    />
-                  </Box>
-                </Box>
-
-                <Box sx={{ display: "flex", flexDirection: "row", gap: 6, mt: 2 }}>
-                  <Box>
-                    <Typography variant="h6">SubTotal</Typography>
-                    <Box sx={{ fontSize: '20px' }}><b>{subtotal.toFixed(2)}</b></Box>
-
-
-
-                  </Box>
-                  <Box>
-                    <Typography variant="h6">CGST</Typography>
-                    <Box sx={{ fontSize: '20px' }}><b> {totalCGST.toFixed(2)}</b></Box>
-
-
-                  </Box>
-                  <Box>
-                    <Typography variant="h6">SGST</Typography>
-                    <Box sx={{ fontSize: '20px' }}><b>{totalSGST.toFixed(2)}</b></Box>
-
-
-                  </Box>
-                  <Box>
-                    <Typography variant="h6">IGST</Typography>
-                    <Box sx={{ fontSize: '20px' }}><b>{totalIGST.toFixed(2)}</b></Box>
-
-
-                  </Box>
-
-                  <Box>
-                    <Typography variant="h6">Total</Typography>
-                    <Box sx={{ fontSize: '20px', mr: 4, }} ><b>{grandTotal.toFixed(2)} Rs</b></Box>
-
-
-                  </Box>
-                </Box>
-              </Box>
-
-
-              <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mb={5}>
-                <Box>
-                  <Button sx={{
-                    background: 'var(--primary-color)',
-                  }} onClick={handleSubmit} variant="contained">
-                    {isEditing ? "update" : "save"}{" "}
-                  </Button>
-                </Box>
-
-                <Box>
-                  <Button onClick={handleDrawerClose} variant='outlined'>Cancel </Button>
-                </Box>
-              </Box>
-
             </Box>
-          }
 
-          {showEntry === 2 &&
+          </Box>
+        }
 
-            <Grid container spacing={2} m={2}>
-              <Grid item xs={6}>
-                <Typography>Purchase No:</Typography>
-                <b> {PurchaseNo} </b>
+        {showEntry === 2 &&
+
+          <Grid container spacing={2} m={2}>
+            <Grid item xs={6}>
+              <Typography>Purchase No:</Typography>
+              <b> {PurchaseNo} </b>
 
 
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>Purchase Date:</Typography>
-                <b>{PurchaseDate}</b>
-
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>Bill No:</Typography>
-                <b>{billNo} </b>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>Bill Date:</Typography>
-                <b>{BillDate}</b>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>CGST Amount:</Typography>
-                <b>{cgstAmount}Rs</b>
-
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>IGST Amount:</Typography>
-                <b>{igstAmount}Rs</b>
-
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>SGST Amount:</Typography>
-                <b>{sgstAmount} Rs</b>
-
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>Transport Charges:</Typography>
-                <b>{transport}Rs </b>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>Other:</Typography>
-                <b>{other}Rs</b>
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>Subtotal:</Typography>
-                <b>{subtotal}Rs </b>
-
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography>Total:</Typography>
-                <b>{grandTotal}RS</b>
-
-              </Grid>
-
-              <Grid item xs={6}>
-                <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
-                  Party:
-                </Typography>
-                <Typography variant="body1">
-                  {options.find(option => option.Id === selectedId)?.AccountName}
-                </Typography>
-              </Grid>
             </Grid>
 
-          }
-        </Drawer>
+            <Grid item xs={6}>
+              <Typography>Purchase Date:</Typography>
+              <b>{PurchaseDate}</b>
 
-      </Box>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography>Bill No:</Typography>
+              <b>{billNo} </b>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography>Bill Date:</Typography>
+              <b>{BillDate}</b>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography>CGST Amount:</Typography>
+              <b>{cgstAmount}Rs</b>
+
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography>IGST Amount:</Typography>
+              <b>{igstAmount}Rs</b>
+
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography>SGST Amount:</Typography>
+              <b>{sgstAmount} Rs</b>
+
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography>Transport Charges:</Typography>
+              <b>{transport}Rs </b>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography>Other:</Typography>
+              <b>{other}Rs</b>
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography>Subtotal:</Typography>
+              <b>{subtotal}Rs </b>
+
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography>Total:</Typography>
+              <b>{grandTotal}RS</b>
+
+            </Grid>
+
+            <Grid item xs={6}>
+              <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+                Party:
+              </Typography>
+              <Typography variant="body1">
+                {options.find(option => option.Id === selectedId)?.AccountName}
+              </Typography>
+            </Grid>
+          </Grid>
+
+        }
+      </Drawer>
 
     </Box>
+
+
   )
 }
 

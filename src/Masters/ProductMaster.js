@@ -21,6 +21,38 @@ const ProductMaster = () => {
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
   };
+
+
+
+  //fetch groupId
+  const [groupOption, setGroupOption] = useState('');
+  const [selectedGroupOption, setSelectedGroupOption] = useState('');
+
+  const fetchGroup = async () => {
+    try {
+      const response = await fetch(
+        "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=productgroup"
+      );
+      const result = await response.json();
+
+      console.log("grp info:", result);
+
+      const options = result.map((grp) => ({
+        value: grp.Id,
+        label: grp.GroupName,
+      }));
+
+      setGroupOption(options);
+    } catch (error) {
+      console.error("Error fetching accounts:", error);
+    }
+  };
+
+
+  useEffect(() => {
+    fetchGroup();
+  }, []);
+
   //table
   const [anchorEl, setAnchorEl] = useState(null);
   const [currentRow, setCurrentRow] = useState(null);
@@ -36,8 +68,27 @@ const ProductMaster = () => {
   const [idwiseData, setIdwiseData] = useState('')
   const handleEdit = () => {
     if (currentRow) {
-      console.log("Editing item with ID:", currentRow.original.Id);
+      console.log("Editing item with ID:", currentRow.original);
       setIdwiseData(currentRow.original.Id)
+      setUpdateProductCode(currentRow.original.ProductCode)
+      setSelectedGroupOption(currentRow.original.ProductGroupId)
+      setUpdateProductName(currentRow.original.ProductName)
+      setUpdateUOM(currentRow.original.UOM)
+      setUpdateSalesPrice(currentRow.original.SellPrice)
+      setUpdatePurchasePrice(currentRow.original.PurchasePrice)
+      setUpdateLocation(currentRow.original.Location)
+      setUpdateOpeningValue(currentRow.original.OpeningValue)
+      setUpdateReorderLevel(currentRow.original.ReOrderLevel)
+      setUpdateMinBal(currentRow.original.MinBalance)
+      setUpdateMaxBal(currentRow.original.MaxBalance)
+      setUpdateHsnCode(currentRow.original.HSNCode)
+      setUpdateCGST(currentRow.original.CGSTPercentage)
+      setUpdateIGST(currentRow.original.IGSTPercentage)
+      setUpdateSGST(currentRow.original.SGSTPercentage)
+
+
+
+
     }
   };
   console.log('idwiseData', idwiseData)
@@ -51,11 +102,11 @@ const ProductMaster = () => {
         header: 'Product Code',
         size: 150,
       },
-      {
-        accessorKey: 'ProductGroupId',
-        header: 'Product GroupId',
-        size: 150,
-      },
+      // {
+      //   accessorKey: 'ProductGroupId',
+      //   header: 'Product GroupId',
+      //   size: 150,
+      // },
       {
         accessorKey: 'ProductName',
         header: 'ProductName',
@@ -174,7 +225,7 @@ const ProductMaster = () => {
   const CreateProductMaster = () => {
     const urlencoded = new URLSearchParams();
     urlencoded.append("ProductCode", productCode);
-    urlencoded.append("ProductGroupId", productGroup);
+    urlencoded.append("ProductGroupId", selectedGroupOption);
     urlencoded.append("ProductName", productName);
     urlencoded.append("UOM", UOM);
     urlencoded.append("SellPrice", salesPrice);
@@ -214,7 +265,7 @@ const ProductMaster = () => {
 
   const handleClearTemplate = () => {
     setProductCode('');
-    setProductGroup('');
+    setSelectedGroupOption('');
     setProductName('');
     setUOM('');
     setSalesPrice('');
@@ -265,8 +316,8 @@ const ProductMaster = () => {
       console.log("Fetched result:", result);  // Log the fetched data before setting it
 
       setData(result);
-      setID(result.map(item => item.Id));
-      console.log('id', setID)
+      // setID(result.map(item => item.Id));
+      // console.log('id', setID)
 
     } catch (error) {
       console.error(error);
@@ -335,7 +386,7 @@ const ProductMaster = () => {
   const UpdateProductMaster = () => {
     const urlencoded = new URLSearchParams();
     urlencoded.append("ProductCode", updateproductCode);
-    urlencoded.append("ProductGroupId", updateproductGroup);
+    urlencoded.append("ProductGroupId", selectedGroupOption);
     urlencoded.append("ProductName", updateproductName);
     urlencoded.append("UOM", updateUOM);
     urlencoded.append("SellPrice", updatesalesPrice);
@@ -400,65 +451,65 @@ const ProductMaster = () => {
 
   return (
     <Box>
-      <Box sx={{ p: 5, height: 'auto' }}>
-        <Box textAlign={'center'}>
-          <Typography variant='h4' color='var(--complementary-color)'><b>Product Master</b></Typography>
-        </Box>
 
-        <Box sx={{ display: 'flex', gap: 3 }}>
-          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleDrawerOpen}>Create Product Master </Button>
-        </Box>
+      <Box textAlign={'center'}>
+        <Typography variant='h4' color='var(--complementary-color)'><b>Product Master</b></Typography>
+      </Box>
 
-
-        <Box mt={4}>
-          <MaterialReactTable
-            columns={columns}
-            data={data}
-            muiTableHeadCellProps={{
-              sx: {
-
-                color: 'var(--primary-color)',
-
-              },
-            }}
-
-          />
-          <Menu
-            anchorEl={anchorEl}
-            open={Boolean(anchorEl)}
-            onClose={handleMenuClose}
-          >
-            <MenuItem
+      <Box sx={{ display: 'flex', gap: 3, m: 4, mt: 4 }}>
+        <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleDrawerOpen}>Create Product Master </Button>
+      </Box>
 
 
-              onClick={handleEditDrawerOpen}
-
-            >Edit </MenuItem>
-            <MenuItem onClick={DeleteProductMaster} >Delete</MenuItem>
-          </Menu>
-        </Box>
-
-        <Drawer
-          anchor="right"
-          open={isDrawerOpen}
-          onClose={handleDrawerClose}
-          PaperProps={{
+      <Box mt={4} m={2}>
+        <MaterialReactTable
+          columns={columns}
+          data={data}
+          muiTableHeadCellProps={{
             sx: {
-              borderRadius: isSmallScreen ? "0" : "10px 0 0 10px",
-              width: isSmallScreen ? "100%" : "650px",
-              zIndex: 1000,
+
+              color: 'var(--primary-color)',
+
             },
           }}
-        >
-          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgb(236, 253, 230)' }}>
-            <Typography m={2} variant="h6"><b>Create Product Master</b></Typography>
-            <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleDrawerClose} />
-          </Box>
-          <Divider />
 
-          <Box>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Box flex={1} m={2}>
+        />
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+        >
+          <MenuItem
+
+
+            onClick={handleEditDrawerOpen}
+
+          >Edit </MenuItem>
+          <MenuItem onClick={DeleteProductMaster} >Delete</MenuItem>
+        </Menu>
+      </Box>
+
+      <Drawer
+        anchor="right"
+        open={isDrawerOpen}
+        onClose={handleDrawerClose}
+        PaperProps={{
+          sx: {
+            borderRadius: isSmallScreen ? "0" : "10px 0 0 10px",
+            width: isSmallScreen ? "100%" : "650px",
+            zIndex: 1000,
+          },
+        }}
+      >
+        <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgb(236, 253, 230)' }}>
+          <Typography m={2} variant="h6"><b>Create Product Master</b></Typography>
+          <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleDrawerClose} />
+        </Box>
+        <Divider />
+
+
+        {/* <Box display="flex" alignItems="center" gap={2}>
+              <Box flex={1} m={1}>
                 <Box>
                   <Typography>Product Code</Typography>
                   <TextField
@@ -468,347 +519,405 @@ const ProductMaster = () => {
                 </Box>
               </Box>
 
-              <Box flex={1} m={2}>
-
-
+           
                 <Box flex={1}>
                   <Typography>Product Group</Typography>
-                  <Autocomplete
-                    options={productsGroups}
-                    value={productGroup}
-                    onChange={(event, newValue) => setProductGroup(newValue)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder="Select Product Group"
-                        size="small"
-                        margin="normal"
-                        fullWidth
-
-                      />
-                    )}
-                  />
-
+                  <FormControl fullWidth size="small">
+                    <Select
+                      value={selectedGroupOption}
+                      onChange={(event) => setSelectedGroupOption(event.target.value)}
+                    >
+                      {groupOption.length > 0 ? (
+                        groupOption.map((option) => (
+                          <MenuItem key={option.value} value={option.value}>
+                            {option.label}
+                          </MenuItem>
+                        ))
+                      ) : (
+                        <MenuItem disabled>No options available</MenuItem>
+                      )}
+                    </Select>
+                  </FormControl>
                 </Box>
+         
 
-              </Box>
 
+            </Box> */}
 
-            </Box>
+        <Box display="flex" alignItems="center" gap={2} m={1}>
+          {/* Product Code */}
+          <Box flex={1} display="flex" flexDirection="column" gap={1}>
+            <Typography variant="body2">Product Code</Typography>
+            <TextField
+              value={productCode}
+              onChange={(e) => setProductCode(e.target.value)}
+              size="small"
+              placeholder="Enter Product Code"
+              fullWidth
+            />
           </Box>
 
-          <Box display={'flex'} alignItems={"center"} gap={2} m={2} >
-
-            <Box flex={2}>
-              <Typography>Product Name</Typography>
-              <TextField
-                value={productName}
-                onChange={(e) => setProductName(e.target.value)}
-
-                size="small" margin="normal" placeholder="Enter Product Name" fullWidth />
-
-            </Box>
-
-
-
-            <Box flex={1}>
-              <Typography>UOM</Typography>
-              <FormControl fullWidth size="small" margin="normal">
-                <Select value={UOM} onChange={(e) => setUOM(e.target.value)} displayEmpty>
-                  <MenuItem value="">Select UOM</MenuItem>
-                  <MenuItem value="num">No</MenuItem>
-
-                </Select>
-              </FormControl>
-            </Box>
+          {/* Product Group */}
+          <Box flex={1} display="flex" flexDirection="column" gap={1}>
+            <Typography variant="body2">Product Group</Typography>
+            <FormControl fullWidth size="small">
+              <Select
+                value={selectedGroupOption}
+                onChange={(event) => setSelectedGroupOption(event.target.value)}
+              >
+                {groupOption.length > 0 ? (
+                  groupOption.map((option) => (
+                    <MenuItem key={option.value} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))
+                ) : (
+                  <MenuItem disabled>No options available</MenuItem>
+                )}
+              </Select>
+            </FormControl>
           </Box>
+        </Box>
+        <Box display={'flex'} alignItems={"center"} gap={2} m={1} >
 
-          {/*  */}
-          <Box>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Box flex={1} m={2}>
-                <Box>
-                  <Typography>Sales Price</Typography>
-                  <TextField
-                    value={salesPrice}
-                    onChange={(e) => setSalesPrice(e.target.value)}
+          <Box flex={2}>
+            <Typography>Product Name</Typography>
+            <TextField
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
 
-                    size="small" margin="normal" placeholder="Enter Sales Price" fullWidth />
-
-                </Box>
-
-                <Box>
-                  <Typography>Opening Value</Typography>
-
-                  <TextField
-                    value={openingValue}
-                    onChange={(e) => setOpeningValue(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Op.Value" fullWidth />
-
-                </Box>
-
-
-                <Box>
-                  <Typography>CGST%</Typography>
-                  <TextField
-                    value={CGST}
-                    onChange={(e) => setCGST(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter CGST%" fullWidth />
-
-                </Box>
-
-
-
-
-
-              </Box>
-
-
-
-
-
-              <Box flex={1} m={2}>
-
-
-                <Box >
-                  <Typography>Purchase Price</Typography>
-                  <TextField
-                    value={purchasePrice}
-                    onChange={(e) => setPurchasePrice(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Purchase Price" fullWidth />
-
-                </Box>
-
-
-                <Box >
-                  <Typography>Reorder Level</Typography>
-                  <TextField
-                    value={reorderLevel}
-                    onChange={(e) => setReorderLevel(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Reorder Level" fullWidth />
-
-                </Box>
-
-                <Box >
-                  <Typography>SGST%</Typography>
-                  <TextField
-
-                    value={SGST}
-                    onChange={(e) => setSGST(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter SGST" fullWidth />
-
-                </Box>
-
-
-              </Box>
-
-
-              <Box flex={1} m={2}>
-                <Box>
-                  <Typography>Location</Typography>
-                  <TextField
-                    value={location}
-                    onChange={(e) => setLocation(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Location" fullWidth />
-
-                </Box>
-
-                <Box>
-                  <Typography>Min Balance</Typography>
-                  <TextField
-                    value={minbal}
-                    onChange={(e) => setMinBal(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Min Balance" fullWidth />
-
-                </Box>
-
-
-                <Box>
-                  <Typography>IGST%</Typography>
-                  <TextField
-                    value={IGST}
-                    onChange={(e) => setIGST(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter IGST" fullWidth />
-
-                </Box>
-
-              </Box>
-
-
-            </Box>
-
-
+              size="small" margin="normal" placeholder="Enter Product Name" fullWidth />
 
           </Box>
 
 
-          <Box>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Box flex={1} m={2}>
-                <Box>
-                  <Typography>Max Balance</Typography>
-                  <TextField
-                    value={maxbal}
-                    onChange={(e) => setMaxBal(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Max Balance" fullWidth />
 
-                </Box>
-              </Box>
+          <Box flex={1}>
+            <Typography>UOM</Typography>
+            <FormControl fullWidth size="small" margin="normal">
+              <Select value={UOM} onChange={(event) => setUOM(event.target.value)} displayEmpty>
+                <MenuItem value="">Select UOM</MenuItem>
+                <MenuItem value="num">No</MenuItem>
 
-              <Box flex={1} m={2}>
-                <Box>
-                  <Typography>HSN Code</Typography>
-                  <TextField
-                    value={hsnCode}
-                    onChange={(e) => setHsnCode(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter HSN Code" fullWidth />
-
-                </Box>
-              </Box>
-            </Box>
+              </Select>
+            </FormControl>
           </Box>
+        </Box>
 
-          <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mt={5}>
-            <Box>
-              <Button sx={{
-                background: 'var(--primary-color)',
-              }} onClick={CreateProductMaster} variant='contained'>Save </Button>
-            </Box>
-
-            <Box>
-              <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }}
-                onClick={handleDrawerClose}
-                variant='outlined'>
-                <b>Cancel</b>
-
-              </Button>
-            </Box>
-          </Box>
-        </Drawer>
-
-        {/* edit drawer */}
-
-        <Drawer
-          anchor="right"
-          open={isEditDrawerOpen}
-          onClose={handleEditDrawerClose}
-          PaperProps={{
-            sx: {
-              borderRadius: isSmallScreen ? "0" : "10px 0 0 10px",
-              width: isSmallScreen ? "100%" : "650px",
-              zIndex: 1000,
-            },
-          }}
-        >
-          <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgb(236, 253, 230)' }}>
-            <Typography m={2} variant="h6"><b>Update Product Master</b></Typography>
-            <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleEditDrawerClose} />
-          </Box>
-          <Divider />
-
-          <Box>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Box flex={1} m={2}>
-                <Box>
-                  <Typography>Product Code</Typography>
-                  <TextField
-                    value={updateproductCode}
-                    onChange={(e) => setUpdateProductCode(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Product Code" fullWidth />
-                </Box>
-              </Box>
-
-              <Box flex={1} m={2}>
-
-
-                <Box flex={1}>
-                  <Typography>Product Group</Typography>
-                  <Autocomplete
-                    options={productsGroups}
-                    value={updateproductGroup}
-                    onChange={(event, newValue) => setUpdateProductGroup(newValue)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        placeholder="Select Product Group"
-                        size="small"
-                        margin="normal"
-                        fullWidth
-
-                      />
-                    )}
-                  />
-
-                </Box>
-
-              </Box>
-
-
-            </Box>
-          </Box>
-
-          <Box display={'flex'} alignItems={"center"} gap={2} m={2} >
-
-            <Box flex={2}>
-              <Typography>Product Name</Typography>
-              <TextField
-                value={updateproductName}
-                onChange={(e) => setUpdateProductName(e.target.value)}
-
-                size="small" margin="normal" placeholder="Enter Product Name" fullWidth />
-
-            </Box>
+        {/*  */}
+        <Box>
+          <Box display="flex" alignItems="center" gap={2} m={1} >
             <Box flex={1} >
-              <Typography>UOM</Typography>
-              <FormControl
-                fullWidth size="small" margin="normal">
+              <Box>
+                <Typography>Sales Price</Typography>
+                <TextField
+                  value={salesPrice}
+                  onChange={(e) => setSalesPrice(e.target.value)}
 
-                <Select value={updateUOM} onChange={(e) => setUpdateUOM(e.target.value)}>
-                  <MenuItem value="num">No</MenuItem>
+                  size="small" margin="normal" placeholder="Enter Sales Price" fullWidth />
 
-                </Select>
+              </Box>
 
-              </FormControl>
+              <Box>
+                <Typography>Opening Value</Typography>
+
+                <TextField
+                  value={openingValue}
+                  onChange={(e) => setOpeningValue(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Op.Value" fullWidth />
+
+              </Box>
+
+
+              <Box>
+                <Typography>CGST%</Typography>
+                <TextField
+                  value={CGST}
+                  onChange={(e) => setCGST(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter CGST%" fullWidth />
+
+              </Box>
+
+
+
+
+
             </Box>
+
+
+
+
+
+            <Box flex={1} >
+
+
+              <Box >
+                <Typography>Purchase Price</Typography>
+                <TextField
+                  value={purchasePrice}
+                  onChange={(e) => setPurchasePrice(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Purchase Price" fullWidth />
+
+              </Box>
+
+
+              <Box >
+                <Typography>Reorder Level</Typography>
+                <TextField
+                  value={reorderLevel}
+                  onChange={(e) => setReorderLevel(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Reorder Level" fullWidth />
+
+              </Box>
+
+              <Box >
+                <Typography>SGST%</Typography>
+                <TextField
+
+                  value={SGST}
+                  onChange={(e) => setSGST(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter SGST" fullWidth />
+
+              </Box>
+
+
+            </Box>
+
+
+            <Box flex={1} >
+              <Box>
+                <Typography>Location</Typography>
+                <TextField
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Location" fullWidth />
+
+              </Box>
+
+              <Box>
+                <Typography>Min Balance</Typography>
+                <TextField
+                  value={minbal}
+                  onChange={(e) => setMinBal(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Min Balance" fullWidth />
+
+              </Box>
+
+
+              <Box>
+                <Typography>IGST%</Typography>
+                <TextField
+                  value={IGST}
+                  onChange={(e) => setIGST(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter IGST" fullWidth />
+
+              </Box>
+
+            </Box>
+
+
           </Box>
 
+
+
+        </Box>
+
+
+        <Box>
+          <Box display="flex" alignItems="center" gap={2} m={1}>
+            <Box flex={1} >
+              <Box>
+                <Typography>Max Balance</Typography>
+                <TextField
+                  value={maxbal}
+                  onChange={(e) => setMaxBal(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Max Balance" fullWidth />
+
+              </Box>
+            </Box>
+
+            <Box flex={1} >
+              <Box>
+                <Typography>HSN Code</Typography>
+                <TextField
+                  value={hsnCode}
+                  onChange={(e) => setHsnCode(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter HSN Code" fullWidth />
+
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+
+        <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mt={5} m={2}>
+          <Box>
+            <Button sx={{
+              background: 'var(--primary-color)',
+            }} onClick={CreateProductMaster} variant='contained'>Save </Button>
+          </Box>
 
           <Box>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Box flex={1} m={2}>
-                <Box>
-                  <Typography>Sales Price</Typography>
-                  <TextField
-                    value={updatesalesPrice}
-                    onChange={(e) => setUpdateSalesPrice(e.target.value)}
+            <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }}
+              onClick={handleDrawerClose}
+              variant='outlined'>
+              <b>Cancel</b>
 
-                    size="small" margin="normal" placeholder="Enter Sales Price" fullWidth />
+            </Button>
+          </Box>
+        </Box>
+      </Drawer>
 
-                </Box>
+      {/* edit drawer */}
 
-                <Box>
-                  <Typography>Opening Value</Typography>
+      <Drawer
+        anchor="right"
+        open={isEditDrawerOpen}
+        onClose={handleEditDrawerClose}
+        PaperProps={{
+          sx: {
+            borderRadius: isSmallScreen ? "0" : "10px 0 0 10px",
+            width: isSmallScreen ? "100%" : "650px",
+            zIndex: 1000,
+          },
+        }}
+      >
+        <Box sx={{ padding: 2, display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'rgb(236, 253, 230)' }}>
+          <Typography m={2} variant="h6"><b>Update Product Master</b></Typography>
+          <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleEditDrawerClose} />
+        </Box>
+        <Divider />
 
-                  <TextField
-                    value={updateopeningValue}
-                    onChange={(e) => setUpdateOpeningValue(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Op.Value" fullWidth />
+        {/* <Box>
+          <Box display="flex" alignItems="center" gap={2}>
+            <Box flex={1} m={1}>
+              <Box>
+                <Typography>Product Code</Typography>
+                <TextField
+                  value={updateproductCode}
+                  onChange={(e) => setUpdateProductCode(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Product Code" fullWidth />
+              </Box>
+            </Box>
 
-                </Box>
-
-
-                <Box>
-                  <Typography>CGST%</Typography>
-                  <TextField
-                    value={updateCGST}
-                    onChange={(e) => setUpdateCGST(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter CGST%" fullWidth />
-
-                </Box>
+            <Box flex={1} m={1}>
 
 
 
+              <Box flex={1}>
+                <Typography>Product Group</Typography>
+                <FormControl fullWidth size="small">
+                  <Select
+                    value={selectedGroupOption}
+                    onChange={(event) => setSelectedGroupOption(event.target.value)}
+                  >
+                    {groupOption.length > 0 ? (
+                      groupOption.map((option) => (
+                        <MenuItem key={option.value} value={option.value}>
+                          {option.label}
+                        </MenuItem>
+                      ))
+                    ) : (
+                      <MenuItem disabled>No options available</MenuItem>
+                    )}
+                  </Select>
+                </FormControl>
+              </Box>
 
+            </Box>
+
+
+          </Box>
+        </Box> */}
+<Box display="flex" alignItems="center" gap={2} m={1}>
+  {/* Product Code */}
+  <Box flex={1} display="flex" flexDirection="column" gap={1}>
+    <Typography variant="body2">Product Code</Typography>
+    <TextField
+      value={updateproductCode}
+      onChange={(e) => setUpdateProductCode(e.target.value)}
+      size="small"
+      placeholder="Enter Product Code"
+      fullWidth
+    />
+  </Box>
+
+  {/* Product Group */}
+  <Box flex={1} display="flex" flexDirection="column" gap={1}>
+    <Typography variant="body2">Product Group</Typography>
+    <FormControl fullWidth size="small">
+      <Select
+        value={selectedGroupOption}
+        onChange={(event) => setSelectedGroupOption(event.target.value)}
+      >
+        {groupOption.length > 0 ? (
+          groupOption.map((option) => (
+            <MenuItem key={option.value} value={option.value}>
+              {option.label}
+            </MenuItem>
+          ))
+        ) : (
+          <MenuItem disabled>No options available</MenuItem>
+        )}
+      </Select>
+    </FormControl>
+  </Box>
+</Box>
+        <Box display={'flex'} alignItems={"center"} gap={2} m={1} >
+
+          <Box flex={2}>
+            <Typography>Product Name</Typography>
+            <TextField
+              value={updateproductName}
+              onChange={(e) => setUpdateProductName(e.target.value)}
+
+              size="small" margin="normal" placeholder="Enter Product Name" fullWidth />
+
+          </Box>
+          <Box flex={1} >
+            <Typography>UOM</Typography>
+            <FormControl
+              fullWidth size="small" margin="normal">
+
+              <Select value={updateUOM} onChange={(e) => setUpdateUOM(e.target.value)}>
+                <MenuItem value="num">No</MenuItem>
+
+              </Select>
+
+            </FormControl>
+          </Box>
+        </Box>
+
+
+        <Box>
+          <Box display="flex" alignItems="center" m={1} gap={1} >
+            <Box flex={1} >
+              <Box>
+                <Typography>Sales Price</Typography>
+                <TextField
+                  value={updatesalesPrice}
+                  onChange={(e) => setUpdateSalesPrice(e.target.value)}
+
+                  size="small" margin="normal" placeholder="Enter Sales Price" fullWidth />
+
+              </Box>
+
+              <Box>
+                <Typography>Opening Value</Typography>
+
+                <TextField
+                  value={updateopeningValue}
+                  onChange={(e) => setUpdateOpeningValue(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Op.Value" fullWidth />
+
+              </Box>
+
+
+              <Box>
+                <Typography>CGST%</Typography>
+                <TextField
+                  value={updateCGST}
+                  onChange={(e) => setUpdateCGST(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter CGST%" fullWidth />
 
               </Box>
 
@@ -816,70 +925,41 @@ const ProductMaster = () => {
 
 
 
-              <Box flex={1} m={2}>
+            </Box>
 
 
-                <Box >
-                  <Typography>Purchase Price</Typography>
-                  <TextField
-                    value={updatepurchasePrice}
-                    onChange={(e) => setUpdatePurchasePrice(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Purchase Price" fullWidth />
-
-                </Box>
 
 
-                <Box >
-                  <Typography>Reorder Level</Typography>
-                  <TextField
-                    value={updatereorderLevel}
-                    onChange={(e) => setUpdateReorderLevel(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Reorder Level" fullWidth />
 
-                </Box>
+            <Box flex={1} >
 
-                <Box >
-                  <Typography>SGST%</Typography>
-                  <TextField
 
-                    value={updateSGST}
-                    onChange={(e) => setUpdateSGST(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter SGST" fullWidth />
-
-                </Box>
-
+              <Box >
+                <Typography>Purchase Price</Typography>
+                <TextField
+                  value={updatepurchasePrice}
+                  onChange={(e) => setUpdatePurchasePrice(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Purchase Price" fullWidth />
 
               </Box>
 
 
-              <Box flex={1} m={2}>
-                <Box>
-                  <Typography>Location</Typography>
-                  <TextField
-                    value={updatelocation}
-                    onChange={(e) => setUpdateLocation(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Location" fullWidth />
+              <Box >
+                <Typography>Reorder Level</Typography>
+                <TextField
+                  value={updatereorderLevel}
+                  onChange={(e) => setUpdateReorderLevel(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Reorder Level" fullWidth />
 
-                </Box>
+              </Box>
 
-                <Box>
-                  <Typography>Min Balance</Typography>
-                  <TextField
-                    value={updateminbal}
-                    onChange={(e) => setUpdateMinBal(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Min Balance" fullWidth />
+              <Box >
+                <Typography>SGST%</Typography>
+                <TextField
 
-                </Box>
-
-
-                <Box>
-                  <Typography>IGST%</Typography>
-                  <TextField
-                    value={updateIGST}
-                    onChange={(e) => setUpdateIGST(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter IGST" fullWidth />
-
-                </Box>
+                  value={updateSGST}
+                  onChange={(e) => setUpdateSGST(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter SGST" fullWidth />
 
               </Box>
 
@@ -887,51 +967,86 @@ const ProductMaster = () => {
             </Box>
 
 
+            <Box flex={1} >
+              <Box>
+                <Typography>Location</Typography>
+                <TextField
+                  value={updatelocation}
+                  onChange={(e) => setUpdateLocation(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Location" fullWidth />
+
+              </Box>
+
+              <Box>
+                <Typography>Min Balance</Typography>
+                <TextField
+                  value={updateminbal}
+                  onChange={(e) => setUpdateMinBal(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Min Balance" fullWidth />
+
+              </Box>
+
+
+              <Box>
+                <Typography>IGST%</Typography>
+                <TextField
+                  value={updateIGST}
+                  onChange={(e) => setUpdateIGST(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter IGST" fullWidth />
+
+              </Box>
+
+            </Box>
+
 
           </Box>
 
+
+
+        </Box>
+
+
+        <Box>
+          <Box display="flex" alignItems="center" gap={1} m={1}>
+            <Box flex={1} >
+              <Box>
+                <Typography>Max Balance</Typography>
+                <TextField
+                  value={updatemaxbal}
+                  onChange={(e) => setUpdateMaxBal(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter Max Balance" fullWidth />
+
+              </Box>
+            </Box>
+
+            <Box flex={1} >
+              <Box>
+                <Typography>HSN Code</Typography>
+                <TextField
+                  value={updatehsnCode}
+                  onChange={(e) => setUpdateHsnCode(e.target.value)}
+                  size="small" margin="normal" placeholder="Enter HSN Code" fullWidth />
+
+              </Box>
+            </Box>
+          </Box>
+        </Box>
+
+        <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mt={5} m={2}>
+          <Box>
+            <Button sx={{
+              background: 'var(--primary-color)',
+            }} onClick={UpdateProductMaster} variant='contained'>Save </Button>
+          </Box>
 
           <Box>
-            <Box display="flex" alignItems="center" gap={2}>
-              <Box flex={1} m={2}>
-                <Box>
-                  <Typography>Max Balance</Typography>
-                  <TextField
-                    value={updatemaxbal}
-                    onChange={(e) => setUpdateMaxBal(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter Max Balance" fullWidth />
-
-                </Box>
-              </Box>
-
-              <Box flex={1} m={2}>
-                <Box>
-                  <Typography>HSN Code</Typography>
-                  <TextField
-                    value={updatehsnCode}
-                    onChange={(e) => setUpdateHsnCode(e.target.value)}
-                    size="small" margin="normal" placeholder="Enter HSN Code" fullWidth />
-
-                </Box>
-              </Box>
-            </Box>
+            <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }} onClick={handleEditDrawerClose} variant='outlined'><b>Cancel</b> </Button>
           </Box>
-
-          <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mt={5}>
-            <Box>
-              <Button sx={{
-                 background: 'var(--primary-color)', 
-                 }} onClick={UpdateProductMaster} variant='contained'>Save </Button>
-            </Box>
-
-            <Box>
-              <Button sx={{ borderColor: 'var(--complementary-color)', color: 'var(--complementary-color)' }} onClick={handleEditDrawerClose} variant='outlined'><b>Cancel</b> </Button>
-            </Box>
-          </Box>
-        </Drawer>
+        </Box>
+      </Drawer>
 
 
-      </Box>
+
 
     </Box>
   )
