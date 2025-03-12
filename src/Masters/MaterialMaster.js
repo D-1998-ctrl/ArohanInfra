@@ -57,7 +57,7 @@ const MaterialMaster = () => {
 
     }
   };
-  console.log('idwiseData', idwiseData)
+  // console.log('idwiseData', idwiseData)
 
   const [data, setData] = useState([]);
   const columns = useMemo(() => [
@@ -152,7 +152,7 @@ const MaterialMaster = () => {
       );
       const result = await response.json();
 
-      console.log("grp info:", result);
+      // console.log("grp info:", result);
 
       const options = result.map((grp) => ({
         value: grp.Id,
@@ -183,7 +183,7 @@ const MaterialMaster = () => {
       const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=Materialmaster", requestOptions);
       const result = await response.json();
 
-      console.log("Fetched result:", result);
+      // console.log("Fetched result:", result);
 
       setData(result);
 
@@ -192,7 +192,7 @@ const MaterialMaster = () => {
       console.error(error);
     }
   };
-  console.log("result", data);
+  // console.log("result", data);
   useEffect(() => {
     fetchData();
   }, []);
@@ -262,18 +262,7 @@ const MaterialMaster = () => {
 
   const CreateMaterialMaster = () => {
     const urlencoded = new URLSearchParams();
-    console.log("MaterialCode:", materialCode);
-    console.log("MaterialGroupId:", materialGroup);
-    console.log("MaterialName:", materialName);
-    console.log("BrandName:", brandName);
-    console.log("PurchaseRate:", purchaseRate);
-    console.log("ReOrderLevel:", reorderLevel);
-    console.log("MinBalance:", minBal);
-    console.log("MaxBalance:", maxBal);
-    console.log("HSNCode:", HSNCode);
-    console.log("CGSTPercentage:", CGST);
-    console.log("SGSTPercentage:", SGST);
-    console.log("IGSTPercentage:", IGST);
+  
     urlencoded.append("MaterialCode", materialCode);
     urlencoded.append("MaterialGroupId", selectedGroupOption);
     urlencoded.append("MaterialName", materialName);
@@ -301,9 +290,11 @@ const MaterialMaster = () => {
       )
       .then((response) => {
         console.log("API Response:", response.data);
-        handleClearTemplate();
-        handleDrawerClose()
+   
         toast.success("Material Master created successfully");
+        handleClearTemplate();
+        fetchData();
+        handleDrawerClose()
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -366,32 +357,62 @@ const MaterialMaster = () => {
   const handleEditDrawerClose = () => {
     setEditIsDrawerOpen(false);
   };
-  console.log(idwiseData)
+  // console.log(idwiseData)
   //for delete 
-  const DeleteMaterialMaster = () => {
-    // if (currentRow) {
-    //   console.log("Editing item with ID:", currentRow.original.Id);
+  // const DeleteMaterialMaster = () => {
+  //   // if (currentRow) {
+  //   //   console.log("Editing item with ID:", currentRow.original.Id);
 
-    // }
+  //   // }
+  //   const requestOptions = {
+  //     method: "GET",
+  //     redirect: "follow"
+  //   };
+  //   const url = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Materialmaster&Id=${currentRow.original.Id}`
+  //   console.log(url)
+  //   fetch(url, requestOptions)
+  //     .then((response) => response.json())
+  //     .then((result) => {
+  //       console.log(result)
+
+  //       toast.success("Material deleted successfully!");
+  //       fetchData();
+
+  //     })
+  //     .catch((error) => console.error(error));
+  // }
+
+  const DeleteMaterialMaster = () => {
     const requestOptions = {
       method: "GET",
       redirect: "follow"
     };
-    const url = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Materialmaster&Id=${currentRow.original.Id}`
-    console.log(url)
+  
+    const url = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Materialmaster&Id=${currentRow.original.Id}`;
+  
+    console.log("Request URL:", url);
+  
     fetch(url, requestOptions)
-      .then((response) => response.json())
-      .then((result) => {
-        console.log(result)
-
-        toast.success("Material deleted successfully!");
-
-
+      .then(response => {
+        console.log("Raw Response:", response);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.text(); // Read response as text
       })
-      .catch((error) => console.error(error));
-  }
-
-
+      .then(text => {
+        try {
+          const result = JSON.parse(text); // Try parsing JSON
+          console.log("Parsed JSON:", result);
+          toast.success("Material deleted successfully!");
+          fetchData();
+        } catch (error) {
+          console.error("JSON Parsing Error:", error, "Response Text:", text);
+        }
+      })
+      .catch(error => console.error("Fetch Error:", error));
+  };
+  
 
   //update 
   const UpdateMaterialMaster = () => {
@@ -423,8 +444,10 @@ const MaterialMaster = () => {
       )
       .then((response) => {
         console.log("API Response:", response.data);
-        handleEditDrawerClose()
+      
         toast.success("Material Master Updated successfully");
+        handleEditDrawerClose()
+        fetchData();
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -436,12 +459,17 @@ const MaterialMaster = () => {
 
   return (
  
-      <Box m={1} >
+      <Box >
         <Box textAlign={'center'}>
           <Typography color='var(--complementary-color)' variant='h4'><b>Material Master</b></Typography>
         </Box>
 
-        <Box sx={{ display: 'flex', gap: 3,mt:3 }}>
+        <Box sx={{
+        //  background: 'rgb(236, 253, 230)', 
+        p: 5, height: 'auto'
+      }} >
+
+        <Box sx={{ display: 'flex', gap: 3 }}>
           <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleDrawerOpen}>Create Material Master </Button>
         </Box>
 
@@ -454,7 +482,7 @@ const MaterialMaster = () => {
               sx: {
 
                 color: 'var(--primary-color)',
-
+                mt:5
               },
             }}
           />
@@ -884,7 +912,7 @@ const MaterialMaster = () => {
             </Box>
           </Box>
         </Drawer>
-
+        </Box>
       </Box>
 
 

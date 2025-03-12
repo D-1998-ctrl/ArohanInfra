@@ -79,7 +79,7 @@ const SupplierMaster = () => {
   const handleEditDrawerClose = () => {
     setEditIsDrawerOpen(false);
   };
-  console.log(idwiseData)
+  // console.log(idwiseData)
 
   const fetchData = async () => {
     const requestOptions = {
@@ -91,7 +91,7 @@ const SupplierMaster = () => {
       // const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=customermaster", requestOptions);
       const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/getaccountaddress.php?Typecode=S", requestOptions);
       const result = await response.json();
-      console.log("Fetched result:", result);
+      // console.log("Fetched result:", result);
       setData(result);
       // setID(result.map(item => item.Id));
       // console.log('id', setID)
@@ -103,7 +103,7 @@ const SupplierMaster = () => {
 
 
 
-  console.log("result", data);
+  // console.log("result", data);
   useEffect(() => {
     fetchData();
   }, []);
@@ -143,7 +143,7 @@ const SupplierMaster = () => {
       },
       {
         accessorKey: 'EmailId',
-        header: 'Email Id',
+        header: 'Email ',
         size: 150,
       },
       {
@@ -239,7 +239,7 @@ const SupplierMaster = () => {
       );
       const result = await response.json();
 
-      console.log("grp info:", result);
+      // console.log("grp info:", result);
 
       const options = result.map((grp) => ({
         value: grp.Id,
@@ -269,7 +269,7 @@ const SupplierMaster = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log("grp info:", result);
+        // console.log("grp info:", result);
 
         const options = result.map((grp) => ({
           value: grp.Id,
@@ -298,7 +298,7 @@ const SupplierMaster = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log("API Response:", result); // Debugging log
+        // console.log("API Response:", result); // Debugging log
 
         const cityOptions = result.map((city) => ({
           value: city.Id,
@@ -306,7 +306,7 @@ const SupplierMaster = () => {
         }));
 
         setOptions(cityOptions);
-        console.log('cityOptions', cityOptions)
+        // console.log('cityOptions', cityOptions)
       })
       .catch((error) => console.error("Error fetching cities:", error));
   };
@@ -355,7 +355,7 @@ const SupplierMaster = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log("API Response:", result); // Debugging log
+        // console.log("API Response:", result); // Debugging log
 
 
         const stateOptions = result.map((state) => ({
@@ -410,7 +410,7 @@ const SupplierMaster = () => {
 
       let accId = parseInt(accountResponse.data.Id);
       setAccountId(accId);
-      console.log('accId', accId);
+      // console.log('accId', accId);
 
 
       let addressData = qs.stringify({
@@ -446,6 +446,7 @@ const SupplierMaster = () => {
       handleDrawerClose()
       handleClearTemplate();
       toast.success("Supplier Master created successfully");
+      fetchData()
     } catch (error) {
       console.error("Error:", error);
     }
@@ -497,33 +498,29 @@ const SupplierMaster = () => {
 
   const deleteCustomerMaster = async () => {
     try {
-      const requestOptions = {
-        method: "GET",
-        redirect: "follow",
-      };
+      // Delete Address First
+      const addressUrl = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`;
+      console.log("Deleting Address:", addressUrl);
 
-      // Delete Account
-      const accountResponse = await fetch(
-        `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Account&Id=${currentRow.original.AccountId}`,
-        requestOptions
-      );
-      const accountResult = await accountResponse.json();
-      console.log("Deleted Account:", accountResult);
+      const addressResponse = await axios.get(addressUrl);
+      console.log("Address Deleted:", addressResponse.data);
 
-      // Delete Address
-      const addressResponse = await fetch(
-        `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`,
-        requestOptions
-      );
-      const addressResult = await addressResponse.json();
-      console.log("Deleted Address:", addressResult);
+      // Delete Account After Address
+      const accountUrl = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Account&Id=${currentRow.original.AccountId}`;
+      console.log("Deleting Account:", accountUrl);
 
-      toast.success("Customer Master deleted successfully");
+      const accountResponse = await axios.get(accountUrl);
+      console.log("Account Deleted:", accountResponse.data);
+
+      toast.success("Supplier master deleted successfully");
+     fetchData();
+
     } catch (error) {
-      console.error("Error deleting Customer Master:", error);
-      // toast.error("Failed to delete Customer Master");
+      console.error("Error deleting customer:", error);
     }
-  }
+  };
+
+
   const UpdateCustomerMaster = async () => {
     try {
       //  Post Account Data
@@ -536,7 +533,7 @@ const SupplierMaster = () => {
         'TypeCode': 'S',
         'IsSystem': updatedissystem,
         'Depriciation': "0",
-        'Id': idwiseData
+        'Id': accountId
       });
 
       let accountConfig = {
@@ -587,9 +584,10 @@ const SupplierMaster = () => {
 
       const addressResponse = await axios.request(addressConfig);
       console.log("Address Response:", addressResponse.data);
-      handleDrawerClose()
-      handleClearTemplate();
       toast.success("Supplier Master updated successfully");
+      handleEditDrawerClose()
+      fetchData()
+    
     } catch (error) {
       console.error("Error:", error);
     }
@@ -975,7 +973,7 @@ const SupplierMaster = () => {
                 
 
                 <Box m={1.5}>
-                  <Typography>Account Name</Typography>
+                  <Typography>Account Name </Typography>
                   <TextField
                     value={updatedAccountName}
                     onChange={(e) => setUpdatedAccountName(e.target.value)}
@@ -987,7 +985,7 @@ const SupplierMaster = () => {
 
 
                 <Box m={1.5}>
-                  <Typography>Group</Typography>
+                  <Typography>Group </Typography>
                   <FormControl fullWidth size="small">
                     <Select
                       value={selectedGroupOption}
@@ -1076,7 +1074,7 @@ const SupplierMaster = () => {
               {/* Right Column */}
               <Box flex={1}>
               <Box m={1.5}>
-                  <Typography>Opening Balance</Typography>
+                  <Typography>Opening Balance  </Typography>
                   <TextField
                     value={updatedcurrentBal}
                     onChange={(e) => setUpdatedCurrentBal(e.target.value)}

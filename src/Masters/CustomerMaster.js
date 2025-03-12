@@ -40,14 +40,15 @@ const CustomerMaster = () => {
     setAnchorEl(null);
   };
   const [idwiseData, setIdwiseData] = useState('')
+  const [addressId, setAddressId] = useState('')
   const [accountId, setAccountId] = useState(null)
   const handleEdit = () => {
     if (currentRow) {
-      console.log("Editing item with ID:", currentRow.original);
+      // console.log("Editing item with ID:", currentRow.original);
       setIdwiseData(currentRow.original.Id)
-      console.log(currentRow.original.Id)
+      // console.log(currentRow.original.Id)
       setAccountId(currentRow.original.AccountId)
-      console.log(currentRow.original.AccountId)
+      // console.log(currentRow.original.AccountId)
       setUpdatedAccountName(currentRow.original.AccountName)
       setSelectedGroupOption(currentRow.original.GroupId)
       setSelectedSubGroupOption(currentRow.original.SubGroupId)
@@ -62,6 +63,8 @@ const CustomerMaster = () => {
       setupdatedMobile(currentRow.original.MobileNo)
       SetupdatedGSTNo(currentRow.original.GSTNo)
       setupdatedIsSystem(currentRow.original.IsSystem)
+
+      setAddressId(currentRow.original.Id)
     }
   };
 
@@ -77,7 +80,7 @@ const CustomerMaster = () => {
   const handleEditDrawerClose = () => {
     setEditIsDrawerOpen(false);
   };
-  console.log(idwiseData)
+  // console.log(idwiseData)
 
   const fetchData = async () => {
     const requestOptions = {
@@ -89,92 +92,41 @@ const CustomerMaster = () => {
       // const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=customermaster", requestOptions);
       const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/getaccountaddress.php?Typecode=C", requestOptions);
       const result = await response.json();
-      console.log("Fetched result:", result);
+      // console.log("Fetched result:", result);
       setData(result);
     } catch (error) {
       console.error(error);
     }
   };
 
-
-
-
   useEffect(() => {
     fetchData();
   }, []);
 
-
-  // const deleteCustomerMaster = () => {
-  //   const requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow"
-  //   };
-
-  //   // Delete Account 
-  //   fetch(`https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Account&Id=${currentRow.original.AccountId}`, requestOptions)
-  //     .then((response) => response.json())
-  //     .then((result) => console.log("Deleted Account:", result))
-  //     .catch((error) => console.error("Error deleting Account:", error));
-
-  //   // Delete Address 
-  //   fetch(`https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`, requestOptions)
-  //     .then((response) => response.json())
-  //     .then((result) => console.log("Deleted Address:", result))
-  //     .catch((error) => console.error("Error deleting Address:", error));
-  // };
-
-
   const deleteCustomerMaster = async () => {
-    const requestOptions = {
-      method: "GET",
-      redirect: "follow"
-    };
-
     try {
       // Delete Address First
-      const addressResponse = await fetch(
-        `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`,
-        requestOptions
-      );
-      const addressResult = await addressResponse.json();
-      console.log("Deleted Address:", addressResult);
+      const addressUrl = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`;
+      console.log("Deleting Address:", addressUrl);
+
+      const addressResponse = await axios.get(addressUrl);
+      console.log("Address Deleted:", addressResponse.data);
 
       // Delete Account After Address
-      const accountResponse = await fetch(
-        `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Account&Id=${currentRow.original.AccountId}`,
-        requestOptions
-      );
-      const accountResult = await accountResponse.json();
-      console.log("Deleted Account:", accountResult);
+      const accountUrl = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Account&Id=${currentRow.original.AccountId}`;
+      console.log("Deleting Account:", accountUrl);
+
+      const accountResponse = await axios.get(accountUrl);
+      console.log("Account Deleted:", accountResponse.data);
+
+
+      toast.success("Customer master deleted successfully");
+      fetchData();
 
     } catch (error) {
-      console.error("Error deleting:", error);
+      console.error("Error deleting customer:", error);
     }
   };
-
-
-  // const deleteCustomerMaster = () => {
-  //   if (currentRow) {
-  //     console.log("Editing item with ID:", currentRow.original.Id);
-
-  //   }
-  //   const requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow"
-  //   };
-  //   const url = `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=Address&Id=${currentRow.original.Id}`
-  //   console.log(url)
-  //   fetch(url, requestOptions)
-  //     .then((response) => response.json())
-  //     .then((result) => {
-  //       console.log(result)
-
-  //       toast.success("customermaster deleted successfully!");
-
-
-  //     })
-  //     .catch((error) => console.error(error));
-  // }
 
   const columns = useMemo(() => {
     return [
@@ -210,7 +162,7 @@ const CustomerMaster = () => {
 
       {
         accessorKey: 'EmailId',
-        header: 'Email Id',
+        header: 'Email',
         size: 150,
       },
 
@@ -308,7 +260,7 @@ const CustomerMaster = () => {
       );
       const result = await response.json();
 
-      console.log("grp info:", result);
+      // console.log("grp info:", result);
 
       const options = result.map((grp) => ({
         value: grp.Id,
@@ -338,7 +290,7 @@ const CustomerMaster = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log("grp info:", result);
+        // console.log("grp info:", result);
 
         const options = result.map((grp) => ({
           value: grp.Id,
@@ -368,7 +320,7 @@ const CustomerMaster = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log("API Response:", result); // Debugging log
+        // console.log("API Response:", result); // Debugging log
 
 
         const cityOptions = result.map((city) => ({
@@ -401,7 +353,7 @@ const CustomerMaster = () => {
     )
       .then((response) => response.json())
       .then((result) => {
-        console.log("API Response:", result); // Debugging log
+        // console.log("API Response:", result); // Debugging log
 
 
         const stateOptions = result.map((state) => ({
@@ -492,6 +444,7 @@ const CustomerMaster = () => {
       handleDrawerClose()
       handleClearTemplate();
       toast.success("Customer Master created successfully");
+      fetchData();
     } catch (error) {
       console.error("Error:", error);
     }
@@ -535,9 +488,9 @@ const CustomerMaster = () => {
         'TypeCode': 'C',
         'IsSystem': updatedissystem,
         'Depriciation': "0",
-        'Id': idwiseData
+        'Id': accountId
       });
-
+      console.log("accountData", accountData)
       let accountConfig = {
         method: 'post',
         maxBodyLength: Infinity,
@@ -550,9 +503,9 @@ const CustomerMaster = () => {
 
       const updateaccountResponse = await axios.request(accountConfig);
       console.log("updateAccount Response:", updateaccountResponse.data);
-      // let accId = parseInt(accountResponse.data.Id)
-      // setAccountId(accId)
-      console.log('accId', accountId)
+      //  let accId = parseInt(updateaccountResponse.data.Id)
+      //  setAccountId(accId)
+      // console.log('accId', accountId)
 
 
       let addressData = qs.stringify({
@@ -586,9 +539,10 @@ const CustomerMaster = () => {
 
       const addressResponse = await axios.request(addressConfig);
       console.log("Address Response:", addressResponse.data);
-      handleDrawerClose()
-      handleClearTemplate();
       toast.success("Customer Master updated successfully");
+      handleEditDrawerClose()
+      fetchData();
+  
     } catch (error) {
       console.error("Error:", error);
     }
@@ -971,7 +925,7 @@ const CustomerMaster = () => {
                     fullWidth
                   />
                 </Box> */}
-             
+
 
                 <Box m={1.5}>
                   <Typography>Account Name</Typography>
@@ -1073,7 +1027,7 @@ const CustomerMaster = () => {
 
               {/* Right Column */}
               <Box flex={1}>
-              <Box m={1.5}>
+                <Box m={1.5}>
                   <Typography>Opening Balance</Typography>
                   <TextField
                     value={updatedcurrentBal}

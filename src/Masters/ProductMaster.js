@@ -35,7 +35,7 @@ const ProductMaster = () => {
       );
       const result = await response.json();
 
-      console.log("grp info:", result);
+      // console.log("grp info:", result);
 
       const options = result.map((grp) => ({
         value: grp.Id,
@@ -85,13 +85,9 @@ const ProductMaster = () => {
       setUpdateCGST(currentRow.original.CGSTPercentage)
       setUpdateIGST(currentRow.original.IGSTPercentage)
       setUpdateSGST(currentRow.original.SGSTPercentage)
-
-
-
-
     }
   };
-  console.log('idwiseData', idwiseData)
+  // console.log('idwiseData', idwiseData)
 
   const [data, setData] = useState([]);
   const columns = useMemo(() => {
@@ -162,12 +158,12 @@ const ProductMaster = () => {
       },
       {
         accessorKey: 'CGSTPercentage',
-        header: 'CGST',
+        header: 'CGST%',
         size: 150,
       },
       {
         accessorKey: 'IGSTPercentage',
-        header: 'IGST',
+        header: 'IGST%',
         size: 150,
       },
 
@@ -313,7 +309,7 @@ const ProductMaster = () => {
       const response = await fetch("https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=productmaster", requestOptions);
       const result = await response.json();
 
-      console.log("Fetched result:", result);  // Log the fetched data before setting it
+      // console.log("Fetched result:", result);  // Log the fetched data before setting it
 
       setData(result);
       // setID(result.map(item => item.Id));
@@ -323,7 +319,7 @@ const ProductMaster = () => {
       console.error(error);
     }
   };
-  console.log("result", data);
+  // console.log("result", data);
   useEffect(() => {
     fetchData();
   }, []);
@@ -340,7 +336,7 @@ const ProductMaster = () => {
   const handleEditDrawerClose = () => {
     setEditIsDrawerOpen(false);
   };
-  console.log(idwiseData)
+  // console.log(idwiseData)
 
 
   //get Data by Id
@@ -372,8 +368,6 @@ const ProductMaster = () => {
         setUpdateCGST(result.CGSTPercentage)
         setUpdateIGST(result.IGSTPercentage)
         setUpdateSGST(result.SGSTPercentage)
-
-
       })
       .catch((error) => console.error(error));
   };
@@ -415,8 +409,9 @@ const ProductMaster = () => {
       )
       .then((response) => {
         console.log("API Response:", response.data);
-        handleEditDrawerClose()
         toast.success("Product Master Updated successfully");
+        handleEditDrawerClose()
+        fetchData();
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -455,8 +450,13 @@ const ProductMaster = () => {
       <Box textAlign={'center'}>
         <Typography variant='h4' color='var(--complementary-color)'><b>Product Master</b></Typography>
       </Box>
+       
 
-      <Box sx={{ display: 'flex', gap: 3, m: 4, mt: 4 }}>
+       <Box sx={{
+        //  background: 'rgb(236, 253, 230)', 
+        p: 5, height: 'auto'
+      }}>
+      <Box sx={{ display: 'flex', gap: 3 }}>
         <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleDrawerOpen}>Create Product Master </Button>
       </Box>
 
@@ -1047,7 +1047,7 @@ const ProductMaster = () => {
 
 
 
-
+      </Box>
     </Box>
   )
 }

@@ -18,7 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BorderColorIcon from '@mui/icons-material/BorderColor';
-const PurchaseEntry = () => { 
+const PurchaseOtherEntry = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
@@ -48,10 +48,10 @@ const PurchaseEntry = () => {
   const fetchpurchaseHeader = async () => {
     try {
       const response = await axios.get(
-        "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=purchaseheader"
+        "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=PurchaseOtherHeader"
       );
       setPurchaseheaders(response.data);
-      // console.log('header', response.data)
+       console.log('header', response.data)
     } catch (error) { }
   };
 
@@ -60,10 +60,10 @@ const PurchaseEntry = () => {
   const fetchpurchasedetails = async () => {
     try {
       const response = await axios.get(
-        "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=purchasedetail"
+        "https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=purchaseotherdetail"
       );
       setPurchasedetails(response.data);
-      // console.log('detail', response.data)
+      console.log('detail', response.data)
     } catch (error) { }
   };
 
@@ -147,7 +147,7 @@ const PurchaseEntry = () => {
     ];
   }, [purchaheaders]);
 
-  const [anchorEl, setAnchorEl] = useState(null);
+ 
 
   const handleMenuOpen = (row) => {
     //  setAnchorEl(event.currentTarget);
@@ -159,10 +159,7 @@ const PurchaseEntry = () => {
 
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    handleMenuOpen(false);
-  };
+
 
   const handleNewClick = () => {
     setIsDrawerOpen(true);
@@ -171,13 +168,10 @@ const PurchaseEntry = () => {
     setShowEntry(1)
   };
 
-  const handleNewClick1 = () => {
-    setIsDrawerOpen(true);
-    setShowEntry(2)
-  };
 
 
-  const [currentRow, setCurrentRow] = useState(null);
+
+
   //
   const [rate, setRate] = useState(0);
   const [gstNoComp, setGstNoComp] = useState(0);
@@ -195,15 +189,14 @@ const PurchaseEntry = () => {
   const [transport, setTransport] = useState("");
   const [other, setOther] = useState('')
   const [showEntry, setShowEntry] = useState(0)
-  const [materialId, setMaterialId] = useState()
-  const [subTotal, setSubtotal] = useState()
+
 
   const fetchMaterialMaster = async () => {
     try {
       const response = await axios.get(
-        'https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=materialmaster',
+        'https://arohanagroapi.microtechsolutions.co.in/php/get/gettable.php?Table=ProductMaster',
       );
-      // console.log(response.data);
+       console.log(response.data);
       processMaterialData(response.data)
     } catch (error) {
       console.error(error);
@@ -222,13 +215,13 @@ const PurchaseEntry = () => {
 
       const options = data.map((account) => ({
         value: account?.Id || "",
-        label: account?.MaterialName || "",
+        label: account?.ProductName || "",
         cgstpercent: account?.CGSTPercentage,
         sgstpercent: account?.SGSTPercentage,
         igstpercent: account?.IGSTPercentage,
       }));
 
-      // console.log('options', options)
+       console.log('options', options)
       setProductOptions(options);
     }
   };
@@ -240,7 +233,7 @@ const PurchaseEntry = () => {
         'https://arohanagroapi.microtechsolutions.co.in/php/gettypecode.php?TypeCode=S',
         // "https://arohanagroapi.microtechsolutions.co.in/php/getbyid.php?Table=Account&Colname=TypeCode&Colvalue=S"
       );
-      // console.log("fetchTypeCodeS", response.data);
+     console.log("fetchTypeCodeS", response.data);
       setOptions(response.data);
     } catch (error) {
       console.error(error);
@@ -314,8 +307,8 @@ const PurchaseEntry = () => {
   const handleAddRow = () => {
 
     const newRow = {
-      MaterialId: selectedProduct,
-      MaterialName: materialName,
+      ProductId: selectedProduct,
+      ProductName: materialName,
       Quantity: quantity,
       Rate: rate,
       Amount: amount,
@@ -326,6 +319,8 @@ const PurchaseEntry = () => {
       IGSTPercentage: selectedIGST,
       IGSTAmount: igstAmount,
     };
+    console.log('ProductId',selectedProduct);
+    console.log('ProductName',materialName);
     console.log("newRow", newRow);
     // Update rows state and ensure the new row is added to the table
     setRows((prevRows) => [...prevRows, newRow]);
@@ -341,8 +336,8 @@ const PurchaseEntry = () => {
       const updatedRows = [...rows];
       updatedRows[editingRow] = {
         ...updatedRows[editingRow],
-        MaterialId: selectedProduct,
-        MaterialName: materialName,
+        ProductId: selectedProduct,
+        ProductName: materialName,
 
         Quantity: quantity,
         Rate: rate,
@@ -396,12 +391,12 @@ const PurchaseEntry = () => {
     setOther(rowData.Other)
     setSelectedId(rowData.SupplierId)
     // console.log(rowData.SupplierId)
-    setSelectedLocation(rowData.Storelocation)
+    setSelectedLocation(rowData.StorelocId)
 
     const invdetail = purchasedetails
-      .filter((detail) => detail.PurchaseId === rowData.Id)
-
-    setBrandName(invdetail[0]?.Brandname ?? null);
+      // .filter((detail) => detail.PurchaseId === rowData.Id)
+      .filter((detail) => detail.PurchaseotherId === rowData.Id)
+    setBrandName(invdetail[0]?.Brandname?? null);
     console.log('invdetail', invdetail)
   };
 
@@ -443,8 +438,6 @@ const PurchaseEntry = () => {
   const grandTotal =
     subtotal + totalCGST + totalSGST + totalIGST + (parseFloat(transport) || 0) + (parseFloat(other) || 0);
 
-
-
   const [editId, setEditId] = useState("");
   const [PurchaseDate, setPurchaseDate] = useState(null);
   const [BillDate, setBillDate] = useState(null);
@@ -464,7 +457,7 @@ const PurchaseEntry = () => {
       SupplierId: parseInt(selectedId),
       BillNo: parseInt(billNo),
       BillDate: formattedBillDate,
-      Storelocation: selectedLocation,
+      StorelocId: selectedLocation,
       CGSTAmount: cgstAmount,
       SGSTAmount: sgstAmount,
       IGSTAmount: igstAmount,
@@ -477,8 +470,8 @@ const PurchaseEntry = () => {
     console.log("purchaseheaderdata", purchaseheaderdata);
     try {
       const invoiceurl = isEditing
-        ? "https://arohanagroapi.microtechsolutions.co.in/php/updatepurchaseheader.php"
-        : "https://arohanagroapi.microtechsolutions.co.in/php/postpurchaseheader.php";
+        ? "https://arohanagroapi.microtechsolutions.co.in/php/updatepurchaseotherheader.php"
+        : "https://arohanagroapi.microtechsolutions.co.in/php/postpurchaseotherheader.php";
 
       const response = await axios.post(
         invoiceurl,
@@ -488,7 +481,7 @@ const PurchaseEntry = () => {
         }
       );
       console.log('postpurchaseheader', response.data)
-      let PurchaseId = isEditing ? rowId : parseInt(response.data.Id, 10);
+      let PurchaseId = isEditing ? rowId : parseInt(response.data.ID, 10);
       console.log("Purchase Id ", PurchaseId);
       console.log("rows", rows);
 
@@ -496,9 +489,9 @@ const PurchaseEntry = () => {
         console.log("this row   ", row);
         const rowData = {
           Id: parseInt(row.Id, 10),
-          PurchaseId: parseInt(PurchaseId, 10),
+          PurchaseotherId: parseInt(PurchaseId, 10),
           SerialNo: rows.indexOf(row) + 1,
-          MaterialId: parseInt(row.MaterialId, 10),
+          ProductId: parseInt(row.ProductId, 10),
           // MaterialId: parseInt(row.selectedProduct, 10),
           Quantity: parseFloat(row.Quantity),
           Rate: parseFloat(row.Rate),
@@ -517,8 +510,8 @@ const PurchaseEntry = () => {
 
         const invoicdedetailurl =
           isEditing && row.Id
-            ? "https://arohanagroapi.microtechsolutions.co.in/php/updatepurchasedetail.php"
-            : "https://arohanagroapi.microtechsolutions.co.in/php/postpurchasedetail.php";
+            ? "https://arohanagroapi.microtechsolutions.co.in/php/updatepurchaseotherdetail.php"
+            : "https://arohanagroapi.microtechsolutions.co.in/php/postpurchaseotherdetail.php";
 
         console.log(" invoicdedetailurl is used ", invoicdedetailurl);
         try {
@@ -584,16 +577,19 @@ const PurchaseEntry = () => {
     console.log("Editing item with ID:", rowId);
 
     const invdetail = purchasedetails.filter(
-      (detail) => detail.PurchaseId === rowId);
-
-    //console.log('invdetail', invdetail)
+      (detail) => detail.PurchaseotherId === rowId);
+    console.log('invdetail', invdetail)
 
     const mappedRows = invdetail.map((detail) => ({
       Id: detail.Id,
-      PurchaseId: detail.PurchaseId,
-      MaterialId: detail.MaterialId,
-      MaterialName: productOptions.find((data) => data.value === detail.MaterialId)?.label || "",
-      Quantity: parseFloat(detail.Quantity) || 0,
+      PurchaseotherId: detail.PurchaseotherId,
+
+      
+      ProductId: detail.ProductId,
+     MaterialName: productOptions.find((data) => data.value === detail.ProductId)?.label || "",
+      
+     
+     Quantity: parseFloat(detail.Quantity) || 0,
       Rate: parseFloat(detail.Rate) || 0,
       Amount: parseFloat(detail.Amount) || 0,
       CGSTPercentage: parseFloat(detail.CGSTPercentage) || 0,
@@ -653,7 +649,7 @@ const PurchaseEntry = () => {
     setSGSTAmount(row.SGSTAmount || "0");
     setSelectedIGST(row.IGSTPercentage || "0");
     setIGSTAmount(row.IGSTAmount || "0");
-    setSelectedProduct(row.MaterialId);
+    setSelectedProduct(row.ProductId);
 
   };
 
@@ -694,14 +690,14 @@ const PurchaseEntry = () => {
 
     <Box>
       <Box textAlign={'center'}>
-        <Typography variant='h4' color='var(--complementary-color)'><b>Purchase Entry</b></Typography>
+        <Typography variant='h4' color='var(--complementary-color)'><b>Other Purchase Entry</b></Typography>
       </Box>
       <Box sx={{
         //  background: 'rgb(236, 253, 230)', 
         p: 5, height: 'auto'
       }} >
         <Box sx={{ display: 'flex', gap: 3 }}>
-          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleNewClick}>Create Purchase Entry </Button>
+          <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleNewClick}>Create Other Purchase Entry </Button>
         </Box>
 
         <Box mt={4}>
@@ -734,14 +730,14 @@ const PurchaseEntry = () => {
 
             <Box  >
               {showEntry === 1 &&
-                <Typography m={2} variant="h6"><b>Create Purchase Entry</b></Typography>
+                <Typography m={2} variant="h6"><b>Create Other Purchase Entry</b></Typography>
               }
               {showEntry === 2 && <Box
 
               >
                 <Box display="flex" justifyContent="space-between" alignItems="center" m={2}>
                   <Typography fontWeight="bold" variant="h6">
-                    Purchase Entry Detail
+                  Other Purchase Entry Detail
                   </Typography>
                   <IconButton color='#000' onClick={handleMenuOpen}>
                     <BorderColorIcon />
@@ -752,7 +748,7 @@ const PurchaseEntry = () => {
               </Box>
               }
               {showEntry === 3 &&
-                <Typography m={2} variant="h6"><b>Update Purchase Entry </b></Typography>
+                <Typography m={2} variant="h6"><b>Update Other Purchase Entry </b></Typography>
 
 
               }
@@ -1325,7 +1321,7 @@ const PurchaseEntry = () => {
                 <Grid item xs={12}>
                   <Divider />
                 </Grid>
-                <Grid container spacing={2} sx={{ display: "flex", alignItems: "center", gap: 15, p: 2, mt: 1 }}>
+                <Grid container spacing={2} sx={{ display: "flex", alignItems: "center", gap: 25, p: 2, mt: 1 }}>
                   <Grid item sx={{ display: "flex", alignItems: "center", gap: 1 }}>
                     <Typography>Bill No:</Typography>
                     <b>{billNo}</b>
@@ -1397,12 +1393,6 @@ const PurchaseEntry = () => {
 
               </Grid>
             </Box>
-
-
-
-
-
-
           }
         </Drawer>
       </Box>
@@ -1411,7 +1401,7 @@ const PurchaseEntry = () => {
 
   )
 }
+export default PurchaseOtherEntry
 
-export default PurchaseEntry
 
 

@@ -67,18 +67,24 @@ export const menuItems = [
       },
 
       {
+        title: "Purchase Other",
+        path: "/Purchaseother",
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
+      },
+
+      {
         title: "Production Entry",
         path: "productionentry",
         icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
-        title: "Delivery Challan at godwon",
-        path: "commonpage",
+        title: "Delivery Challan At Godwon",
+        path: "deliverychallan",
         icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {
         title: "Inword at store",
-        path: "commonpage",
+        path: "inwordatstore",
         icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {

@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect, } from "react";
 import {
+  Button,
   Box,
   IconButton,
   List,
@@ -26,7 +27,7 @@ import user from '../imgs/user.jpg'
 import { useNavigate } from 'react-router-dom';
 import Avatar from '@mui/material/Avatar';
 import { green } from "@mui/material/colors";
-
+import LogoutIcon from '@mui/icons-material/Logout';
 
 
 function Sidebar() {
@@ -73,8 +74,29 @@ function Sidebar() {
             <FaBars onClick={handleToggleSidebar} style={{ fontSize: "1.8rem" }} />
           </Box>
 
-          <Box >
-            <Typography color='var(--primary-color)' variant="body"> <b>Welcome To Arohan Agro </b></Typography>
+
+          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', width: '100%', }}>
+
+            <Typography color="var(--primary-color)" variant="body">
+              <b>Welcome To Arohan Agro</b>
+            </Typography>
+
+
+            <Box sx={{ display: 'flex', alignItems: 'center',  gap: 1}}>
+              <Avatar sx={{ bgcolor: "#054c2a", fontSize: 10,width: 30, height: 30 }}>DC</Avatar>
+              <span style={{fontSize:13}} className="hidden-text">
+                <b>Chavan Diksha</b>
+              </span>
+
+
+
+              {/* {!isCollapsed && (
+                <div>
+                  <AiOutlineLogout onClick={logoutUser} className="logout-icon" />
+                </div>
+              )} */}
+            </Box>
+
           </Box>
           {/*           
           <Box display={'flex'} justifyContent={'space-between'} flex={1} m={2} color={'#000'}>
@@ -265,19 +287,42 @@ function Sidebar() {
               <li>
                 <Link to="#" className="logout-link">
                   <div className="info" >
-                    <div>
-                      {/* <img src={user} alt="user" className="user-icon" style={{ height: "50px", width: "50px" }} /> */}
+                    {/* <div>
+                      
                       <Avatar sx={{ bgcolor: "#054c2a", fontSize: 15 }}>DC</Avatar>
-                    </div>
-                    <span className="hidden-text" >
+                    </div> */}
+                    {/* <img src={user} alt="user" className="user-icon" style={{ height: "50px", width: "50px" }} /> */}
+                    {/* <span className="hidden-text" >
                       <b>Chavan Diksha</b>
-                      {/* <h6>{userData}</h6> */}
-                    </span>
+                      
+                    </span> */}
 
                     {!isCollapsed && (
-                      <div>
-                        <AiOutlineLogout onClick={logoutUser} className="logout-icon" />
-                      </div>
+
+                      // <div style={{display:"flex",alignItems:'center'}}>
+                      //   loggout
+                      //   <LogoutIcon onClick={logoutUser} className="logout-icon" />
+                      // </div>
+
+                      <Button
+                        variant="contained"
+                        color="primary"
+                      
+                        endIcon={<LogoutIcon />} 
+                        onClick={logoutUser}
+                        sx={{
+                          backgroundColor: "#074e2c", // Adjust to match the image
+                          color: "white",
+                          textTransform: "none",
+                          padding: "6px 16px",
+                          borderRadius: "6px",
+                          width:210,
+                          textAlign:'center',
+                          m:2
+                        }}
+                      >
+                        Logout
+                      </Button>
                     )}
                   </div>
 
