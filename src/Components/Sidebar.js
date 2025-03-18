@@ -66,6 +66,20 @@ function Sidebar() {
     navigate('/login');
   };
 
+  const Name = sessionStorage.getItem('Name');
+  // Function to extract the initials from the username (for Avatar display)
+  const getInitials = (name) => {
+    if (!name) return ''; 
+    const splitName = name.trim().split(' '); 
+    const initials = splitName
+      .filter(word => word.length > 0) 
+      .map(word => word[0].toUpperCase()) 
+      .join('');
+  
+    return initials || '?'; 
+  }; 
+
+
   return (
     <div className="grid-container">
       <header className="header">
@@ -82,13 +96,12 @@ function Sidebar() {
             </Typography>
 
 
-            <Box sx={{ display: 'flex', alignItems: 'center',  gap: 1}}>
-              <Avatar sx={{ bgcolor: "#054c2a", fontSize: 10,width: 30, height: 30 }}>DC</Avatar>
-              <span style={{fontSize:13}} className="hidden-text">
-                <b>Chavan Diksha</b>
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+
+              <Avatar sx={{ bgcolor: "#054c2a", fontSize: 12, width: 31, height: 31 }}> {getInitials(Name || '')}</Avatar>
+              <span style={{ fontSize: 13 }} className="hidden-text">
+                <b>{Name}</b>
               </span>
-
-
 
               {/* {!isCollapsed && (
                 <div>
@@ -307,8 +320,8 @@ function Sidebar() {
                       <Button
                         variant="contained"
                         color="primary"
-                      
-                        endIcon={<LogoutIcon />} 
+
+                        endIcon={<LogoutIcon />}
                         onClick={logoutUser}
                         sx={{
                           backgroundColor: "#074e2c", // Adjust to match the image
@@ -316,9 +329,9 @@ function Sidebar() {
                           textTransform: "none",
                           padding: "6px 16px",
                           borderRadius: "6px",
-                          width:210,
-                          textAlign:'center',
-                          m:2
+                          width: 210,
+                          textAlign: 'center',
+                          m: 2
                         }}
                       >
                         Logout

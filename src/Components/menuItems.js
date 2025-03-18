@@ -48,6 +48,12 @@ export const menuItems = [
         icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
 
+      {
+        title: "User Master",
+        path: "/usermaster",
+        icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
+      },
+
     ],
   },
   {

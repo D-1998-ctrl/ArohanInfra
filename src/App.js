@@ -20,6 +20,7 @@ import Commonpage from './Commonpage';
 import InwordAtStore from './Transaction/InwordAtStore';
 import DeliveryChallan from './Transaction/DeliveryChallan';
 import PurchaseOther from './Transaction/PurchaseOther';
+import UserMaster from './Masters/UserMaster';
 // import Coverpage from './LogIn-SignUp/coverpage';
 
 function App() {
@@ -36,6 +37,7 @@ function App() {
           <Route path="/productmaster" element={<ProductMaster />} />
           <Route path="/materialmaster" element={<MaterialMaster />} />
           <Route path="/accountmaster" element={<AccountMaster />} />
+          <Route path="/usermaster" element={<UserMaster/>} />
           {/* transactions */}
           <Route path="/Purchase" element={<Purchase/>} />
           <Route path="/salesentry" element={<SalesEntry/>} />

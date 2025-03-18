@@ -528,7 +528,7 @@ const MaterialMaster = () => {
                   value={materialCode}
                   onChange={(e) => setMaterialCode(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Material Code' fullWidth />
+                  size="small" placeholder='Material Code' fullWidth />
               </Box>
 
 
@@ -577,35 +577,35 @@ const MaterialMaster = () => {
 
 
 
-            <Box flex={1}  >
+            <Box flex={1}  mt={2} >
               <Typography>Material Name</Typography>
               <TextField
 
                 value={materialName}
                 onChange={(e) => setMaterialName(e.target.value)}
 
-                size="small" margin="normal" placeholder='Material Name' fullWidth />
+                size="small"  placeholder='Material Name' fullWidth />
 
             </Box>
 
-            <Box flex={1}  >
+            <Box flex={1}  mt={2} >
               <Typography>Brand Name</Typography>
               <TextField
                 value={brandName}
                 onChange={(e) => setBrandName(e.target.value)}
 
-                size="small" margin="normal" placeholder='Brand Name' fullWidth />
+                size="small"  placeholder='Brand Name' fullWidth />
 
             </Box>
 
-            <Box display={'flex'} alignItems={'center'} gap={5} mt={1}>
+            <Box display={'flex'} alignItems={'center'} gap={5} mt={2}>
               <Box flex={1}  >
                 <Typography>Purchase Rate</Typography>
                 <TextField
                   value={purchaseRate}
                   onChange={(e) => setPurchaseRate(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Purchase Role' fullWidth />
+                  size="small"  placeholder='Purchase Role' fullWidth />
 
               </Box>
 
@@ -615,73 +615,73 @@ const MaterialMaster = () => {
                   value={reorderLevel}
                   onChange={(e) => setReorderLevel(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Reorder level' fullWidth />
+                  size="small" placeholder='Reorder level' fullWidth />
 
               </Box>
 
-              <Box flex={1} >
+              <Box flex={1}  >
                 <Typography>Min.Balance</Typography>
                 <TextField
                   value={minBal}
                   onChange={(e) => setMinBal(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Min.Balance' fullWidth />
+                  size="small" placeholder='Min.Balance' fullWidth />
 
               </Box>
             </Box>
 
-            <Box display={'flex'} alignItems={'center'} gap={5} >
-              <Box flex={1}  >
+            <Box display={'flex'} alignItems={'center'} gap={5}  >
+              <Box flex={1} mt={2} >
                 <Typography>Max.Balance</Typography>
                 <TextField
                   value={maxBal}
                   onChange={(e) => setMaxBal(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Max.Balance' fullWidth />
+                  size="small" placeholder='Max.Balance' fullWidth />
 
               </Box>
 
 
 
-              <Box flex={1}  >
+              <Box flex={1} mt={2}  >
                 <Typography>HSN Code</Typography>
                 <TextField
                   value={HSNCode}
                   onChange={(e) => setHSNCode(e.target.value)}
 
-                  size="small" margin="normal" placeholder='HSN Code' fullWidth />
+                  size="small"  placeholder='HSN Code' fullWidth />
 
               </Box>
             </Box>
 
-            <Box display={'flex'} alignItems={'center'} gap={5} mt={1} >
-              <Box flex={1} >
+            <Box display={'flex'} alignItems={'center'} gap={5}  >
+              <Box flex={1} margin="normal" mt={2}>
                 <Typography>CGST%</Typography>
                 <TextField
                   value={CGST}
                   onChange={(e) => setCGST(e.target.value)}
 
-                  size="small" margin="normal" placeholder='CGST' fullWidth />
+                  size="small"  placeholder='CGST' fullWidth />
 
               </Box>
 
-              <Box flex={1}  >
+              <Box flex={1} margin="normal" mt={2} >
                 <Typography>SGST%</Typography>
                 <TextField
                   value={SGST}
                   onChange={(e) => setSGST(e.target.value)}
 
-                  size="small" margin="normal" placeholder='SGST' fullWidth />
+                  size="small"  placeholder='SGST' fullWidth />
 
               </Box>
 
-              <Box flex={1}  >
+              <Box flex={1} mt={2} >
                 <Typography>IGST%</Typography>
                 <TextField
                   value={IGST}
                   onChange={(e) => setIGST(e.target.value)}
 
-                  size="small" margin="normal" placeholder='IGST' fullWidth />
+                  size="small"  placeholder='IGST' fullWidth />
 
               </Box>
             </Box>
@@ -731,7 +731,7 @@ const MaterialMaster = () => {
                   value={updatematerialCode}
                   onChange={(e) => setUpdateMaterialCode(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Material Code' fullWidth />
+                  size="small"  placeholder='Material Code' fullWidth />
 
               </Box>
 
@@ -759,7 +759,7 @@ const MaterialMaster = () => {
               </Box> */}
 
 
-              <Box flex={1}>
+              <Box flex={1} >
                 <Typography>Material Group</Typography>
                 <FormControl fullWidth size="small">
                   <Select
@@ -786,111 +786,111 @@ const MaterialMaster = () => {
 
 
 
-            <Box flex={1}  >
+            <Box flex={1} mt={2}  >
               <Typography>Material Name</Typography>
               <TextField
 
                 value={updatematerialName}
                 onChange={(e) => setUpdateMaterialName(e.target.value)}
 
-                size="small" margin="normal" placeholder='Material Name' fullWidth />
+                size="small" placeholder='Material Name' fullWidth />
 
             </Box>
 
-            <Box flex={1}  >
+            <Box flex={1} mt={2} >
               <Typography>Brand Name</Typography>
               <TextField
                 value={updatebrandName}
                 onChange={(e) => setUpdateBrandName(e.target.value)}
 
-                size="small" margin="normal" placeholder='Brand Name' fullWidth />
+                size="small"  placeholder='Brand Name' fullWidth />
 
             </Box>
 
             <Box display={'flex'} alignItems={'center'} gap={5} mt={1}>
-              <Box flex={1}  >
+              <Box flex={1} mt={2} >
                 <Typography>Purchase Rate</Typography>
                 <TextField
                   value={updatepurchaseRate}
                   onChange={(e) => setUpdatePurchaseRate(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Purchase Role' fullWidth />
+                  size="small"  placeholder='Purchase Role' fullWidth />
 
               </Box>
 
-              <Box flex={1} >
+              <Box flex={1} mt={2}>
                 <Typography>Reorder level</Typography>
                 <TextField
                   value={updatereorderLevel}
                   onChange={(e) => setUpdateReorderLevel(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Reorder level' fullWidth />
+                  size="small"  placeholder='Reorder level' fullWidth />
 
               </Box>
 
-              <Box flex={1} >
+              <Box flex={1} mt={2} >
                 <Typography>Min.Balance</Typography>
                 <TextField
                   value={updateminBal}
                   onChange={(e) => setUpdateMinBal(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Min.Balance' fullWidth />
+                  size="small"  placeholder='Min.Balance' fullWidth />
 
               </Box>
             </Box>
 
             <Box display={'flex'} alignItems={'center'} gap={5} >
-              <Box flex={1}  >
+              <Box flex={1} mt={2} >
                 <Typography>Max.Balance</Typography>
                 <TextField
                   value={updatemaxBal}
                   onChange={(e) => setUpdateMaxBal(e.target.value)}
 
-                  size="small" margin="normal" placeholder='Max.Balance' fullWidth />
+                  size="small"  placeholder='Max.Balance' fullWidth />
 
               </Box>
 
 
 
-              <Box flex={1}  >
+              <Box flex={1} mt={2}  >
                 <Typography>HSN Code</Typography>
                 <TextField
                   value={updateHSNCode}
                   onChange={(e) => setUpdateHSNCode(e.target.value)}
 
-                  size="small" margin="normal" placeholder='HSN Code' fullWidth />
+                  size="small"  placeholder='HSN Code' fullWidth />
 
               </Box>
             </Box>
 
             <Box display={'flex'} alignItems={'center'} gap={5} mt={1} >
-              <Box flex={1} >
+              <Box flex={1} mt={2}>
                 <Typography>CGST%</Typography>
                 <TextField
                   value={updateCGST}
                   onChange={(e) => setUpdateCGST(e.target.value)}
 
-                  size="small" margin="normal" placeholder='CGST' fullWidth />
+                  size="small"  placeholder='CGST' fullWidth />
 
               </Box>
 
-              <Box flex={1}  >
+              <Box flex={1} mt={2} >
                 <Typography>SGST%</Typography>
                 <TextField
                   value={updateSGST}
                   onChange={(e) => setUpdateSGST(e.target.value)}
 
-                  size="small" margin="normal" placeholder='SGST' fullWidth />
+                  size="small"  placeholder='SGST' fullWidth />
 
               </Box>
 
-              <Box flex={1}  >
+              <Box flex={1}  mt={2}>
                 <Typography>IGST%</Typography>
                 <TextField
                   value={updateIGST}
                   onChange={(e) => setUpdateIGST(e.target.value)}
 
-                  size="small" margin="normal" placeholder='IGST' fullWidth />
+                  size="small" placeholder='IGST' fullWidth />
 
               </Box>
             </Box>

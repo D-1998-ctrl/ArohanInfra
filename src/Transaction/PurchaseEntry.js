@@ -18,6 +18,12 @@ import "react-toastify/dist/ReactToastify.css";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import BorderColorIcon from '@mui/icons-material/BorderColor';
+import { format } from 'date-fns';
+import { enGB } from 'date-fns/locale'; // Use English (UK) for DD-MM-YYYY
+
+
+
+
 const PurchaseEntry = () => { 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
@@ -329,6 +335,21 @@ const PurchaseEntry = () => {
     console.log("newRow", newRow);
     // Update rows state and ensure the new row is added to the table
     setRows((prevRows) => [...prevRows, newRow]);
+
+
+
+    // Clear all fields after adding a row
+    // setSelectedProduct(""); 
+    // setMaterialName(""); 
+    // setQuantity(""); 
+    // setRate(""); 
+    // SetAmount("");
+    // setSelectedCGST(""); 
+    // setCGSTAmount(""); 
+    // setSelectedSGST("");
+    // setSGSTAmount(""); 
+    // setSelectedIGST(""); 
+    // setIGSTAmount("");
   };
 
   const handleSaveOrAddRow = () => {
@@ -657,6 +678,12 @@ const PurchaseEntry = () => {
 
   };
 
+  const handleDeleteRow = (index) => {
+    const updatedRows = [...rows];
+    updatedRows.splice(index, 1);
+    setRows(updatedRows);
+  };
+
   //for Store locations
   const [storeoptions, setStoreOptions] = useState([]);
   const [selectedLocation, setSelectedLocation] = useState();
@@ -908,6 +935,7 @@ const PurchaseEntry = () => {
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
                           value={PurchaseDate ? new Date(PurchaseDate) : null}
+                           format="dd-MM-yyyy"
                           onChange={(newValue) => setPurchaseDate(newValue)}
                           slotProps={{
                             textField: { size: "small", fullWidth: true },
@@ -933,6 +961,7 @@ const PurchaseEntry = () => {
                       <LocalizationProvider dateAdapter={AdapterDateFns}>
                         <DatePicker
                           value={BillDate ? new Date(BillDate) : null}
+                           format="dd-MM-yyyy" 
                           onChange={(newValue) => setBillDate(newValue)}
                           slotProps={{
                             textField: { size: "small", fullWidth: true },
@@ -1215,6 +1244,8 @@ const PurchaseEntry = () => {
                               >
                                 Edit
                               </MenuItem>
+
+                               <MenuItem onClick={() => handleDeleteRow(index)}>Delete</MenuItem>
                             </Menu>
                           </TableCell>
                         </TableRow>

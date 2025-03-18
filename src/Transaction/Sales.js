@@ -41,6 +41,8 @@ import {
 } from "material-react-table";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { format } from 'date-fns';
+import { enGB } from 'date-fns/locale'
 
 const SalesEntry = () => {
   const theme = useTheme();
@@ -724,6 +726,20 @@ const SalesEntry = () => {
     // Update rows state and ensure the new row is added to the table
     setRows((prevRows) => [...prevRows, newRow]);
 
+
+    // Clear all fields after adding a row
+    // setSelectedProductId("");
+    // setProductName("");
+    // setQuantity("");
+    // setRate("");
+    // SetAmount("");
+    // setCGST("");
+    // setCGSTAmount("");
+    // setSGST("");
+    // setSGSTAmount("");
+    // setIGST("");
+    // setIGSTAmount("");
+
   };
 
   const subtotal = rows.reduce(
@@ -952,7 +968,9 @@ const SalesEntry = () => {
                 <Typography variant="body2">Invoice Date</Typography>
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
-                    value={invoiceDate ? new Date(invoiceDate) : null} // Convert to Date object
+                    value={invoiceDate ? new Date(invoiceDate) : null} 
+
+                  format="dd-MM-yyyy"
                     onChange={(newValue) => setInvoiceDate(newValue)}
                     slotProps={{
                       textField: { size: "small", fullWidth: true },
@@ -1023,6 +1041,7 @@ const SalesEntry = () => {
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
                     value={orderDate ? new Date(orderDate) : null} // Convert to Date object
+                  format="dd-MM-yyyy"
                     onChange={(newValue) => setOrderDate(newValue)}
                     slotProps={{
                       textField: { size: "small", fullWidth: true },

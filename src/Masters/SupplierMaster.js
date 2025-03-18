@@ -17,6 +17,7 @@ const SupplierMaster = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
+    handleClearTemplate();
   };
 
   const handleDrawerClose = () => {

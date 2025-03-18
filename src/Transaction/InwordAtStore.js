@@ -74,8 +74,8 @@ const InwordAtStore = () => {
         } catch (error) { }
     };
 
+    
     //  api to call fetchInwarddetails
-
     const fetchInwarddetails = async () => {
         try {
             const response = await axios.get(
@@ -95,7 +95,7 @@ const InwordAtStore = () => {
 
     //table
     const [anchorEl, setAnchorEl] = useState(null);
-    const [currentRow, setCurrentRow] = useState(null);
+    const [currentRow, setCurrentRow] = useState(null);                              
 
     const handleMenuOpen = (event, row) => {
         setAnchorEl(event.currentTarget);
@@ -339,6 +339,14 @@ const InwordAtStore = () => {
         // Update rows state and ensure the new row is added to the table
         setRows((prevRows) => [...prevRows, newRow]);
         console.log("Updated Rows:", rows);
+
+        //clear all fileds
+        // setSelectedProduct("");
+        // setQuantity("");
+        // setRate("");
+        // setAmount("");
+        // setBatchNo("");
+        // setBatchDate("")
     };
 
     //for updaterows
@@ -370,7 +378,7 @@ const InwordAtStore = () => {
         e.preventDefault();
         const formattedInwardDate = moment(inwordDate).format("YYYY-MM-DD");
         const formattedChallanDate = moment(challanDate).format("YYYY-MM-DD");
-        const formattedBatchDate = moment(batchDate).format("YYYY-MM-DD");
+    
         const purchaseheaderdata = {
             Id: rowId,
             InwardNo: parseInt(inwordNo),
@@ -402,8 +410,8 @@ const InwordAtStore = () => {
 
             for (const row of rows) {
                 console.log("this row   ", row);
-                // const formattedBatchDate = moment(row.batchDate).format("YYYY-MM-DD");
-                // console.log('b date',formattedBatchDate)
+                const formattedBatchDate = moment(row.BatchDate).format("YYYY-MM-DD");
+                console.log('b date',formattedBatchDate)
                 const rowData = {
                     Id: parseInt(row.Id, 10),
                     InwardId: parseInt(InwardId, 10),
@@ -411,6 +419,7 @@ const InwordAtStore = () => {
                     ProductId: parseInt(row.ProductId, 10),
                     // MaterialId: parseInt(row.selectedProduct, 10),
                     BatchNo: parseInt(row.BatchNo),
+                    
                     BatchDate: formattedBatchDate,
                     Quantity: parseFloat(row.Quantity),
                     Rate: parseFloat(row.Rate),
@@ -529,6 +538,7 @@ const InwordAtStore = () => {
                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                             <DatePicker
                                                 value={inwordDate ? new Date(inwordDate) : null}
+                                                 format="dd-MM-yyyy"
                                                 onChange={(newValue) => setInwordDate(newValue)}
                                                 slotProps={{
                                                     textField: { size: "small", fullWidth: true },
@@ -586,6 +596,7 @@ const InwordAtStore = () => {
                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                             <DatePicker
                                                 value={challanDate ? new Date(challanDate) : null}
+                                                  format="dd-MM-yyyy"
                                                 onChange={(newValue) => setChallanDate(newValue)}
                                                 slotProps={{
                                                     textField: { size: "small", fullWidth: true },
@@ -706,6 +717,7 @@ const InwordAtStore = () => {
                                         <Typography variant="body2">Batch Date</Typography>
                                         <DatePicker
                                             value={batchDate ? new Date(batchDate) : null}
+                                              format="dd-MM-yyyy"
                                             onChange={(newValue) => setBatchDate(newValue)}
                                             slotProps={{
                                                 textField: { size: "small", fullWidth: true },

@@ -90,8 +90,8 @@ const DeliveryChallan = () => {
                 header: 'VehicleNo',
                 size: 150,
             },
-            
-            
+
+
 
             // {
             //     header: "Actions",
@@ -116,7 +116,7 @@ const DeliveryChallan = () => {
 
     //for get data in main table and form
     const handleSubmit = (rowData) => {
-        console.log("This row has been clicked:", rowData);  
+        console.log("This row has been clicked:", rowData);
         setRowId(rowData.Id)
         setIsDrawerOpen(true);
         //setIsEditing(false);
@@ -287,12 +287,12 @@ const DeliveryChallan = () => {
         e.preventDefault();
 
         const formattedChallanDate = moment(challanDate).format("YYYY-MM-DD");
-        const formattedBatchDate = moment(batchDate).format("YYYY-MM-DD");
+        // const formattedBatchDate = moment(batchDate).format("YYYY-MM-DD");
 
         const purchaseheaderdata = {
             Id: rowId,
             ChallanNo: parseInt(challanNo),
-            ChallanDate:formattedChallanDate,
+            ChallanDate: formattedChallanDate,
             StoreLocation: selectedLocation,
             VehicleNo: vehicleNo,
             Total: totalAmount,
@@ -318,8 +318,8 @@ const DeliveryChallan = () => {
 
             for (const row of rows) {
                 console.log("this row   ", row);
-                // const formattedBatchDate = moment(row.batchDate).format("YYYY-MM-DD");
-               
+                const formattedBatchDate = moment(row.BatchDate).format("YYYY-MM-DD");
+
                 const rowData = {
                     Id: parseInt(row.Id, 10),
                     ChallanId: parseInt(InwardId, 10),
@@ -327,7 +327,7 @@ const DeliveryChallan = () => {
                     ProductId: parseInt(row.ProductId, 10),
                     // MaterialId: parseInt(row.selectedProduct, 10),
                     BatchNo: parseInt(row.BatchNo),
-                    BatchDate:formattedBatchDate,
+                    BatchDate: formattedBatchDate,
                     Quantity: parseFloat(row.Quantity),
                     Rate: parseFloat(row.Rate),
                     Amount: parseInt(row.Amount),
@@ -404,6 +404,14 @@ const DeliveryChallan = () => {
         // Update rows state and ensure the new row is added to the table
         setRows((prevRows) => [...prevRows, newRow]);
         console.log("Updated Rows:", rows);
+
+        // //clear all fileds
+        // setSelectedProduct("");
+        // setQuantity("");
+        // setRate("");
+        // setAmount("");
+        // setBatchNo("");
+        // setBatchDate("")
     };
 
     //for updaterows
@@ -445,16 +453,16 @@ const DeliveryChallan = () => {
 
 
     //for delete Table
-    
+
     // const handleDelete = async (id) => {
     //     try {
     //         const response = await axios.delete(
     //             `https://arohanagroapi.microtechsolutions.co.in/php/delete/deletetable.php?Table=DeliveryChallanHeader&Id=${id}`
     //         );
-    
+
     //         if (response.status === 200) {
     //             console.log("Deleted successfully");
-                
+
     //             // Update the state to remove the deleted row
     //             setChallanheaders(prevHeaders => prevHeaders.filter(header => header.Id !== id));
     //         } else {
@@ -514,7 +522,7 @@ const DeliveryChallan = () => {
                                         <Typography variant="body2">Challan No</Typography>
                                         <TextField
                                             value={challanNo}
-                                             disabled
+                                            disabled
                                             onChange={(e) => setChallanNo(e.target.value)}
                                             size="small"
                                             fullWidth />
@@ -528,6 +536,7 @@ const DeliveryChallan = () => {
                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                             <DatePicker
                                                 value={challanDate ? new Date(challanDate) : null}
+                                                format="dd-MM-yyyy"
                                                 onChange={(newValue) => setChallanDate(newValue)}
                                                 slotProps={{
                                                     textField: { size: "small", fullWidth: true },
@@ -633,6 +642,7 @@ const DeliveryChallan = () => {
                                         <Typography variant="body2">Batch Date</Typography>
                                         <DatePicker
                                             value={batchDate ? new Date(batchDate) : null}
+                                            format="dd-MM-yyyy"
                                             onChange={(newValue) => setBatchDate(newValue)}
                                             slotProps={{
                                                 textField: { size: "small", fullWidth: true },
@@ -751,8 +761,8 @@ const DeliveryChallan = () => {
                                 <Button
                                     sx={{
                                         background: 'var(--primary-color)',
-                                    }}onClick={handleSubmitDelivery}
-                                     
+                                    }} onClick={handleSubmitDelivery}
+
                                     variant="contained"
                                 >
                                     {isEditing ? "Update" : "Save"}

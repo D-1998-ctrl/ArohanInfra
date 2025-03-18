@@ -16,6 +16,7 @@ const AccountMaster = () => {
 
   const handleDrawerOpen = () => {
     setIsDrawerOpen(true);
+    handleClearTemplate()
   };
 
   const handleDrawerClose = () => {
@@ -395,11 +396,11 @@ const AccountMaster = () => {
               <TextField
                 value={AccountName}
                 onChange={(e) => setAccountName(e.target.value)}
-                size="small" margin="normal" placeholder="Enter Account Name" fullWidth />
+                size="small"  placeholder="Enter Account Name" fullWidth />
             </Box>
 
             <Box display={'flex'} gap={2} alignItems={'center'}>
-              <Box flex={1}>
+              <Box flex={1} mt={2}>
                 <Typography>Group</Typography>
                 <FormControl fullWidth size="small">
                   <Select
@@ -419,10 +420,10 @@ const AccountMaster = () => {
                 </FormControl>
               </Box>
 
-              <Box flex={1}  >
+              <Box flex={1} mt={2}  >
                 <Typography>Sub Group</Typography>
                 <FormControl
-                  fullWidth size="small" margin="normal">
+                  fullWidth size="small" >
                   <Select
                     value={selectedSubGroupOption}
                     onChange={(event) => setSelectedSubGroupOption(event.target.value)}
@@ -442,10 +443,10 @@ const AccountMaster = () => {
             </Box>
 
 
-            <Box flex={1}  >
+            <Box flex={1} mt={2}  >
               <Typography>Type Code</Typography>
               <FormControl
-                fullWidth size="small" margin="normal">
+                fullWidth size="small" >
                 <Select
                   value={typecode}
 
@@ -459,7 +460,7 @@ const AccountMaster = () => {
             </Box>
 
             <Box display={'flex'} alignItems={'center'} gap={2}>
-              <Box flex={1}>
+              <Box flex={1} mt={2}>
                 <Typography>Opening Balance</Typography>
                 <TextField
                   value={currentBal}
@@ -467,7 +468,7 @@ const AccountMaster = () => {
                   type="number"
 
                   size="small"
-                  margin="normal"
+                  
                   placeholder="Enter Opening Balance"
                   fullWidth
                   InputProps={{
@@ -490,10 +491,10 @@ const AccountMaster = () => {
               </Box>
 
 
-              <Box flex={1}  >
+              <Box flex={1} mt={2}  >
                 <Typography>Debit or Credit</Typography>
                 <FormControl
-                  fullWidth size="small" margin="normal">
+                  fullWidth size="small">
 
 
                   <Select
@@ -555,11 +556,11 @@ const AccountMaster = () => {
               <TextField
                 value={updatedAccountName}
                 onChange={(e) => setUpdatedAccountName(e.target.value)}
-                size="small" margin="normal" placeholder="Enter Account Name" fullWidth />
+                size="small"  placeholder="Enter Account Name" fullWidth />
             </Box>
 
             <Box display={'flex'} gap={2} alignItems={'center'}>
-              <Box flex={1}>
+              <Box flex={1} mt={2}>
                 <Typography>Group</Typography>
                 <FormControl fullWidth size="small">
                   <Select
@@ -579,10 +580,10 @@ const AccountMaster = () => {
                 </FormControl>
               </Box>
 
-              <Box flex={1}  >
+              <Box flex={1} mt={2}  >
                 <Typography>Sub Group</Typography>
                 <FormControl
-                  fullWidth size="small" margin="normal">
+                  fullWidth size="small" >
                   <Select
                     value={selectedSubGroupOption}
                     onChange={(event) => setSelectedSubGroupOption(event.target.value)}
@@ -602,10 +603,10 @@ const AccountMaster = () => {
             </Box>
 
 
-            <Box flex={1}  >
+            <Box flex={1} mt={2} >
               <Typography>Type Code</Typography>
               <FormControl
-                fullWidth size="small" margin="normal">
+                fullWidth size="small" >
                 <Select
                   value={typecode}
 
@@ -619,7 +620,7 @@ const AccountMaster = () => {
             </Box>
 
             <Box display={'flex'} alignItems={'center'} gap={2}>
-              <Box flex={1}>
+              <Box flex={1} mt={2}>
                 <Typography>Opening Balance</Typography>
                 <TextField
                   value={updatedcurrentBal}
@@ -627,7 +628,7 @@ const AccountMaster = () => {
                   type="number"
 
                   size="small"
-                  margin="normal"
+                 
                   placeholder="Enter Opening Balance"
                   fullWidth
                   InputProps={{
@@ -650,10 +651,10 @@ const AccountMaster = () => {
               </Box>
 
 
-              <Box flex={1}  >
+              <Box flex={1} mt={2}  >
                 <Typography>Debit or Credit</Typography>
                 <FormControl
-                  fullWidth size="small" margin="normal">
+                  fullWidth size="small" >
                   <Select
                     value={debitCredit}
                     onChange={(event) => setDebitCredit(event.target.value)}
