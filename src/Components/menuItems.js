@@ -100,7 +100,7 @@ export const menuItems = [
       },
       {
         title: "Receipts",
-        path: "commonpage",
+        path: "receipts",
         icon: <FiberManualRecordIcon sx={{ fontSize: 15 }} />,
       },
       {

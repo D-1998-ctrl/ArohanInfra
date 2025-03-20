@@ -61,6 +61,7 @@ const InwordAtStore = () => {
 
     const handleDrawerClose = () => {
         setIsDrawerOpen(false);
+        resetForm();
     };
 
     //api to call fetchInwardHeader
@@ -74,7 +75,7 @@ const InwordAtStore = () => {
         } catch (error) { }
     };
 
-    
+
     //  api to call fetchInwarddetails
     const fetchInwarddetails = async () => {
         try {
@@ -95,7 +96,7 @@ const InwordAtStore = () => {
 
     //table
     const [anchorEl, setAnchorEl] = useState(null);
-    const [currentRow, setCurrentRow] = useState(null);                              
+    const [currentRow, setCurrentRow] = useState(null);
 
     const handleMenuOpen = (event, row) => {
         setAnchorEl(event.currentTarget);
@@ -171,7 +172,7 @@ const InwordAtStore = () => {
     //for get data in main table and form
     const handleSubmit = (rowData) => {
         console.log("This row has been clicked:", rowData);
-        console.log("InwardDate:", rowData.InwardDate?.date.split(" ")[0]);
+        //console.log("InwardDate:", rowData.InwardDate?.date.split(" ")[0]);
         setRowId(rowData.Id)
         setIsDrawerOpen(true);
 
@@ -186,11 +187,11 @@ const InwordAtStore = () => {
         setChallanNo(rowData.ChallanNo)
         setVehicleNo(rowData.VehicleNo)
         setSelectedLocation(rowData.StoreLocation);
-        console.log("storelocation", rowData.StoreLocation);
+        //console.log("storelocation", rowData.StoreLocation);
 
         const inwdetail = inwarddetails.filter(
             (detail) => detail.InwardId === rowData.Id);
-        console.log('invdetail', inwdetail)
+        //console.log('invdetail', inwdetail)
 
         const mappedRows = inwdetail.map((detail) => ({
             Id: detail.Id,
@@ -325,8 +326,6 @@ const InwordAtStore = () => {
     //Add Rows
     const handleAddRow = () => {
         const newRow = {
-            // Id: rows.length + 1,
-
             ProductId: selectedProduct,
             Quantity: quentity,
             Rate: rate,
@@ -338,15 +337,6 @@ const InwordAtStore = () => {
         console.log("newRow", newRow);
         // Update rows state and ensure the new row is added to the table
         setRows((prevRows) => [...prevRows, newRow]);
-        console.log("Updated Rows:", rows);
-
-        //clear all fileds
-        // setSelectedProduct("");
-        // setQuantity("");
-        // setRate("");
-        // setAmount("");
-        // setBatchNo("");
-        // setBatchDate("")
     };
 
     //for updaterows
@@ -357,7 +347,6 @@ const InwordAtStore = () => {
             updatedRows[editingRow] = {
                 ...updatedRows[editingRow],
                 ProductId: selectedProduct,
-                // MaterialName: materialName,
                 Quantity: quentity,
                 Rate: rate,
                 Amount: amount,
@@ -368,31 +357,118 @@ const InwordAtStore = () => {
             setEditingRow(null);
         }
         else {
-            // Add a new row
             handleAddRow();
         }
     };
     const totalAmount = rows.reduce((total, row) => total + (row.Amount || 0), 0).toFixed(2);
+
     //create and update Inword At Store
+    // const handleSubmitInWord = async (e) => {
+    //     e.preventDefault();
+    //     const formattedInwardDate = moment(inwordDate).format("YYYY-MM-DD");
+    //     const formattedChallanDate = moment(challanDate).format("YYYY-MM-DD");
+
+    //     const purchaseheaderdata = {
+    //         Id: rowId,
+    //         InwardNo: parseInt(inwordNo),
+    //         InwardDate: formattedInwardDate,
+    //         ChallanNo: parseInt(challanNo),
+    //         ChallanDate: formattedChallanDate,
+    //         StoreLocation: selectedLocation,
+    //         VehicleNo: vehicleNo,
+    //         Total: totalAmount,
+    //     };
+    //     console.log("inwordNo", inwordNo)
+    //     console.log("inwardheadersdata", inwardheaders);
+    //     try {
+    //         const invoiceurl = isEditing
+    //             ? "https://arohanagroapi.microtechsolutions.co.in/php/updateinwardheader.php"
+    //             : "https://arohanagroapi.microtechsolutions.co.in/php/postinwardheader.php";
+
+    //         const response = await axios.post(
+    //             invoiceurl,
+    //             qs.stringify(purchaseheaderdata),
+    //             {
+    //                 headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    //             }
+    //         );
+    //         console.log('postinwardheaders', response.data)
+    //         let InwardId = isEditing ? rowId : parseInt(response.data.ID, 10);
+    //         console.log("Inward Id ", InwardId);
+    //         console.log("rows", rows);
+
+    //         for (const row of rows) {
+    //             console.log("this row   ", row);
+    //             const formattedBatchDate = moment(row.BatchDate).format("YYYY-MM-DD");
+    //             console.log('b date', formattedBatchDate)
+    //             const rowData = {
+    //                 Id: parseInt(row.Id, 10),
+    //                 InwardId: parseInt(InwardId, 10),
+    //                 // SerialNo: rows.indexOf(row) + 1,
+    //                 ProductId: parseInt(row.ProductId, 10),
+    //                 // MaterialId: parseInt(row.selectedProduct, 10),
+    //                 BatchNo: parseInt(row.BatchNo),
+
+    //                 BatchDate: formattedBatchDate,
+    //                 Quantity: parseFloat(row.Quantity),
+    //                 Rate: parseFloat(row.Rate),
+    //                 Amount: parseInt(row.Amount),
+    //             };
+    //             console.log("this row has rowData ", rowData);
+    //             const invoicdedetailurl =
+    //                 isEditing && row.Id
+    //                     ? "https://arohanagroapi.microtechsolutions.co.in/php/updateinwarddetail.php"
+    //                     : "https://arohanagroapi.microtechsolutions.co.in/php/postinwarddetail.php";
+    //             console.log(" invoicdedetailurl is used ", invoicdedetailurl);
+    //             try {
+    //                 const response = await axios.post(
+    //                     invoicdedetailurl,
+    //                     qs.stringify(rowData),
+    //                     {
+    //                         headers: {
+    //                             "Content-Type": "application/x-www-form-urlencoded",
+    //                         },
+    //                     }
+    //                 );
+    //                 console.log("Response:", response);
+    //             } catch (error) {
+    //                 console.error("Error:", error);
+    //             }
+    //             if (isEditing && row.Id) {
+    //                 handleSaveOrAddRow();
+    //             }
+    //         }
+    //         setIsDrawerOpen(false);
+    //         toast.success(
+    //             isEditing
+    //                 ? "Inword At Store updated successfully!"
+    //                 : "Inword At Store Created successfully!"
+    //         );
+    //         resetForm();
+    //         console.log("Inword Header Data:", purchaseheaderdata);
+    //     } catch (error) {
+    //         console.error("Error submitting Inword:", error);
+    //     }
+    // };
+
     const handleSubmitInWord = async (e) => {
         e.preventDefault();
         const formattedInwardDate = moment(inwordDate).format("YYYY-MM-DD");
         const formattedChallanDate = moment(challanDate).format("YYYY-MM-DD");
-    
+
         const purchaseheaderdata = {
             Id: rowId,
             InwardNo: parseInt(inwordNo),
             InwardDate: formattedInwardDate,
             ChallanNo: parseInt(challanNo),
-            ChallanDate:formattedChallanDate,
+            ChallanDate: formattedChallanDate,
             StoreLocation: selectedLocation,
             VehicleNo: vehicleNo,
             Total: totalAmount,
         };
-        console.log("inwordNo", inwordNo)
-        console.log("inwardheadersdata", inwardheaders);
+
         try {
-            const invoiceurl = isEditing
+            const invoiceurl = rowId
                 ? "https://arohanagroapi.microtechsolutions.co.in/php/updateinwardheader.php"
                 : "https://arohanagroapi.microtechsolutions.co.in/php/postinwardheader.php";
 
@@ -404,33 +480,34 @@ const InwordAtStore = () => {
                 }
             );
             console.log('postinwardheaders', response.data)
-            let InwardId = isEditing ? rowId : parseInt(response.data.ID, 10);
-            console.log("Inward Id ", InwardId);
+
+            let InwardId = rowId ? rowId : parseInt(response.data.ID, 10);
+            //console.log("Inward Id ", InwardId);
             console.log("rows", rows);
 
             for (const row of rows) {
-                console.log("this row   ", row);
+
                 const formattedBatchDate = moment(row.BatchDate).format("YYYY-MM-DD");
-                console.log('b date',formattedBatchDate)
+                //console.log('b date', formattedBatchDate)
+
                 const rowData = {
                     Id: parseInt(row.Id, 10),
                     InwardId: parseInt(InwardId, 10),
-                    // SerialNo: rows.indexOf(row) + 1,
                     ProductId: parseInt(row.ProductId, 10),
-                    // MaterialId: parseInt(row.selectedProduct, 10),
                     BatchNo: parseInt(row.BatchNo),
-                    
                     BatchDate: formattedBatchDate,
                     Quantity: parseFloat(row.Quantity),
                     Rate: parseFloat(row.Rate),
                     Amount: parseInt(row.Amount),
                 };
                 console.log("this row has rowData ", rowData);
-                const invoicdedetailurl =
-                    isEditing && row.Id
-                        ? "https://arohanagroapi.microtechsolutions.co.in/php/updateinwarddetail.php"
-                        : "https://arohanagroapi.microtechsolutions.co.in/php/postinwarddetail.php";
+
+                const invoicdedetailurl = row.Id
+                    ? "https://arohanagroapi.microtechsolutions.co.in/php/updateinwarddetail.php"
+                    : "https://arohanagroapi.microtechsolutions.co.in/php/postinwarddetail.php";
+
                 console.log(" invoicdedetailurl is used ", invoicdedetailurl);
+
                 try {
                     const response = await axios.post(
                         invoicdedetailurl,
@@ -445,9 +522,7 @@ const InwordAtStore = () => {
                 } catch (error) {
                     console.error("Error:", error);
                 }
-                if (isEditing && row.Id) {
-                    handleSaveOrAddRow();
-                }
+
             }
             setIsDrawerOpen(false);
             toast.success(
@@ -456,7 +531,7 @@ const InwordAtStore = () => {
                     : "Inword At Store Created successfully!"
             );
             resetForm();
-            console.log("Inword Header Data:", purchaseheaderdata);
+
         } catch (error) {
             console.error("Error submitting Inword:", error);
         }
@@ -482,7 +557,10 @@ const InwordAtStore = () => {
             <Box sx={{ p: 5, height: 'auto' }}>
 
                 <Box sx={{ display: 'flex', gap: 3 }}>
-                    <Button sx={{ background: 'var(--complementary-color)', }} variant="contained" onClick={handleDrawerOpen}>Create Inword At Store </Button>
+                    <Button sx={{ background: 'var(--complementary-color)', }}
+                        variant="contained"
+                        onClick={handleDrawerOpen}
+                    >Create Inword At Store </Button>
                 </Box>
 
                 {/* main table */}
@@ -512,6 +590,7 @@ const InwordAtStore = () => {
                             {/* <Typography m={2} variant="h6"><b>Create Inword At Store</b></Typography> */}
                             <Typography m={2} fontWeight="bold" variant="h6">
                                 {isEditing ? "Update Inword At Store" : "Create Inword At Store"}
+                                 {/* {rows.length} */}
                             </Typography>
                             <CloseIcon sx={{ cursor: 'pointer' }} onClick={handleDrawerClose} />
                         </Box>
@@ -538,7 +617,7 @@ const InwordAtStore = () => {
                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                             <DatePicker
                                                 value={inwordDate ? new Date(inwordDate) : null}
-                                                 format="dd-MM-yyyy"
+                                                format="dd-MM-yyyy"
                                                 onChange={(newValue) => setInwordDate(newValue)}
                                                 slotProps={{
                                                     textField: { size: "small", fullWidth: true },
@@ -596,7 +675,7 @@ const InwordAtStore = () => {
                                         <LocalizationProvider dateAdapter={AdapterDateFns}>
                                             <DatePicker
                                                 value={challanDate ? new Date(challanDate) : null}
-                                                  format="dd-MM-yyyy"
+                                                format="dd-MM-yyyy"
                                                 onChange={(newValue) => setChallanDate(newValue)}
                                                 slotProps={{
                                                     textField: { size: "small", fullWidth: true },
@@ -717,7 +796,7 @@ const InwordAtStore = () => {
                                         <Typography variant="body2">Batch Date</Typography>
                                         <DatePicker
                                             value={batchDate ? new Date(batchDate) : null}
-                                              format="dd-MM-yyyy"
+                                            format="dd-MM-yyyy"
                                             onChange={(newValue) => setBatchDate(newValue)}
                                             slotProps={{
                                                 textField: { size: "small", fullWidth: true },

@@ -21,7 +21,7 @@ import InwordAtStore from './Transaction/InwordAtStore';
 import DeliveryChallan from './Transaction/DeliveryChallan';
 import PurchaseOther from './Transaction/PurchaseOther';
 import UserMaster from './Masters/UserMaster';
-// import Coverpage from './LogIn-SignUp/coverpage';
+import Receipt from './Transaction/Receipt';
 
 function App() {
   return (
@@ -46,7 +46,7 @@ function App() {
           <Route path='/inwordatstore' element={<InwordAtStore/>}/>
           <Route path='/deliverychallan' element={<DeliveryChallan/>}/>
           <Route path='/Purchaseother' element={<PurchaseOther/>}/>
-          
+          <Route path='/receipts' element={<Receipt/>}/>
           <Route path="/commonpage" element={<Commonpage/>} />
         </Route>
       </Routes>
