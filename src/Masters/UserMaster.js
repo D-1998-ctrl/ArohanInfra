@@ -59,7 +59,7 @@ const UserMaster = () => {
                 size: 100,
                 Cell: ({ row }) => row.index + 1,
             },
-           
+
             {
                 accessorKey: 'Name',
                 header: 'FullName',
@@ -71,11 +71,11 @@ const UserMaster = () => {
                 size: 150,
             },
 
-            {
-                accessorKey: 'Password',
-                header: 'Password',
-                size: 150,
-            },
+            // {
+            //     accessorKey: 'Password',
+            //     header: 'Password',
+            //     size: 150,
+            // },
 
             {
                 accessorKey: 'LoginStatus',
@@ -136,6 +136,18 @@ const UserMaster = () => {
     const [name, setName] = useState('');
     const [user, setUser] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState(false);
+    const handlePasswordChange = (e) => {
+        const value = e.target.value;
+        setPassword(value);
+
+         // Validate: Exactly 6 letters, digits, or a mix of both
+         if (/^[A-Za-z0-9]{6}$/.test(value) || value === "") {
+            setError(false);
+        } else {
+            setError(true);
+        }
+    };
 
     //fetch Level
     const [levelOption, setLevelOption] = useState([]);
@@ -341,8 +353,11 @@ const UserMaster = () => {
                             <Typography>Password</Typography>
                             <TextField
                                 value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                                size="small" placeholder="Enter Password" fullWidth />
+                                // onChange={(e) => setPassword(e.target.value)}
+                                onChange={handlePasswordChange}
+                                error={error}
+                                helperText={error ? "Password must be exactly 6 digits" : ""}
+                                size="small" placeholder="Enter 6-digit Password" fullWidth />
                         </Box>
 
                         <Box display={'flex'} gap={2} alignItems={'center'} mt={2}>

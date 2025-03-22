@@ -1486,6 +1486,7 @@ const PurchaseEntry = () => {
 
   const handleDrawerClose = () => {
     setIsDrawerOpen(false);
+    resetForm();
   };
 
   /*
@@ -1935,7 +1936,7 @@ const PurchaseEntry = () => {
         }
       );
       console.log('postpurchaseheader', response.data)
-      let PurchaseId = isEditing ? rowId : parseInt(response.data.Id, 10);
+      let PurchaseId = isEditing ? rowId : parseInt(response.data.PurchaseId, 10);
       console.log("Purchase Id ", PurchaseId);
       console.log("rows", rows);
 
@@ -2023,6 +2024,7 @@ const PurchaseEntry = () => {
     setIGSTAmount("");
     setOther("");
     setTransport("");
+    setSelectedLocation('')
     setRows([]);
   };
 

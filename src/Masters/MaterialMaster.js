@@ -67,11 +67,11 @@ const MaterialMaster = () => {
       size: 150,
     },
 
-    // {
-    //   accessorKey: 'MaterialGroupId',
-    //   header: 'Material ID',
-    //   size: 150,
-    // },
+    {
+      accessorKey: 'MaterialName',
+      header: 'Material Name',
+      size: 150,
+    },
 
     {
       accessorKey: 'BrandName',

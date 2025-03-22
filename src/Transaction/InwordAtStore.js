@@ -49,13 +49,13 @@ const InwordAtStore = () => {
         setRate('');
         setAmount('');
         setVehicleNo('');
+        setSelectedLocation('')
         setRows([]);
     };
 
 
     const handleDrawerOpen = () => {
         setIsDrawerOpen(true);
-        resetForm();
         setIsEditing(false);
     };
 
@@ -95,18 +95,18 @@ const InwordAtStore = () => {
     }, []);
 
     //table
-    const [anchorEl, setAnchorEl] = useState(null);
-    const [currentRow, setCurrentRow] = useState(null);
+    // const [anchorEl, setAnchorEl] = useState(null);
+    // const [currentRow, setCurrentRow] = useState(null);
 
-    const handleMenuOpen = (event, row) => {
-        setAnchorEl(event.currentTarget);
-        setCurrentRow(row);
-    };
+    // const handleMenuOpen = (event, row) => {
+    //     setAnchorEl(event.currentTarget);
+    //     setCurrentRow(row);
+    // };
 
-    const handleMenuClose = () => {
-        setAnchorEl(null);
-    };
-    const [idwiseData, setIdwiseData] = useState('')
+    // const handleMenuClose = () => {
+    //     setAnchorEl(null);
+    // };
+    // const [idwiseData, setIdwiseData] = useState('')
 
     //main table
     const columns = useMemo(() => {
@@ -355,6 +355,7 @@ const InwordAtStore = () => {
             };
             setRows(updatedRows);
             setEditingRow(null);
+
         }
         else {
             handleAddRow();

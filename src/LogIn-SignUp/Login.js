@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Box, Typography, TextField, Link, Button, useMediaQuery, FormControl, InputLabel, OutlinedInput, InputAdornment, IconButton } from '@mui/material';
+import { Box, Typography, TextField,  Button, useMediaQuery,  InputAdornment, IconButton } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 import BaggroundImg from '../imgs/bg7.2.jpg';
 import logo from '../imgs/logo5.jpeg';
@@ -24,45 +24,7 @@ const Login = () => {
     event.preventDefault();
   };
 
-
-
-
-  const handleLoginClick = (e) => {
-    e.preventDefault();
-    navigate('/customermaster');
-  };
-
-
   //login
-// const Login =()=>{
-//   const myHeaders = new Headers();
-// myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
-
-// const urlencoded = new URLSearchParams();
-// urlencoded.append("UserId", userName);
-// urlencoded.append("Password", password);
-
-// const requestOptions = {
-//   method: "POST",
-//   headers: myHeaders,
-//   body: urlencoded,
-//   redirect: "follow"
-// };
-
-// fetch("https://arohanagroapi.microtechsolutions.co.in/php/Usernameget.php", requestOptions)
-//   .then((response) => response.json())
-//   .then((result) => {
-//     console.log(result);
-//     if (result?.message === "Login successful") {
-//       navigate("/customermaster");
-//     } else {
-//       alert("Login failed! Please check your credentials.");
-//     }
-//   })
-//   .catch((error) => console.error(error));
-// }
-
-
 const Login = () => {
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/x-www-form-urlencoded");
@@ -94,20 +56,6 @@ const Login = () => {
     })
     .catch((error) => console.error(error));
 };
-
-
-
-
-  const [error, setError] = useState("");
-  const validatePassword = (value) => {
-    const strongPasswordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-
-    if (!strongPasswordRegex.test(value)) {
-      setError("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.");
-    } else {
-      setError("");
-    }
-  };
 
 
   return (

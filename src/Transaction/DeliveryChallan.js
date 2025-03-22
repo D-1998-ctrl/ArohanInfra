@@ -49,17 +49,19 @@ const DeliveryChallan = () => {
         setRate('');
         setAmount('');
         setVehicleNo('');
-        // setRows([]);
+        setSelectedLocation('')
+         setRows([]);
     };
 
     const handleDrawerOpen = () => {
         setIsDrawerOpen(true);
-        resetForm();
+      
         setIsEditing(false);
     };
 
     const handleDrawerClose = () => {
         setIsDrawerOpen(false);
+        resetForm();
     };
 
     //main table
@@ -282,13 +284,12 @@ const DeliveryChallan = () => {
     const [rows, setRows] = useState([]);
     //create and update Delivery challan
     const totalAmount = rows.reduce((total, row) => total + (row.Amount || 0), 0).toFixed(2);
+
     //create and update Inword At Store
     const handleSubmitDelivery = async (e) => {
         e.preventDefault();
-
         const formattedChallanDate = moment(challanDate).format("YYYY-MM-DD");
-        // const formattedBatchDate = moment(batchDate).format("YYYY-MM-DD");
-
+      
         const purchaseheaderdata = {
             Id: rowId,
             ChallanNo: parseInt(challanNo),
@@ -300,7 +301,7 @@ const DeliveryChallan = () => {
         console.log("ChallanNo", challanNo)
         console.log("deliveryheders", challanheaders);
         try {
-            const invoiceurl = isEditing
+            const invoiceurl = rowId
                 ? "https://arohanagroapi.microtechsolutions.co.in/php/updatedeliverychallanheader.php"
                 : "https://arohanagroapi.microtechsolutions.co.in/php/postdeliverychallanheader.php";
 
@@ -312,8 +313,8 @@ const DeliveryChallan = () => {
                 }
             );
             console.log('postchallanheders', response.data)
-            let InwardId = isEditing ? rowId : parseInt(response.data.ID, 10);
-            console.log("Inward Id ", InwardId);
+            let InwardId = rowId ? rowId : parseInt(response.data.ID, 10);
+            // console.log("Inward Id ", InwardId);
             console.log("rows", rows);
 
             for (const row of rows) {
@@ -334,7 +335,7 @@ const DeliveryChallan = () => {
                 };
                 console.log("this row has rowData ", rowData);
                 const invoicdedetailurl =
-                    isEditing && row.Id
+                     row.Id
                         ? "https://arohanagroapi.microtechsolutions.co.in/php/updatedeliverychallandetail.php"
                         : "https://arohanagroapi.microtechsolutions.co.in/php/postdeliverychallandetail.php";
                 console.log(" invoicdedetailurl is used ", invoicdedetailurl);
@@ -391,7 +392,6 @@ const DeliveryChallan = () => {
     //Add Rows
     const handleAddRow = () => {
         const newRow = {
-            Id: rows.length + 1,
             ProductId: selectedProduct,
             Quantity: quentity,
             Rate: rate,
@@ -399,7 +399,6 @@ const DeliveryChallan = () => {
             BatchNo: batchNo,
             BatchDate: batchDate,
         };
-
         console.log("newRow", newRow);
         // Update rows state and ensure the new row is added to the table
         setRows((prevRows) => [...prevRows, newRow]);

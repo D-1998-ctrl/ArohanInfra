@@ -1,6 +1,6 @@
 
 import React, { useMemo, useState, useEffect } from 'react'
-import { Alert, IconButton, Menu,FormLabel, Box, useMediaQuery, Button, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, RadioGroup, Radio } from '@mui/material';
+import { Alert, IconButton, Menu, FormLabel, Box, useMediaQuery, Button, Typography, TextField, Drawer, Divider, FormControl, Select, MenuItem, FormControlLabel, RadioGroup, Radio } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { MaterialReactTable, } from 'material-react-table';
 import { useTheme } from "@mui/material/styles";
@@ -267,41 +267,37 @@ const Receipt = () => {
 
                             </Box>
 
-
-                            <Box display={'flex'} gap={2} alignItems={'center'}>
-
-                                <FormControl>
-                                    <FormLabel>Select Payment Method</FormLabel>
-                                    <RadioGroup >
-                                        <FormControlLabel control={<Radio />} label="Cash" />
-                                        <FormControlLabel  control={<Radio />} label="Bank" />
-                                        <FormControlLabel  control={<Radio />} label="MBB Receipt" />
+                            <Box mt={2}>
+                                <Typography variant="body2" >Cash/Bank</Typography>
+                                <FormControl component="fieldset" size="small" margin="none">
+                                    <RadioGroup
+                                        // value={selectedCashorbank}
+                                        // onChange={(e) => setSelectedCashorbank(e.target.value)}
+                                        row // This will display the radio buttons in a row
+                                    >
+                                        <FormControlLabel value="cash" control={<Radio />} label="Cash" size="small" margin="none" />
+                                        <FormControlLabel value="bank" control={<Radio />} label="Bank" size="small" margin="none" />
+                                        <FormControlLabel value="mbb" control={<Radio />} label="MBB Receipt" size="small" margin="none" />
                                     </RadioGroup>
                                 </FormControl>
                             </Box>
+                            <Divider sx={{mt:2}}/>
 
-
-
-
-                            <Box display={'flex'} gap={2} alignItems={'center'} mt={2}>
-                                <Box flex={1}  >
-                                    <Typography variant="body2">Level</Typography>
-                                    <FormControl fullWidth size="small">
-                                        <Select
-                                            value={selectedLevelOption || ""}
-                                            onChange={(event) => setSelectedLevelOption(event.target.value)}
+                            <Box display={'flex'} gap={2} alignItems={'center'} mt={1} p={1}>
+                                <Box>
+                                <Typography variant="body2">Cheque/DD</Typography>
+                                    <FormControl component="fieldset">
+                                        <RadioGroup row
+                                        // value={selectedPaymentMode} onChange={(event) => setSelectedPaymentMode(event.target.value)}
                                         >
-                                            {levelOption.map((option) => (
-                                                <MenuItem key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </MenuItem>
-                                            ))}
-                                        </Select>
+                                            <FormControlLabel value="cheque" control={<Radio size="small" />} label="Cheque" />
+                                            <FormControlLabel value="dd" control={<Radio size="small" />} label="DD" />
+                                        </RadioGroup>
                                     </FormControl>
                                 </Box>
 
                                 <Box flex={1}>
-                                    <Typography variant="body2">Branch</Typography>
+                                    <Typography variant="body2">Bank Name</Typography>
                                     <FormControl fullWidth size="small">
                                         <Select
                                             value={selectedBranchOption || ""}
@@ -315,9 +311,74 @@ const Receipt = () => {
                                         </Select>
                                     </FormControl>
                                 </Box>
+
+                                <Box flex={1}>
+                                    <Typography variant="body2">Cheque No</Typography>
+                                    <TextField
+                                        // value={Amount}
+                                        // onChange={(e) => setAmount(e.target.value)}
+                                        size="small" margin="none" placeholder='Cheque No' fullWidth
+                                    />
+                                </Box>
+
+                                <Box flex={1} >
+                                    <Typography>Cheque Date</Typography>
+                                    <DatePicker
+                                        // value={PurchaseDate ? new Date(PurchaseDate) : null}
+                                        format="dd-MM-yyyy"
+                                        // onChange={(newValue) => setPurchaseDate(newValue)}
+                                        slotProps={{
+                                            textField: { size: "small", fullWidth: true },
+                                        }}
+                                    />
+                                </Box>
+
+
+
                             </Box>
+                            <Divider sx={{mt:2}}/>
+                                 
+                            <Box display={'flex'} gap={2} alignItems={'center'} mt={2}>
+                                <Box flex={1}>
+                                    <Typography variant="body2">Towards</Typography>
+                                    <FormControl fullWidth size="small">
+                                        <Select
+                                            value={selectedBranchOption || ""}
+                                            onChange={(event) => setSelectedBranchOption(event.target.value)}
+                                        >
+                                            {branchOption.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </MenuItem>
+                                            ))}
+                                        </Select>
+                                    </FormControl>
+                                </Box>
+
+                                <Box flex={1}>
+                                    <Typography variant="body2">Kachi Pavati No</Typography>
+                                    <TextField
+                                        // value={Amount}
+                                        // onChange={(e) => setAmount(e.target.value)}
+                                        size="small" margin="none" placeholder='Kachi Pavati No' fullWidth
+                                    />
+                                </Box>
+
+                                <Box flex={1} >
+                                    <Typography>Kachi Pavati Date</Typography>
+                                    <DatePicker
+                                        // value={PurchaseDate ? new Date(PurchaseDate) : null}
+                                        format="dd-MM-yyyy"
+                                        // onChange={(newValue) => setPurchaseDate(newValue)}
+                                        slotProps={{
+                                            textField: { size: "small", fullWidth: true },
+                                        }}
+                                    />
+                                </Box>
 
 
+
+                            </Box>
                         </LocalizationProvider>
                     </Box>
                     <Box display={'flex'} alignItems={'center'} justifyContent={'center'} gap={2} mt={5}>
